@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        2.8.6
-Release:        2%{?dist}
+Version:        3.0.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -18,10 +18,8 @@ BuildRequires:  frei0r-devel
 BuildRequires:  fribidi-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  gsm-devel
-# Reworked in FFMpeg 3.0.0
-# BuildRequires:  kvazaar-devel < 0.7.0
+BuildRequires:  kvazaar-devel >= 0.8.1
 BuildRequires:  lame-devel >= 3.98.3
-BuildRequires:  libaacplus-devel >= 2.0.2
 BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libcdio-paranoia-devel
@@ -34,12 +32,12 @@ BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  libvdpau-devel
-BuildRequires:  libvo-aacenc-devel
 BuildRequires:  libvorbis-devel
 BuildRequires:  libvpx-devel
 # libwebp at >= 0.2.0, but libwepmux at 0.4.0
 BuildRequires:  libwebp-devel >= 0.4.0
-BuildRequires:  nvenc
+BuildRequires:  libxcb-devel >= 1.4
+BuildRequires:  nvenc >= 5
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
@@ -58,9 +56,10 @@ BuildRequires:  texinfo
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
 BuildRequires:  x264-devel >= 0.118
-BuildRequires:  x265-devel >= 0.57
+BuildRequires:  x265-devel >= 0.68
 BuildRequires:  xvidcore-devel
 BuildRequires:  zlib-devel
+BuildRequires:  zvbi-devel >= 0.2.28
 
 %ifarch %{ix86} x86_64
 BuildRequires:  libXvMC-devel
@@ -131,7 +130,6 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-gnutls \
     --enable-gpl \
     --enable-iconv \
-    --enable-libaacplus \
     --enable-libass \
     --enable-libbluray \
     --enable-libcdio \
@@ -141,7 +139,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libgsm \
-    --disable-libkvazaar \
+    --enable-libkvazaar >= 0.8.1 \
     --enable-libmfx \
     --enable-libmp3lame \
     --enable-libopencore-amrnb \
@@ -158,14 +156,18 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libtheora \
     --enable-libtwolame \
     --enable-libv4l2 \
-    --enable-libvo-aacenc \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
     --enable-libwebp \
-    --enable-libx264 \
+    --enable-libx264 >= 0.118 \
     --enable-libx265 \
+    --enable-libxcb >= 1.4 \
+    --enable-libxcb-shm \
+    --enable-libxcb-xfixes \
+    --enable-libxcb-shape \
     --enable-libxvid \
+    --enable-libzvbi \
     --enable-lzma \
     --enable-nonfree \
     --enable-openal \
@@ -258,6 +260,11 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed Apr 20 2016 Simone Caronni <negativo17@gmail.com> - 1:3.0.1-1
+- Update to 3.0.1.
+- Enable kvazaar, libzvbi and libxcb support.
+- Remove obsolete libvo-aacenc and libaacplus.
+
 * Mon Apr 04 2016 Simone Caronni <negativo17@gmail.com> - 1:2.8.6-2
 - Rebuild for libva update.
 
