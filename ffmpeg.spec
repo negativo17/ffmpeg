@@ -1,6 +1,6 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.0.1
+Version:        3.0.2
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -260,6 +260,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed May 25 2016 Simone Caronni <negativo17@gmail.com> - 1:3.0.2-1
+- Update to 3.0.2.
+
 * Wed Apr 20 2016 Simone Caronni <negativo17@gmail.com> - 1:3.0.1-1
 - Update to 3.0.1.
 - Enable kvazaar, libzvbi and libxcb support.
