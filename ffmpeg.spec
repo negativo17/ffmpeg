@@ -139,7 +139,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libgsm \
-    --enable-libkvazaar >= 0.8.1 \
+    --enable-libkvazaar \
     --enable-libmfx \
     --enable-libmp3lame \
     --enable-libopencore-amrnb \
@@ -160,9 +160,9 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libvorbis \
     --enable-libvpx \
     --enable-libwebp \
-    --enable-libx264 >= 0.118 \
+    --enable-libx264 \
     --enable-libx265 \
-    --enable-libxcb >= 1.4 \
+    --enable-libxcb \
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
     --enable-libxcb-shape \
