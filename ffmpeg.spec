@@ -1,12 +1,15 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.0.2
+Version:        3.1.1
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
+
+# http://git.videolan.org/?p=ffmpeg.git;a=patch;h=f9a150fc31c5336a8d51bc51a921d1f9885d5876
+Patch0:         ffmpeg-disable-gcc49-vectorization.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -110,8 +113,11 @@ This package contains development files for %{name}.
 
 %prep
 %setup -q
+%patch0 -p1
 # Dynamically load libcuda.so.1 (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
+
+#sed -i -e 's|#!/bin/sh|#!/bin/sh -x|g' configure
 
 %build
 ./configure \
@@ -172,7 +178,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
-    --enable-nvenc --extra-cflags=-I%{_includedir}/nvenc \
+    --enable-nvenc \
     --enable-opengl \
     --enable-postproc \
     --enable-pthreads \
@@ -182,6 +188,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-x11grab \
     --enable-xlib \
     --enable-zlib \
+    --extra-cflags="-I%{_includedir}/nvenc" \
     --incdir=%{_includedir}/%{name} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
@@ -260,6 +267,10 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Jul 14 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-1
+- Update to 3.1.1.
+- Add patch from upstream for runtime crashes.
+
 * Wed May 25 2016 Simone Caronni <negativo17@gmail.com> - 1:3.0.2-1
 - Update to 3.0.2.
 
