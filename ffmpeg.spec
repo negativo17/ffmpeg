@@ -1,12 +1,15 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
+
+# https://trac.ffmpeg.org/ticket/5587
+Source1:        scale_npp.txt
 
 # http://git.videolan.org/?p=ffmpeg.git;a=patch;h=f9a150fc31c5336a8d51bc51a921d1f9885d5876
 Patch0:         ffmpeg-disable-gcc49-vectorization.patch
@@ -14,6 +17,7 @@ Patch0:         ffmpeg-disable-gcc49-vectorization.patch
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
+BuildRequires:  cuda-devel
 BuildRequires:  doxygen
 BuildRequires:  faac-devel
 BuildRequires:  freetype-devel
@@ -78,10 +82,6 @@ and video, MPEG4, h263, ac3, asf, avi, real, mjpeg, and flash.
 
 %package        libs
 Summary:        Libraries for %{name}
-%if 0%{?fedora} || 0%{?rhel} > 7
-# libavcoded loads libnvidia-encode.so.1 at runtime
-Recommends:     nvidia-driver-cuda-libs
-%endif
 
 %description    libs
 FFmpeg is a complete and free Internet live audio and video
@@ -114,9 +114,10 @@ This package contains development files for %{name}.
 %prep
 %setup -q
 %patch0 -p1
-# Dynamically load libcuda.so.1 (SONAME)
+# Use CUDA entry point versioned library (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
 
+# Uncomment to enable debugging while configuring
 #sed -i -e 's|#!/bin/sh|#!/bin/sh -x|g' configure
 
 %build
@@ -130,6 +131,8 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-avfilter \
     --enable-avresample \
     --enable-bzlib \
+    --enable-cuda \
+    --enable-cuvid \
     --enable-doc \
     --enable-fontconfig \
     --enable-frei0r \
@@ -153,6 +156,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libopenh264 \
     --enable-libopenjpeg \
     --enable-libopus \
+    --enable-libnpp \
     --enable-libpulse \
     --enable-librtmp \
     --enable-libschroedinger \
@@ -188,7 +192,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-x11grab \
     --enable-xlib \
     --enable-zlib \
-    --extra-cflags="-I%{_includedir}/nvenc" \
+    --extra-cflags="-I%{_includedir}/nvenc -I%{_includedir}/cuda" \
     --incdir=%{_includedir}/%{name} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
@@ -251,7 +255,7 @@ mv doc/*.html doc/html
 %files libs
 %{!?_licensedir:%global license %%doc}
 %license COPYING.* LICENSE.md
-%doc MAINTAINERS README.md CREDITS Changelog RELEASE_NOTES
+%doc MAINTAINERS README.md CREDITS Changelog RELEASE_NOTES scale_npp.txt
 %{_libdir}/lib*.so.*
 %exclude %{_libdir}/libavdevice.so.*
 %{_mandir}/man3/lib*.3.gz
@@ -267,6 +271,11 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Jul 14 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-2
+- Enable Nvidia CUVID support and Performance Primitives based code. Both
+  require linking to CUDA libraries. As such, libs subpackage now requires
+  libraries from both CUDA and Nvidia drivers.
+
 * Thu Jul 14 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-1
 - Update to 3.1.1.
 - Add patch from upstream for runtime crashes.
