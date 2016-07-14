@@ -17,7 +17,6 @@ Patch0:         ffmpeg-disable-gcc49-vectorization.patch
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
-BuildRequires:  cuda-devel
 BuildRequires:  doxygen
 BuildRequires:  faac-devel
 BuildRequires:  freetype-devel
@@ -72,6 +71,12 @@ BuildRequires:  zvbi-devel >= 0.2.28
 BuildRequires:  libXvMC-devel
 BuildRequires:  libva-devel
 BuildRequires:  yasm
+%endif
+
+# Nvidia CUVID support and Performance Primitives based code
+%ifarch x86_64
+BuildRequires:  cuda-devel
+BuildRequires:  nvidia-driver-devel
 %endif
 
 %description
@@ -131,8 +136,10 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-avfilter \
     --enable-avresample \
     --enable-bzlib \
+%ifarch x86_64
     --enable-cuda \
     --enable-cuvid \
+%endif
     --enable-doc \
     --enable-fontconfig \
     --enable-frei0r \
@@ -272,8 +279,8 @@ mv doc/*.html doc/html
 
 %changelog
 * Thu Jul 14 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-2
-- Enable Nvidia CUVID support and Performance Primitives based code. Both
-  require linking to CUDA libraries. As such, libs subpackage now requires
+- Enable Nvidia CUVID support and Performance Primitives based code (x86_64).
+  Both require linking to CUDA libraries. As such, libs subpackage now requires
   libraries from both CUDA and Nvidia drivers.
 
 * Thu Jul 14 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-1
