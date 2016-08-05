@@ -14,6 +14,11 @@ Source1:        scale_npp.txt
 # http://git.videolan.org/?p=ffmpeg.git;a=patch;h=f9a150fc31c5336a8d51bc51a921d1f9885d5876
 Patch0:         ffmpeg-disable-gcc49-vectorization.patch
 
+# OpenH264 1.6 support:
+# http://git.videolan.org/?p=ffmpeg.git;a=commit;h=c5d326f551b0312ff581bf1df35b21d956e01523
+# http://git.videolan.org/?p=ffmpeg.git;a=commit;h=293676c476733e81d7b596736add6cd510eb6960
+Patch1:         ffmpeg-openh264-16.patch
+
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
@@ -119,6 +124,7 @@ This package contains development files for %{name}.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 # Use CUDA entry point versioned library (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
 
