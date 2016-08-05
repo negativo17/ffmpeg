@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -278,6 +278,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Aug 05 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-3
+- Rebuild for OpenH264 1.6.0.
+
 * Thu Jul 14 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-2
 - Enable Nvidia CUVID support and Performance Primitives based code (x86_64).
   Both require linking to CUDA libraries. As such, libs subpackage now requires
