@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.1.1
-Release:        3%{?dist}
+Version:        3.1.2
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -11,13 +11,10 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 # https://trac.ffmpeg.org/ticket/5587
 Source1:        scale_npp.txt
 
-# http://git.videolan.org/?p=ffmpeg.git;a=patch;h=f9a150fc31c5336a8d51bc51a921d1f9885d5876
-Patch0:         ffmpeg-disable-gcc49-vectorization.patch
-
 # OpenH264 1.6 support:
 # http://git.videolan.org/?p=ffmpeg.git;a=commit;h=c5d326f551b0312ff581bf1df35b21d956e01523
 # http://git.videolan.org/?p=ffmpeg.git;a=commit;h=293676c476733e81d7b596736add6cd510eb6960
-Patch1:         ffmpeg-openh264-16.patch
+Patch0:         ffmpeg-openh264-16.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -124,7 +121,6 @@ This package contains development files for %{name}.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 # Use CUDA entry point versioned library (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
 
@@ -284,6 +280,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Aug 15 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.2-1
+- Update to 3.1.2, remove upstreamed patch.
+
 * Fri Aug 05 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.1-3
 - Rebuild for OpenH264 1.6.0.
 
