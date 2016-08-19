@@ -123,6 +123,7 @@ This package contains development files for %{name}.
 %patch0 -p1
 # Use CUDA entry point versioned library (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
+cp %{SOURCE1} .
 
 # Uncomment to enable debugging while configuring
 #sed -i -e 's|#!/bin/sh|#!/bin/sh -x|g' configure
