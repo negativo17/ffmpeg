@@ -1,6 +1,6 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.1.2
+Version:        3.1.3
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -281,6 +281,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Sep 06 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.3-1
+- Update to 3.1.3.
+
 * Mon Aug 15 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.2-1
 - Update to 3.1.2, remove upstreamed patch.
 
