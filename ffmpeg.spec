@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        2.8.7
-Release:        2%{?dist}
+Version:        2.8.8
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -258,6 +258,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Sep 19 2016 Simone Caronni <negativo17@gmail.com> - 1:2.8.8-1
+- Update to 2.8.8.
+
 * Sat Aug 20 2016 Simone Caronni <negativo17@gmail.com> - 1:2.8.7-2
 - Rebuild for Nvidia Video SDK update.
 
