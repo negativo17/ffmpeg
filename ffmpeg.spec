@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.1.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -142,6 +142,7 @@ cp %{SOURCE1} .
 %ifarch x86_64
     --enable-cuda \
     --enable-cuvid \
+    --enable-libnpp \
 %endif
     --enable-doc \
     --enable-fontconfig \
@@ -281,6 +282,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Oct 17 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-2
+- Explicitly enable NVIDIA Performance Primitives.
+
 * Mon Oct 03 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-1
 - Update to 3.1.4.
 
