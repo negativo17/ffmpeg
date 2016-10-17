@@ -1,7 +1,7 @@
-diff -Naur ffmpeg-3.1.1.old/configure ffmpeg-3.1.1/configure
---- ffmpeg-3.1.1.old/configure	2016-08-05 17:45:58.609584928 +0200
-+++ ffmpeg-3.1.1/configure	2016-08-05 17:47:03.183876565 +0200
-@@ -2766,6 +2766,8 @@
+diff -Naur ffmpeg-3.1.4.old/configure ffmpeg-3.1.4/configure
+--- ffmpeg-3.1.4.old/configure	2016-10-17 14:40:55.373892729 +0200
++++ ffmpeg-3.1.4/configure	2016-10-17 14:40:59.156951030 +0200
+@@ -2767,6 +2767,8 @@
  libopencore_amrnb_encoder_deps="libopencore_amrnb"
  libopencore_amrnb_encoder_select="audio_frame_queue"
  libopencore_amrwb_decoder_deps="libopencore_amrwb"
@@ -10,9 +10,9 @@ diff -Naur ffmpeg-3.1.1.old/configure ffmpeg-3.1.1/configure
  libopenh264_encoder_deps="libopenh264"
  libopenjpeg_decoder_deps="libopenjpeg"
  libopenjpeg_encoder_deps="libopenjpeg"
-diff -Naur ffmpeg-3.1.1.old/doc/general.texi ffmpeg-3.1.1/doc/general.texi
---- ffmpeg-3.1.1.old/doc/general.texi	2016-08-05 17:45:58.616585068 +0200
-+++ ffmpeg-3.1.1/doc/general.texi	2016-08-05 17:47:03.184876585 +0200
+diff -Naur ffmpeg-3.1.4.old/doc/general.texi ffmpeg-3.1.4/doc/general.texi
+--- ffmpeg-3.1.4.old/doc/general.texi	2016-10-17 14:40:55.432893640 +0200
++++ ffmpeg-3.1.4/doc/general.texi	2016-10-17 14:40:59.157951046 +0200
 @@ -103,12 +103,19 @@
  
  @section OpenH264
@@ -34,9 +34,9 @@ diff -Naur ffmpeg-3.1.1.old/doc/general.texi ffmpeg-3.1.1/doc/general.texi
  @section x264
  
  FFmpeg can make use of the x264 library for H.264 encoding.
-diff -Naur ffmpeg-3.1.1.old/libavcodec/allcodecs.c ffmpeg-3.1.1/libavcodec/allcodecs.c
---- ffmpeg-3.1.1.old/libavcodec/allcodecs.c	2016-08-05 17:45:58.588584508 +0200
-+++ ffmpeg-3.1.1/libavcodec/allcodecs.c	2016-08-05 17:47:03.185876605 +0200
+diff -Naur ffmpeg-3.1.4.old/libavcodec/allcodecs.c ffmpeg-3.1.4/libavcodec/allcodecs.c
+--- ffmpeg-3.1.4.old/libavcodec/allcodecs.c	2016-10-17 14:40:55.406893240 +0200
++++ ffmpeg-3.1.4/libavcodec/allcodecs.c	2016-10-17 14:40:59.157951046 +0200
 @@ -622,7 +622,7 @@
  
      /* external libraries, that shouldn't be used by default if one of the
@@ -46,9 +46,9 @@ diff -Naur ffmpeg-3.1.1.old/libavcodec/allcodecs.c ffmpeg-3.1.1/libavcodec/allco
      REGISTER_DECODER(H264_CUVID,        h264_cuvid);
      REGISTER_ENCODER(H264_NVENC,        h264_nvenc);
      REGISTER_ENCODER(H264_OMX,          h264_omx);
-diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264.c ffmpeg-3.1.1/libavcodec/libopenh264.c
---- ffmpeg-3.1.1.old/libavcodec/libopenh264.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-3.1.1/libavcodec/libopenh264.c	2016-08-05 17:47:03.185876605 +0200
+diff -Naur ffmpeg-3.1.4.old/libavcodec/libopenh264.c ffmpeg-3.1.4/libavcodec/libopenh264.c
+--- ffmpeg-3.1.4.old/libavcodec/libopenh264.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-3.1.4/libavcodec/libopenh264.c	2016-10-17 14:40:59.157951046 +0200
 @@ -0,0 +1,62 @@
 +/*
 + * OpenH264 shared utils
@@ -112,9 +112,9 @@ diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264.c ffmpeg-3.1.1/libavcodec/lib
 +#endif
 +    return 0;
 +}
-diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264dec.c ffmpeg-3.1.1/libavcodec/libopenh264dec.c
---- ffmpeg-3.1.1.old/libavcodec/libopenh264dec.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-3.1.1/libavcodec/libopenh264dec.c	2016-08-05 17:47:59.000993039 +0200
+diff -Naur ffmpeg-3.1.4.old/libavcodec/libopenh264dec.c ffmpeg-3.1.4/libavcodec/libopenh264dec.c
+--- ffmpeg-3.1.4.old/libavcodec/libopenh264dec.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-3.1.4/libavcodec/libopenh264dec.c	2016-10-17 14:40:59.157951046 +0200
 @@ -0,0 +1,245 @@
 +/*
 + * OpenH264 video decoder
@@ -361,9 +361,9 @@ diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264dec.c ffmpeg-3.1.1/libavcodec/
 +    .caps_internal  = FF_CODEC_CAP_SETS_PKT_DTS | FF_CODEC_CAP_INIT_THREADSAFE |
 +                      FF_CODEC_CAP_INIT_CLEANUP,
 +};
-diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264enc.c ffmpeg-3.1.1/libavcodec/libopenh264enc.c
---- ffmpeg-3.1.1.old/libavcodec/libopenh264enc.c	2016-08-05 17:45:58.591584568 +0200
-+++ ffmpeg-3.1.1/libavcodec/libopenh264enc.c	2016-08-05 17:47:59.000993039 +0200
+diff -Naur ffmpeg-3.1.4.old/libavcodec/libopenh264enc.c ffmpeg-3.1.4/libavcodec/libopenh264enc.c
+--- ffmpeg-3.1.4.old/libavcodec/libopenh264enc.c	2016-10-17 14:40:55.409893286 +0200
++++ ffmpeg-3.1.4/libavcodec/libopenh264enc.c	2016-10-17 14:40:59.157951046 +0200
 @@ -31,6 +31,11 @@
  
  #include "avcodec.h"
@@ -499,9 +499,9 @@ diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264enc.c ffmpeg-3.1.1/libavcodec/
          } else {
              av_log(avctx, AV_LOG_ERROR, "Invalid -max_nal_size, "
                     "specify a valid max_nal_size to use -slice_mode dyn\n");
-diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264.h ffmpeg-3.1.1/libavcodec/libopenh264.h
---- ffmpeg-3.1.1.old/libavcodec/libopenh264.h	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-3.1.1/libavcodec/libopenh264.h	2016-08-05 17:47:03.186876625 +0200
+diff -Naur ffmpeg-3.1.4.old/libavcodec/libopenh264.h ffmpeg-3.1.4/libavcodec/libopenh264.h
+--- ffmpeg-3.1.4.old/libavcodec/libopenh264.h	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-3.1.4/libavcodec/libopenh264.h	2016-10-17 14:40:59.157951046 +0200
 @@ -0,0 +1,39 @@
 +/*
 + * OpenH264 shared utils
@@ -542,10 +542,10 @@ diff -Naur ffmpeg-3.1.1.old/libavcodec/libopenh264.h ffmpeg-3.1.1/libavcodec/lib
 +int ff_libopenh264_check_version(void *logctx);
 +
 +#endif /* AVCODEC_LIBOPENH264_H */
-diff -Naur ffmpeg-3.1.1.old/libavcodec/Makefile ffmpeg-3.1.1/libavcodec/Makefile
---- ffmpeg-3.1.1.old/libavcodec/Makefile	2016-08-05 17:45:58.593584608 +0200
-+++ ffmpeg-3.1.1/libavcodec/Makefile	2016-08-05 17:47:03.185876605 +0200
-@@ -864,7 +864,8 @@
+diff -Naur ffmpeg-3.1.4.old/libavcodec/Makefile ffmpeg-3.1.4/libavcodec/Makefile
+--- ffmpeg-3.1.4.old/libavcodec/Makefile	2016-10-17 14:40:55.411893317 +0200
++++ ffmpeg-3.1.4/libavcodec/Makefile	2016-10-17 14:40:59.158951061 +0200
+@@ -865,7 +865,8 @@
  OBJS-$(CONFIG_LIBOPENCORE_AMRNB_DECODER)  += libopencore-amr.o
  OBJS-$(CONFIG_LIBOPENCORE_AMRNB_ENCODER)  += libopencore-amr.o
  OBJS-$(CONFIG_LIBOPENCORE_AMRWB_DECODER)  += libopencore-amr.o

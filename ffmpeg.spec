@@ -14,7 +14,7 @@ Source1:        scale_npp.txt
 # OpenH264 1.6 support:
 # http://git.videolan.org/?p=ffmpeg.git;a=commit;h=c5d326f551b0312ff581bf1df35b21d956e01523
 # http://git.videolan.org/?p=ffmpeg.git;a=commit;h=293676c476733e81d7b596736add6cd510eb6960
-Patch0:         ffmpeg-openh264-16.patch
+Patch0:         ffmpeg-3.1.4-openh264-16.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -284,6 +284,7 @@ mv doc/*.html doc/html
 %changelog
 * Mon Oct 17 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-2
 - Explicitly enable NVIDIA Performance Primitives.
+- Rebase OpenH264 1.6 patch from 3.2 to 3.1.4.
 
 * Mon Oct 03 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-1
 - Update to 3.1.4.
