@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.1.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -45,7 +45,7 @@ BuildRequires:  libvpx-devel
 # libwebp at >= 0.2.0, but libwepmux at 0.4.0
 BuildRequires:  libwebp-devel >= 0.4.0
 BuildRequires:  libxcb-devel >= 1.4
-BuildRequires:  nvenc >= 5
+BuildRequires:  nvenc >= 7
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
@@ -282,6 +282,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Oct 18 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-3
+- Update NVENC build requirement for 10-bit HEVC encoding support (3.2 feature).
+
 * Mon Oct 17 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-2
 - Explicitly enable NVIDIA Performance Primitives.
 - Rebase OpenH264 1.6 patch from 3.2 to 3.1.4.
