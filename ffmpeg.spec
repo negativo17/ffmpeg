@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.1.4
-Release:        3%{?dist}
+Version:        3.1.5
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -282,6 +282,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Oct 23 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.5-1
+- Update to latest release.
+
 * Tue Oct 18 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.4-3
 - Update NVENC build requirement for 10-bit HEVC encoding support (3.2 feature).
 
