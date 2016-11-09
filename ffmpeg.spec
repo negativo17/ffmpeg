@@ -1,32 +1,34 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        2.8.8
-Release:        3%{?dist}
+Version:        3.2
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
+# https://trac.ffmpeg.org/ticket/5587
+Source1:        scale_npp.txt
+
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
 BuildRequires:  doxygen
-BuildRequires:  faac-devel
 BuildRequires:  freetype-devel
 BuildRequires:  frei0r-devel
 BuildRequires:  fribidi-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  gsm-devel
-# Reworked in FFMpeg 3.0.0
-# BuildRequires:  kvazaar-devel < 0.7.0
+BuildRequires:  kvazaar-devel >= 0.8.1
 BuildRequires:  lame-devel >= 3.98.3
-BuildRequires:  libaacplus-devel >= 2.0.2
 BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libdc1394-devel
+#BuildRequires:  libebur128-devel
 BuildRequires:  libfdk-aac-devel
+#BuildRequires:  libiec61883
 Buildrequires:  libmfx-devel
 Buildrequires:  libmodplug-devel
 BuildRequires:  librtmp-devel
@@ -34,23 +36,24 @@ BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  libvdpau-devel
-BuildRequires:  libvo-aacenc-devel
 BuildRequires:  libvorbis-devel
 BuildRequires:  libvpx-devel
 # libwebp at >= 0.2.0, but libwepmux at 0.4.0
 BuildRequires:  libwebp-devel >= 0.4.0
-BuildRequires:  nvenc
+BuildRequires:  libxcb-devel >= 1.4
+BuildRequires:  mesa-libGL-devel
+BuildRequires:  nvenc >= 7
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
 Buildrequires:  opencore-amr-devel
-Buildrequires:  openh264-devel
+Buildrequires:  openh264-devel >= 1.6
 BuildRequires:  openjpeg-devel
 BuildRequires:  opus-devel
 BuildRequires:  perl(Pod::Man)
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  schroedinger-devel
-BuildRequires:  SDL-devel
+BuildRequires:  SDL2-devel
 BuildRequires:  soxr-devel
 BuildRequires:  speex-devel
 BuildRequires:  subversion
@@ -58,14 +61,21 @@ BuildRequires:  texinfo
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
 BuildRequires:  x264-devel >= 0.118
-BuildRequires:  x265-devel >= 0.57
+BuildRequires:  x265-devel >= 0.68
 BuildRequires:  xvidcore-devel
 BuildRequires:  zlib-devel
+BuildRequires:  zvbi-devel >= 0.2.28
 
 %ifarch %{ix86} x86_64
 BuildRequires:  libXvMC-devel
 BuildRequires:  libva-devel
 BuildRequires:  yasm
+%endif
+
+# Nvidia CUVID support and Performance Primitives based code
+%ifarch x86_64
+BuildRequires:  cuda-devel
+BuildRequires:  nvidia-driver-devel
 %endif
 
 %description
@@ -76,10 +86,6 @@ and video, MPEG4, h263, ac3, asf, avi, real, mjpeg, and flash.
 
 %package        libs
 Summary:        Libraries for %{name}
-%if 0%{?fedora} || 0%{?rhel} > 7
-# libavcoded loads libnvidia-encode.so.1 at runtime
-Recommends:     nvidia-driver-cuda-libs
-%endif
 
 %description    libs
 FFmpeg is a complete and free Internet live audio and video
@@ -111,8 +117,12 @@ This package contains development files for %{name}.
 
 %prep
 %setup -q
-# Dynamically load libcuda.so.1 (SONAME)
+# Use CUDA entry point versioned library (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
+cp %{SOURCE1} .
+
+# Uncomment to enable debugging while configuring
+#sed -i -e 's|#!/bin/sh|#!/bin/sh -x|g' configure
 
 %build
 ./configure \
@@ -125,23 +135,26 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-avfilter \
     --enable-avresample \
     --enable-bzlib \
+%ifarch x86_64
+    --enable-cuda \
+    --enable-cuvid \
+    --enable-libnpp \
+%endif
     --enable-doc \
     --enable-fontconfig \
     --enable-frei0r \
     --enable-gnutls \
     --enable-gpl \
     --enable-iconv \
-    --enable-libaacplus \
     --enable-libass \
     --enable-libbluray \
     --enable-libcdio \
     --enable-libdc1394 \
-    --enable-libfaac \
     --enable-libfdk-aac \
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libgsm \
-    --disable-libkvazaar \
+    --enable-libkvazaar \
     --enable-libmfx \
     --enable-libmp3lame \
     --enable-libopencore-amrnb \
@@ -149,6 +162,7 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libopenh264 \
     --enable-libopenjpeg \
     --enable-libopus \
+    --enable-libnpp \
     --enable-libpulse \
     --enable-librtmp \
     --enable-libschroedinger \
@@ -158,28 +172,33 @@ sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
     --enable-libtheora \
     --enable-libtwolame \
     --enable-libv4l2 \
-    --enable-libvo-aacenc \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
+    --enable-libxcb \
+    --enable-libxcb-shm \
+    --enable-libxcb-xfixes \
+    --enable-libxcb-shape \
     --enable-libxvid \
+    --enable-libzvbi \
     --enable-lzma \
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
-    --enable-nvenc --extra-cflags=-I%{_includedir}/nvenc \
+    --enable-nvenc \
     --enable-opengl \
     --enable-postproc \
     --enable-pthreads \
-    --enable-sdl \
+    --enable-sdl2 \
     --enable-shared \
     --enable-version3 \
     --enable-x11grab \
     --enable-xlib \
     --enable-zlib \
+    --extra-cflags="-I%{_includedir}/nvenc -I%{_includedir}/cuda" \
     --incdir=%{_includedir}/%{name} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
@@ -242,7 +261,7 @@ mv doc/*.html doc/html
 %files libs
 %{!?_licensedir:%global license %%doc}
 %license COPYING.* LICENSE.md
-%doc MAINTAINERS README.md CREDITS Changelog RELEASE_NOTES
+%doc MAINTAINERS README.md CREDITS Changelog RELEASE_NOTES scale_npp.txt
 %{_libdir}/lib*.so.*
 %exclude %{_libdir}/libavdevice.so.*
 %{_mandir}/man3/lib*.3.gz
@@ -258,6 +277,15 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Nov 07 2016 Simone Caronni <negativo17@gmail.com> - 1:3.2-1
+- Update to 3.2.
+- Remove obsolete aacplus, faac, vo-aacenc and SDL options.
+- Enable kvazaar, SDL2, xcb, zvbi.
+- Enable Nvidia CUVID support and Performance Primitives based code (x86_64).
+  Both require linking to CUDA libraries. As such, libs subpackage now requires
+  libraries from both CUDA and Nvidia drivers.
+- Update NVENC build requirement for 10-bit HEVC encoding support.
+
 * Sat Oct 08 2016 Simone Caronni <negativo17@gmail.com> - 1:2.8.8-3
 - Rebuild for fdk-aac update.
 
