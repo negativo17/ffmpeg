@@ -1,6 +1,6 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.1.5
+Version:        3.2
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -11,16 +11,10 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 # https://trac.ffmpeg.org/ticket/5587
 Source1:        scale_npp.txt
 
-# OpenH264 1.6 support:
-# http://git.videolan.org/?p=ffmpeg.git;a=commit;h=c5d326f551b0312ff581bf1df35b21d956e01523
-# http://git.videolan.org/?p=ffmpeg.git;a=commit;h=293676c476733e81d7b596736add6cd510eb6960
-Patch0:         ffmpeg-3.1.4-openh264-16.patch
-
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
 BuildRequires:  doxygen
-BuildRequires:  faac-devel
 BuildRequires:  freetype-devel
 BuildRequires:  frei0r-devel
 BuildRequires:  fribidi-devel
@@ -32,7 +26,9 @@ BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libdc1394-devel
+#BuildRequires:  libebur128-devel
 BuildRequires:  libfdk-aac-devel
+#BuildRequires:  libiec61883
 Buildrequires:  libmfx-devel
 Buildrequires:  libmodplug-devel
 BuildRequires:  librtmp-devel
@@ -45,18 +41,19 @@ BuildRequires:  libvpx-devel
 # libwebp at >= 0.2.0, but libwepmux at 0.4.0
 BuildRequires:  libwebp-devel >= 0.4.0
 BuildRequires:  libxcb-devel >= 1.4
+BuildRequires:  mesa-libGL-devel
 BuildRequires:  nvenc >= 7
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
 Buildrequires:  opencore-amr-devel
-Buildrequires:  openh264-devel
+Buildrequires:  openh264-devel >= 1.6
 BuildRequires:  openjpeg-devel
 BuildRequires:  opus-devel
 BuildRequires:  perl(Pod::Man)
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  schroedinger-devel
-BuildRequires:  SDL-devel
+BuildRequires:  SDL2-devel
 BuildRequires:  soxr-devel
 BuildRequires:  speex-devel
 BuildRequires:  subversion
@@ -120,7 +117,6 @@ This package contains development files for %{name}.
 
 %prep
 %setup -q
-%patch0 -p1
 # Use CUDA entry point versioned library (SONAME)
 sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
 cp %{SOURCE1} .
@@ -154,7 +150,6 @@ cp %{SOURCE1} .
     --enable-libbluray \
     --enable-libcdio \
     --enable-libdc1394 \
-    --enable-libfaac \
     --enable-libfdk-aac \
     --enable-libfreetype \
     --enable-libfribidi \
@@ -197,7 +192,7 @@ cp %{SOURCE1} .
     --enable-opengl \
     --enable-postproc \
     --enable-pthreads \
-    --enable-sdl \
+    --enable-sdl2 \
     --enable-shared \
     --enable-version3 \
     --enable-x11grab \
@@ -282,6 +277,11 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Nov 07 2016 Simone Caronni <negativo17@gmail.com> - 1:3.2-1
+- Update to 3.2, remove upstreamed patch.
+- Remove obsolete faac and SDL options
+- Enable SDL2.
+
 * Sun Oct 23 2016 Simone Caronni <negativo17@gmail.com> - 1:3.1.5-1
 - Update to latest release.
 
