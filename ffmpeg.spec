@@ -162,7 +162,6 @@ cp %{SOURCE1} .
     --enable-libopenh264 \
     --enable-libopenjpeg \
     --enable-libopus \
-    --enable-libnpp \
     --enable-libpulse \
     --enable-librtmp \
     --enable-libschroedinger \
