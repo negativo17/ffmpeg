@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -26,7 +26,7 @@ BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libdc1394-devel
-#BuildRequires:  libebur128-devel
+BuildRequires:  libebur128-devel
 BuildRequires:  libfdk-aac-devel
 #BuildRequires:  libiec61883
 Buildrequires:  libmfx-devel
@@ -150,6 +150,7 @@ cp %{SOURCE1} .
     --enable-libbluray \
     --enable-libcdio \
     --enable-libdc1394 \
+    --enable-libebur128 \
     --enable-libfdk-aac \
     --enable-libfreetype \
     --enable-libfribidi \
@@ -276,6 +277,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Nov 18 2016 Simone Caronni <negativo17@gmail.com> - 1:3.2-2
+- Enable libebur128 support.
+
 * Mon Nov 07 2016 Simone Caronni <negativo17@gmail.com> - 1:3.2-1
 - Update to 3.2.
 - Remove obsolete aacplus, faac, vo-aacenc and SDL options.
