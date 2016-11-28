@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.2
-Release:        2%{?dist}
+Version:        3.2.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -277,6 +277,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Nov 28 2016 Simone Caronni <negativo17@gmail.com> - 1:3.2.1-1
+- Update to 3.2.1.
+
 * Fri Nov 18 2016 Simone Caronni <negativo17@gmail.com> - 1:3.2-2
 - Enable libebur128 support.
 
