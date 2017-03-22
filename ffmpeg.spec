@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.2.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -277,6 +277,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed Mar 22 2017 Simone Caronni <negativo17@gmail.com> - 1:3.2.4-3
+- Rebuild for libbluray update.
+
 * Thu Feb 23 2017 Simone Caronni <negativo17@gmail.com> - 1:3.2.4-2
 - Rebuild for x265 update.
 
