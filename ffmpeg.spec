@@ -17,57 +17,74 @@ BuildRequires:  bzip2-devel
 BuildRequires:  doxygen
 BuildRequires:  freetype-devel
 BuildRequires:  frei0r-devel
-BuildRequires:  fribidi-devel
-BuildRequires:  gnutls-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
-BuildRequires:  kvazaar-devel >= 0.8.1
 BuildRequires:  lame-devel >= 3.98.3
-BuildRequires:  libass-devel
-BuildRequires:  libbluray-devel
 BuildRequires:  libcdio-paranoia-devel
-BuildRequires:  libdc1394-devel
 BuildRequires:  libfdk-aac-devel
-Buildrequires:  libmfx-devel
-Buildrequires:  libmodplug-devel
-BuildRequires:  librtmp-devel
 BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
-BuildRequires:  libv4l-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
-BuildRequires:  libvpx-devel
 # libwebp at >= 0.2.0, but libwepmux at 0.4.0
 BuildRequires:  libwebp-devel >= 0.4.0
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
-BuildRequires:  netcdf-devel
 BuildRequires:  nvenc >= 7
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
 Buildrequires:  opencore-amr-devel
-Buildrequires:  openh264-devel >= 1.6
 BuildRequires:  openjpeg-devel
-BuildRequires:  opus-devel
 BuildRequires:  perl(Pod::Man)
-BuildRequires:  pulseaudio-libs-devel
-BuildRequires:  rubberband-devel
-BuildRequires:  schroedinger-devel
-BuildRequires:  SDL2-devel
 BuildRequires:  soxr-devel
-BuildRequires:  speex-devel
 BuildRequires:  subversion
 BuildRequires:  texinfo
-BuildRequires:  tesseract-devel
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
-BuildRequires:  x264-devel >= 0.118
-BuildRequires:  x265-devel >= 0.68
 BuildRequires:  xvidcore-devel
 BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
 BuildRequires:  zvbi-devel >= 0.2.28
+
+BuildRequires:  pkgconfig(fontconfig)
+BuildRequires:  pkgconfig(fribidi)
+BuildRequires:  pkgconfig(gnutls)
+BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
+BuildRequires:  pkgconfig(libass)
+BuildRequires:  pkgconfig(libbluray)
+BuildRequires:  pkgconfig(libbs2b)
+BuildRequires:  pkgconfig(libdc1394-2)
+BuildRequires:  pkgconfig(libmfx)
+BuildRequires:  pkgconfig(libmodplug)
+#BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
+BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(librtmp)
+BuildRequires:  pkgconfig(libssh)
+BuildRequires:  pkgconfig(libtcmalloc)
+BuildRequires:  pkgconfig(libv4l2)
+BuildRequires:  pkgconfig(libwebp) >= 0.2.0
+BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
+BuildRequires:  pkgconfig(libzmq)
+BuildRequires:  pkgconfig(netcdf)
+BuildRequires:  pkgconfig(opencv)
+BuildRequires:  pkgconfig(openh264) >= 1.6
+BuildRequires:  pkgconfig(opus)
+BuildRequires:  pkgconfig(rubberband) >= 1.8.1
+BuildRequires:  pkgconfig(schroedinger-1.0)
+BuildRequires:  pkgconfig(sdl2)
+#BuildRequires:  pkgconfig(shine)
+BuildRequires:  pkgconfig(speex)
+BuildRequires:  pkgconfig(tesseract)
+#BuildRequires:  pkgconfig(vidstab) >= 0.98
+BuildRequires:  pkgconfig(vpx) >= 1.3.0
+BuildRequires:  pkgconfig(xcb) >= 1.4
+BuildRequires:  pkgconfig(xcb-shape)
+BuildRequires:  pkgconfig(xcb-shm)
+BuildRequires:  pkgconfig(xcb-xfixes)
+BuildRequires:  pkgconfig(x264) >= 0.118
+BuildRequires:  pkgconfig(x265) >= 0.68
+#BuildRequires:  pkgconfig(zimg) >= 2.3.0
 
 %ifarch %{ix86} x86_64
 BuildRequires:  libXvMC-devel
@@ -285,6 +302,7 @@ mv doc/*.html doc/html
 * Sat May 13 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3-1
 - Update to 3.3.
 - Enable ilbc, netcdf, rubberband, tesseract support.
+- Update build requirements to pkgconfig format where appropriate.
 
 * Wed Mar 22 2017 Simone Caronni <negativo17@gmail.com> - 1:3.2.4-3
 - Rebuild for libbluray update.
