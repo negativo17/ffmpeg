@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.2.4
-Release:        3%{?dist}
+Version:        3.3
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -20,15 +20,14 @@ BuildRequires:  frei0r-devel
 BuildRequires:  fribidi-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  gsm-devel
+BuildRequires:  ilbc-devel
 BuildRequires:  kvazaar-devel >= 0.8.1
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libdc1394-devel
-BuildRequires:  libebur128-devel
 BuildRequires:  libfdk-aac-devel
-#BuildRequires:  libiec61883
 Buildrequires:  libmfx-devel
 Buildrequires:  libmodplug-devel
 BuildRequires:  librtmp-devel
@@ -42,6 +41,7 @@ BuildRequires:  libvpx-devel
 BuildRequires:  libwebp-devel >= 0.4.0
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
+BuildRequires:  netcdf-devel
 BuildRequires:  nvenc >= 7
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
@@ -52,17 +52,20 @@ BuildRequires:  openjpeg-devel
 BuildRequires:  opus-devel
 BuildRequires:  perl(Pod::Man)
 BuildRequires:  pulseaudio-libs-devel
+BuildRequires:  rubberband-devel
 BuildRequires:  schroedinger-devel
 BuildRequires:  SDL2-devel
 BuildRequires:  soxr-devel
 BuildRequires:  speex-devel
 BuildRequires:  subversion
 BuildRequires:  texinfo
+BuildRequires:  tesseract-devel
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
 BuildRequires:  x264-devel >= 0.118
 BuildRequires:  x265-devel >= 0.68
 BuildRequires:  xvidcore-devel
+BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
@@ -150,11 +153,11 @@ cp %{SOURCE1} .
     --enable-libbluray \
     --enable-libcdio \
     --enable-libdc1394 \
-    --enable-libebur128 \
     --enable-libfdk-aac \
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libgsm \
+    --enable-libilbc \
     --enable-libkvazaar \
     --enable-libmfx \
     --enable-libmp3lame \
@@ -165,10 +168,12 @@ cp %{SOURCE1} .
     --enable-libopus \
     --enable-libpulse \
     --enable-librtmp \
+    --enable-librubberband \
     --enable-libschroedinger \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libssh \
+    --enable-libtesseract \
     --enable-libtheora \
     --enable-libtwolame \
     --enable-libv4l2 \
@@ -185,6 +190,7 @@ cp %{SOURCE1} .
     --enable-libxvid \
     --enable-libzvbi \
     --enable-lzma \
+    --enable-netcdf \
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
@@ -195,7 +201,6 @@ cp %{SOURCE1} .
     --enable-sdl2 \
     --enable-shared \
     --enable-version3 \
-    --enable-x11grab \
     --enable-xlib \
     --enable-zlib \
     --extra-cflags="-I%{_includedir}/nvenc -I%{_includedir}/cuda" \
@@ -277,6 +282,10 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sat May 13 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3-1
+- Update to 3.3.
+- Enable ilbc, netcdf, rubberband, tesseract support.
+
 * Wed Mar 22 2017 Simone Caronni <negativo17@gmail.com> - 1:3.2.4-3
 - Rebuild for libbluray update.
 
