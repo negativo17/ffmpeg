@@ -1,6 +1,6 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.3
+Version:        3.3.1
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -299,6 +299,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon May 29 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3.1-1
+- Update to 3.3.1.
+
 * Sat May 13 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3-1
 - Update to 3.3.
 - Enable ilbc, netcdf, rubberband, tesseract support.
