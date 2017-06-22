@@ -1,0 +1,164 @@
+1:1 HWACCEL SCALING TRANSCODE WITHOUT SCALING
+
+The following command reads file input.mp4 and transcodes it to output.mp4 with H.264 video at the same resolution and with the same audio codec.
+
+ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 \
+  -c:a copy -c:v h264_nvenc -b:v 5M output.mp4
+
+1:1 HWACCEL TRANSCODE WITH SCALING
+The following command reads file input.mp4 and transcodes it to output.mp4 with H.264 video at 720p resolution and with the same audio codec.
+
+ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 \
+  -vf scale_npp=1280:720 -c:a copy -c:v h264_nvenc -b:v 5M output.mp4
+
+1:5 HWACCEL TRANSCODE WITH SCALING
+
+The following command reads file input.mp4 and transcodes it to five different H.264 videos at various output resolutions and bit rates. Note that while using the GPU video encoder and decoder, this command also uses the scaling filter (scale_npp) in FFMPEG for scaling the decoded video output into multiple desired resolutions. Doing this ensures that the memory transfers (system memory to video memory and vice versa) are eliminated, and that transcoding is performed with the highest possible performance.
+
+ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 \
+  -vf scale_npp=1920:1080 -c:a copy -c:v h264_nvenc -b:v 8M output_1080p.mp4 \
+  -vf scale_npp=1280:720 -c:a copy -c:v h264_nvenc -b:v 5M output_720p.mp4 \
+  -vf scale_npp=640:480 -c:a copy -c:v h264_nvenc -b:v 3M h264_nvenc output_480p.mp4 \
+  -vf scale_npp=320:240 -c:a copy -c:v h264_nvenc -b:v 2M h264_nvenc output_240p.mp4 \
+  -vf scale_npp=160:128 -c:a copy -c:v h264_nvenc -b:v 1M h264_nvenc output_128p.mp4
+
+VIDEO ENCODING
+
+The quality of encoded video depends on various features in use by the encoder. To encode a 720p YUV, use the following command.
+
+ffmpeg -y -vsync 0 -s 1280x720 -i input.yuv -c:v h264_nvenc output.mp4
+
+This generates the output file in MP4 format (output.mp4) with H264 encoded video.
+
+Video encoding can be broadly classified into two types of use cases:
+- Latency tolerant high quality: In these kind of use cases latency is permitted. B-frames, variable bitrate (VBR) and higher VBV buffer sizes can be used. Typical use cases include cloud transcoding, recording and archiving etc.
+- Low latency: In these kind of use cases latency should be low and can be as low as 16ms. In this mode, B-frames are disabled, constant bitrate modes are used and VBV-buffer sizes are kept very low. Typical use cases include real-time gaming, live streaming and video conferencing etc. This encoding mode however results to a lower encoding quality due to the above constraints.
+
+NVENCODEAPI supports several features for adjusting quality, performance and latency which are exposed through FFMPEG command line. It is recommended to enable the feature(s)/command line option(s) depending on the use case.
+
+VIDEO DECODING
+
+The FFMPEG video decoder is straightforward to use. To decode an input bitstream from input.mp4, use the following command.
+
+ ffmpeg -y -vsync 0 -c:v h264_cuvid -i input.mp4 output.yuv
+
+This generates the output file in YUV format (output.yuv).
+
+COMMAND LINES FOR LATENCY-TOLERANT HIGH QUALITY TRANSCODING
+
+1:1 HWACCEL Transcode without Scaling
+
+Input: input.mp4
+Output: same resolution as input, bitrate = 5M (audio same as input)
+
+- Slow Preset
+
+  ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 -c:a copy -c:v h264_nvenc \
+    -preset slow -profile high -b:v 5M -bufsize 5M -maxrate 10M \
+    -qmin 0 -g 250 -bf 2 -temporal-aq 1 -rc-lookahead 20 \
+    -i_qfactor 0.75 -b_qfactor 1.1 output.mp4
+
+- Medium Preset
+
+  Use -preset medium instead of -preset slow in above command line.
+
+- Fast Preset
+
+  Use -preset fast instead of -preset slow in above command line.
+
+1:5 HWACCEL Transcode with Scaling
+
+Input: input.mp4
+Output: 1080p bitrate = 5M, 1080p bitrate=3M, 720p bitrate=5M, 720p bitrate=2M, 540p bitrate=1M (audio same as input)
+
+- Slow Preset
+
+  ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 \
+    -vf scale_npp=1920:1080 -c:a copy -c:v h264_nvenc -preset slow -profile high -b:v 5M -bufsize 5M -maxrate 10M \
+    -qmin 0 -g 250 -bf 2 -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 output_1080p_5M.mp4 \
+    -vf scale_npp=1920:1080 -c:a copy -c:v h264_nvenc -preset slow -profile high -b:v 3M -bufsize 3M -maxrate 6M \
+    -qmin 0 -g 250 -bf 2 -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 output_1080p_3M.mp4 \
+    -vf scale_npp=1280:720 -c:a copy -c:v h264_nvenc -preset slow -profile high -b:v 5M -bufsize 5M -maxrate 10M \
+    -qmin 0 -g 250 -bf 2 -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 output_720p_5M.mp4 \
+    -vf scale_npp=1280:720 -c:a copy -c:v h264_nvenc -preset slow -profile high -b:v 2M -bufsize 2M -maxrate 4M \
+    -qmin 0 -g 250 -bf 2 -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 output_720p_2M.mp4 \
+    -vf scale_npp=720:540 -c:a copy -c:v h264_nvenc -preset slow -profile high -b:v 1M -bufsize 1M -maxrate 2M \
+    -qmin 0 -g 250 -bf 2 -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 output_540p_1M.mp4
+
+- Medium Preset
+
+  Use -preset medium instead of -preset slow in above command line
+
+- Fast Preset
+
+  Use -preset fast instead of -preset slow in above command line
+
+COMMAND LINE TRANSCODING FOR LOW LATENCY
+
+1:1 HWACCEL Transcode without Scaling
+
+Input: input.mp4 (30fps)
+Output: same resolution as input, bitrate = 5M (audio same as input)
+
+- LLHQ (Low Latency High Quality) Preset
+
+  ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 \
+    -c:a copy -c:v h264_nvenc -preset llhq -profile high -b:v 5M \
+    -bufsize 167K -maxrate 5M -g 999999 -bf 0 output.mp4
+
+- LLHP (Low Latency High performance) Preset
+
+  Use -preset llhp instead of -preset llhq in above command line.
+
+1:5 HWACCEL Transcode with Scaling
+
+Input: input.mp4 (30fps)
+Output: 1080p bitrate = 5M, 1080p bitrate=3M, 720p bitrate=5M, 720p bitrate=2M, 540p bitrate=1M (audio same as input)
+
+- LLHQ (Low Latency High Quality) Preset
+
+  ffmpeg -y -vsync 0 -hwaccel cuvid -c:v h264_cuvid -i input.mp4 \
+    -vf scale_npp=1920:1080 -c:a copy -c:v h264_nvenc -preset llhq -profile high \
+    -b:v 5M -bufsize 167K -maxrate 5M -g 999999 -bf 0 output_1080p_5M.mp4 \
+    -vf scale_npp=1920:1080 -c:a copy -c:v h264_nvenc -preset llhq -profile high \
+    -b:v 3M -bufsize 100K -maxrate 3M -g 999999 -bf 0 output_1080p_3M.mp4 \
+    -vf scale_npp=1280:720 -c:a copy -c:v h264_nvenc -preset llhq -profile high \
+    -b:v 5M -bufsize 167K -maxrate 5M -g 999999 -bf 0 output_720p_5M.mp4 \
+    -vf scale_npp=1280:720 -c:a copy -c:v h264_nvenc -preset llhq -profile high \
+    -b:v 2M -bufsize 67K -maxrate 2M -g 999999 -bf 0 output_720p_2M.mp4 \
+    -vf scale_npp=720:540 -c:a copy -c:v h264_nvenc -preset llhq -profile high \
+    -b:v 1M -bufsize 33K -maxrate 1M -g 999999 -bf 0 output_540p_1M.mp4
+
+- LLHP (Low Latency High Performance) Preset
+
+  Use -preset llhp instead of -preset llhq in above command line.
+
+ADVANCED QUALITY LOOKAHEAD
+
+Lookahead improves the video encoder’s rate control accuracy by enabling the encoder to buffer the specified number of frames, estimate their complexity, and allocate the bits appropriately among these frames proportional to their complexity. This typically results in better quality because the encoder can distribute the bits proportional to the complexity over a larger number of frames. The number of lookahead frames should be at least the number of B frames + 1 to avoid CPU stalls. A lookahead of 10-20 frames is suggested for optimal quality benefits.
+
+To enable lookahead, use the -rc-lookahead N (N = number of frames) option on FFMPEG command line.
+
+ADAPTIVE QUANTIZATION (AQ)
+
+This feature improves visual quality by adjusting the encoding quantization parameter
+(QP) (on top of the QP evaluated by the rate control algorithm) based on spatial and
+temporal characteristics of the sequence. NVENC supports two flavors of AQ which are
+explained below. AQ internally uses CUDA for complexity estimation which may have
+slight impact on the performance and graphics engine utilization.
+
+- Spatial AQ
+
+Spatial AQ mode adjusts QP values based on spatial characteristics of the frame. Since the low complexity flat regions are visually more perceptible to quality differences than high complexity detailed regions, extra bits are allocated to flat regions of the frame at the cost of the regions having high spatial detail. Although Spatial AQ improves the perceptible visual quality of the encoded video, the required bit redistribution results in peak signal-to-noise ratio (PSNR) drop in most cases. Therefore, during PSNR-based evaluation, this feature should be turned off. The spatial AQ algorithm can be controlled by specifying the aq-strength parameter that controls the variations in QP values, with larger values bringing more QP variations. AQ strength ranges from 1-15.
+
+To enable spatial AQ, please use -spatial-aq 1 option on FFMPEG command line, and -aq-strength 8 (can range from 1 to 15). If no value is specified the strength is auto selected by driver.
+
+- Temporal AQ
+
+Temporal AQ tries to adjust encoding quantization parameter (QP) (on top of QP evaluated by the rate control algorithm) based on temporal characteristics of the sequence. Temporal AQ improves the quality of encoded frames by adjusting QP for regions which are constant or have low motion across frames but have high spatial detail, such that they become better reference for future frames. Allocating extra bits to such regions in reference frames is better than allocating them to the residuals in referred frames because it helps improve the overall encoded video quality. If majority of the region within a frame has little or no motion, but has high spatial details (e.g. high-detail non-moving background), enabling temporal AQ will benefit the most.
+
+One of the potential disadvantages of temporal AQ is that enabling temporal AQ may result in high fluctuation of bits consumed per frame within a GOP. I/P-frames will consume more bits than average P-frame size and B-frames will consume lesser bits.
+
+Although target bitrate will be maintained at the GOP level, the frame size will fluctuate from one frame to next within a GOP more than it would without temporal AQ. If a strict CBR profile is required for every frame size within a GOP, it is not recommended to enable temporal AQ. To enable temporal AQ, please use -temporal_aq 1 option on FFMPEG command line.
+
+Temporal AQ is supported only for H.264.

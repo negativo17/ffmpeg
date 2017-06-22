@@ -1,15 +1,14 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
-
-# https://trac.ffmpeg.org/ticket/5587
-Source1:        scale_npp.txt
+# Excerpt from Nvidia's Video Codec SDK document: Using_FFmpeg_with_NVIDIA_GPU_Hardware_Acceleration.pdf
+Source1:        using_ffmpeg_with_nvidia_gpus.txt
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -281,9 +280,8 @@ mv doc/*.html doc/html
 %{_datadir}/%{name}
 
 %files libs
-%{!?_licensedir:%global license %%doc}
 %license COPYING.* LICENSE.md
-%doc MAINTAINERS README.md CREDITS Changelog RELEASE_NOTES scale_npp.txt
+%doc MAINTAINERS README.md CREDITS Changelog RELEASE_NOTES using_ffmpeg_with_nvidia_gpus.txt
 %{_libdir}/lib*.so.*
 %exclude %{_libdir}/libavdevice.so.*
 %{_mandir}/man3/lib*.3.gz
@@ -299,6 +297,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Jun 22 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3.2-2
+- Add extensive notes for Nvidia GPUs taken from Nvidia Video Codec SDK.
+
 * Thu Jun 08 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3.2-1
 - Update to 3.3.2.
 
