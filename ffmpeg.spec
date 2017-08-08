@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.3.2
-Release:        3%{?dist}
+Version:        3.3.3
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -29,7 +29,7 @@ BuildRequires:  libvorbis-devel
 BuildRequires:  libwebp-devel >= 0.4.0
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
-BuildRequires:  nvenc >= 7
+BuildRequires:  nvenc >= 8.0.14
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
@@ -297,6 +297,10 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Aug 08 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3.3-1
+- Update to 3.3.3.
+- Bump Nvidia video codec sdk requirements to 8.0.14.
+
 * Sun Jun 25 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3.2-3
 - Move Nvidia doc in main package.
 
