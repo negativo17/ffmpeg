@@ -25,8 +25,6 @@ BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
-# libwebp at >= 0.2.0, but libwepmux at 0.4.0
-BuildRequires:  libwebp%{?rhel:0.6}-devel >= 0.4.0
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nvenc >= 8.0.14
@@ -62,7 +60,7 @@ BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
 BuildRequires:  pkgconfig(libv4l2)
-BuildRequires:  pkgconfig(libwebp) >= 0.2.0
+BuildRequires:  pkgconfig(libwebp) >= 0.4.0
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq)
 BuildRequires:  pkgconfig(netcdf)
