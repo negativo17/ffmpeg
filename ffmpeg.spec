@@ -1,6 +1,6 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.3.4
+Version:        3.4
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -20,11 +20,13 @@ BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  libcdio-paranoia-devel
+BuildRequires:  libdrm-devel
 BuildRequires:  libfdk-aac-devel
 BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
+BuildRequires:  librsvg2-devel
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nvenc >= 8.0.14
@@ -63,12 +65,10 @@ BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp) >= 0.4.0
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq)
-BuildRequires:  pkgconfig(netcdf)
 BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264) >= 1.6
 BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
-BuildRequires:  pkgconfig(schroedinger-1.0)
 BuildRequires:  pkgconfig(sdl2)
 #BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(speex)
@@ -86,7 +86,7 @@ BuildRequires:  pkgconfig(x265) >= 0.68
 %ifarch %{ix86} x86_64
 BuildRequires:  libXvMC-devel
 BuildRequires:  libva-devel
-BuildRequires:  yasm
+BuildRequires:  nasm
 %endif
 
 # Nvidia CUVID support and Performance Primitives based code
@@ -167,6 +167,7 @@ cp %{SOURCE1} .
     --enable-libbluray \
     --enable-libcdio \
     --enable-libdc1394 \
+    --enable-libdrm \
     --enable-libfdk-aac \
     --enable-libfreetype \
     --enable-libfribidi \
@@ -181,9 +182,9 @@ cp %{SOURCE1} .
     --enable-libopenjpeg \
     --enable-libopus \
     --enable-libpulse \
+    --enable-librsvg \
     --enable-librtmp \
     --enable-librubberband \
-    --enable-libschroedinger \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libssh \
@@ -204,7 +205,6 @@ cp %{SOURCE1} .
     --enable-libxvid \
     --enable-libzvbi \
     --enable-lzma \
-    --enable-netcdf \
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
@@ -295,6 +295,12 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Oct 24 2017 Simone Caronni <negativo17@gmail.com> - 1:3.4-1
+- Update to version 3.4.
+- Add SVG rasterization and KMS screengrabber support.
+- Remove schroedinger support.
+- Remove netCDF support, it will be part of sofa filters.
+
 * Tue Sep 12 2017 Simone Caronni <negativo17@gmail.com> - 1:3.3.4-1
 - Update to 3.3.4.
 
