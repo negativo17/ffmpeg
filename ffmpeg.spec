@@ -1,6 +1,6 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.4
+Version:        3.4.1
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -295,6 +295,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Dec 14 2017 Simone Caronni <negativo17@gmail.com> - 1:3.4.1-1
+- Update to 3.4.1
+
 * Tue Oct 24 2017 Simone Caronni <negativo17@gmail.com> - 1:3.4-1
 - Update to version 3.4.
 - Add SVG rasterization and KMS screengrabber support.
