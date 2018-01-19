@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.4.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -22,6 +22,7 @@ BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libfdk-aac-devel
+BuildRequires:  libndi-devel
 BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
@@ -205,6 +206,7 @@ cp %{SOURCE1} .
     --enable-libxvid \
     --enable-libzvbi \
     --enable-lzma \
+    --enable-libndi_newtek \
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
@@ -295,6 +297,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Jan 19 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.1-3
+- Enable Newtek NDI I/O support.
+
 * Tue Jan 09 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.1-2
 - Rebuild for the various updates.
 
