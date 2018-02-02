@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        3.4.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -13,6 +13,7 @@ Source1:        using_ffmpeg_with_nvidia_gpus.txt
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
+BuildRequires:  decklink-devel >= 10.6.1
 BuildRequires:  doxygen
 BuildRequires:  freetype-devel
 BuildRequires:  frei0r-devel
@@ -158,6 +159,7 @@ cp %{SOURCE1} .
     --enable-cuvid \
     --enable-libnpp \
 %endif
+    --enable-decklink \
     --enable-doc \
     --enable-fontconfig \
     --enable-frei0r \
@@ -297,6 +299,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Feb 02 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.1-4
+- Enable DeckLink support.
+
 * Fri Jan 19 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.1-3
 - Enable Newtek NDI I/O support.
 
