@@ -1,7 +1,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.4.1
-Release:        4%{?dist}
+Version:        3.4.2
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -299,6 +299,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed Feb 14 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.2-1
+- Update to 3.4.2.
+
 * Fri Feb 02 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.1-4
 - Enable DeckLink support.
 
