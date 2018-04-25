@@ -170,11 +170,6 @@ cp %{SOURCE1} .
     --enable-avfilter \
     --enable-avresample \
     --enable-bzlib \
-%ifarch x86_64
-    --enable-cuda \
-    --enable-cuvid \
-    --enable-libnpp \
-%endif
     --enable-decklink \
     --enable-doc \
     --enable-fontconfig \
@@ -237,7 +232,6 @@ cp %{SOURCE1} .
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
-    --enable-nvenc \
     --enable-opengl \
     --enable-postproc \
     --enable-pthreads \
@@ -253,6 +247,12 @@ cp %{SOURCE1} .
     --optflags="%{optflags}" \
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
+%ifarch x86_64
+    --enable-cuda \
+    --enable-cuvid \
+    --enable-libnpp \
+    --enable-nvenc \
+%endif
 %ifarch %{ix86}
     --cpu=%{_target_cpu} \
 %endif
@@ -279,7 +279,7 @@ cp %{SOURCE1} .
 %endif
 %endif
 
-make %{?_smp_mflags}
+%make_build
 make documentation
 make alltools
 
