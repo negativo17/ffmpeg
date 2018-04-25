@@ -1,6 +1,14 @@
+# To check:
+#   libopenmpt
+#   libmysofa
+#   libflite
+#   libsrt
+#   libzimg
+#   mmal
+
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        3.4.2
+Version:        4.0
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -22,32 +30,31 @@ BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libdrm-devel
-BuildRequires:  libfdk-aac-devel
 BuildRequires:  libndi-devel
-BuildRequires:  libssh-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
 BuildRequires:  librsvg2-devel
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
-BuildRequires:  nvenc >= 8.0.14
 Buildrequires:  ocl-icd-devel
 Buildrequires:  openal-soft-devel
 Buildrequires:  opencl-headers
 Buildrequires:  opencore-amr-devel
-BuildRequires:  openjpeg-devel
 BuildRequires:  perl(Pod::Man)
+BuildRequires:  snappy-devel
 BuildRequires:  soxr-devel
 BuildRequires:  subversion
 BuildRequires:  texinfo
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
+BuildRequires:  wavpack-devel
 BuildRequires:  xvidcore-devel
 BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
+BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(gnutls)
@@ -56,8 +63,10 @@ BuildRequires:  pkgconfig(libass)
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
 BuildRequires:  pkgconfig(libdc1394-2)
+BuildRequires:  pkgconfig(libgme)
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libmodplug)
+BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 #BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librtmp)
@@ -67,16 +76,22 @@ BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp) >= 0.4.0
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq)
+%if 0%{?fedora}
+BuildRequires:  pkgconfig(lilv-0)
+BuildRequires:  pkgconfig(lv2)
+%endif
 BuildRequires:  pkgconfig(opencv)
-BuildRequires:  pkgconfig(openh264) >= 1.6
+BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
 #BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
-#BuildRequires:  pkgconfig(vidstab) >= 0.98
-BuildRequires:  pkgconfig(vpx) >= 1.3.0
+BuildRequires:  pkgconfig(vidstab) >= 0.98
+%if 0%{?fedora}
+BuildRequires:  pkgconfig(vpx) >= 1.4.0
+%endif
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
 BuildRequires:  pkgconfig(xcb-shm)
@@ -95,6 +110,7 @@ BuildRequires:  nasm
 %ifarch x86_64
 BuildRequires:  cuda-devel
 BuildRequires:  nvidia-driver-devel
+BuildRequires:  pkgconfig(ffnvcodec) >= 8.0.14.1
 %endif
 
 %description
@@ -174,6 +190,7 @@ cp %{SOURCE1} .
     --enable-libfdk-aac \
     --enable-libfreetype \
     --enable-libfribidi \
+    --enable-libgme \
     --enable-libgsm \
     --enable-libilbc \
     --enable-libkvazaar \
@@ -188,6 +205,7 @@ cp %{SOURCE1} .
     --enable-librsvg \
     --enable-librtmp \
     --enable-librubberband \
+    --enable-libsnappy \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libssh \
@@ -195,9 +213,13 @@ cp %{SOURCE1} .
     --enable-libtheora \
     --enable-libtwolame \
     --enable-libv4l2 \
+    --enable-libvidstab \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
+%if 0%{?fedora}
     --enable-libvpx \
+%endif
+    --enable-libwavpack \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
@@ -207,6 +229,9 @@ cp %{SOURCE1} .
     --enable-libxcb-shape \
     --enable-libxvid \
     --enable-libzvbi \
+%if 0%{?fedora}
+    --enable-lv2 \
+%endif
     --enable-lzma \
     --enable-libndi_newtek \
     --enable-nonfree \
@@ -221,7 +246,7 @@ cp %{SOURCE1} .
     --enable-version3 \
     --enable-xlib \
     --enable-zlib \
-    --extra-cflags="-I%{_includedir}/nvenc -I%{_includedir}/cuda" \
+    --extra-cflags="-I%{_includedir}/cuda" \
     --incdir=%{_includedir}/%{name} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
@@ -270,15 +295,13 @@ mv doc/*.html doc/html
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc doc/ffserver.conf using_ffmpeg_with_nvidia_gpus.txt
+%doc using_ffmpeg_with_nvidia_gpus.txt
 %{_bindir}/%{name}
 %{_bindir}/ffplay
 %{_bindir}/ffprobe
-%{_bindir}/ffserver
 %{_mandir}/man1/%{name}*.1*
 %{_mandir}/man1/ffplay*.1*
 %{_mandir}/man1/ffprobe*.1*
-%{_mandir}/man1/ffserver*.1*
 %{_datadir}/%{name}
 
 %files libs
@@ -299,6 +322,11 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Apr 24 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-1
+- Update to 4.0.
+- Update build requirements.
+- Momentarily disable VPX support in RHEL/CentOS 7.
+
 * Wed Feb 14 2018 Simone Caronni <negativo17@gmail.com> - 1:3.4.2-1
 - Update to 3.4.2.
 
