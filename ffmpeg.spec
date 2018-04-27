@@ -9,7 +9,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -230,6 +230,8 @@ cp %{SOURCE1} .
     --enable-lzma \
     --enable-libndi_newtek \
     --enable-nonfree \
+    --enable-omx \
+    --enable-omx-rpi \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
@@ -251,6 +253,7 @@ cp %{SOURCE1} .
     --enable-cuda \
     --enable-cuvid \
     --enable-libnpp \
+    --enable-nvdec \
     --enable-nvenc \
 %endif
 %ifarch %{ix86}
@@ -322,6 +325,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Apr 27 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-2
+- Update build options.
+
 * Tue Apr 24 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-1
 - Update to 4.0.
 - Update build requirements.
