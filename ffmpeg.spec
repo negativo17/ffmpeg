@@ -9,7 +9,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -290,12 +290,11 @@ make alltools
 %make_install
 # Let rpmbuild pick up the docs
 rm -fr %{buildroot}%{_docdir}/*
+rm -fr %{buildroot}%{_datadir}/examples
 mkdir doc/html
 mv doc/*.html doc/html
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets libs
 
 %files
 %doc using_ffmpeg_with_nvidia_gpus.txt
@@ -315,16 +314,20 @@ mv doc/*.html doc/html
 %{_mandir}/man3/lib*.3.gz
 
 %files -n libavdevice
+%license COPYING.* LICENSE.md
 %{_libdir}/libavdevice.so.*
 
 %files devel
 %doc doc/APIchanges doc/*.txt
-%doc doc/html
+%doc doc/html doc/examples
 %{_includedir}/%{name}
 %{_libdir}/pkgconfig/lib*.pc
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Apr 27 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-3
+- Move examples to devel subpackage.
+
 * Fri Apr 27 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-2
 - Update build options.
 
