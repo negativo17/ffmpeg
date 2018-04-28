@@ -37,10 +37,10 @@ BuildRequires:  libvorbis-devel
 BuildRequires:  librsvg2-devel
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  mesa-libGL-devel
-Buildrequires:  ocl-icd-devel
-Buildrequires:  openal-soft-devel
-Buildrequires:  opencl-headers
-Buildrequires:  opencore-amr-devel
+BuildRequires:  ocl-icd-devel
+BuildRequires:  openal-soft-devel
+BuildRequires:  opencl-headers
+BuildRequires:  opencore-amr-devel
 BuildRequires:  perl(Pod::Man)
 BuildRequires:  snappy-devel
 BuildRequires:  soxr-devel
@@ -230,8 +230,6 @@ cp %{SOURCE1} .
     --enable-lzma \
     --enable-libndi_newtek \
     --enable-nonfree \
-    --enable-omx \
-    --enable-omx-rpi \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
@@ -327,6 +325,7 @@ mv doc/*.html doc/html
 %changelog
 * Fri Apr 27 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-3
 - Move examples to devel subpackage.
+- Remove OpenMAX support.
 
 * Fri Apr 27 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-2
 - Update build options.
