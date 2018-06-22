@@ -8,8 +8,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.0
-Release:        3%{?dist}
+Version:        4.0.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -323,6 +323,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Jun 22 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.1-1
+- Update to 4.0.1.
+
 * Fri Apr 27 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0-3
 - Move examples to devel subpackage.
 - Remove OpenMAX support.
