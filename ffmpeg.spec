@@ -54,6 +54,7 @@ BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
+BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(fribidi)
@@ -325,6 +326,7 @@ mv doc/*.html doc/html
 %changelog
 * Mon Jul 16 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.1-2
 - Rebuild for updated dependencies.
+- Add missing Alsa build requirement (thanks Matteo).
 
 * Fri Jun 22 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.1-1
 - Update to 4.0.1.
