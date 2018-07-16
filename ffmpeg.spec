@@ -168,6 +168,7 @@ cp %{SOURCE1} .
     --disable-debug \
     --disable-static \
     --disable-stripping \
+    --enable-alsa \
     --enable-avfilter \
     --enable-avresample \
     --enable-bzlib \
