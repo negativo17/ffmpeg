@@ -9,7 +9,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.0.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -36,6 +36,7 @@ BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
 BuildRequires:  librsvg2-devel
 BuildRequires:  libxcb-devel >= 1.4
+BuildRequires:  libxml2-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  ocl-icd-devel
 BuildRequires:  openal-soft-devel
@@ -224,6 +225,7 @@ cp %{SOURCE1} .
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
     --enable-libxcb-shape \
+    --enable-libxml2 \
     --enable-libxvid \
     --enable-libzvbi \
 %if 0%{?fedora}
@@ -325,6 +327,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Aug 19 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.2-2
+- Enable libxml support (thanks barsnick).
+
 * Fri Jul 20 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.2-1
 - Update to 4.0.2.
 
