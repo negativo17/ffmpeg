@@ -9,7 +9,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.0.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -327,6 +327,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sat Oct 20 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.2-5
+- Rebuild for updated dependencies.
+
 * Thu Sep 20 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.2-4
 - Rebuild for updated libraries.
 
