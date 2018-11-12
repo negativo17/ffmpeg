@@ -8,8 +8,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.0.2
-Release:        5%{?dist}
+Version:        4.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -52,7 +52,6 @@ BuildRequires:  vo-amrwbenc-devel
 BuildRequires:  wavpack-devel
 BuildRequires:  xvidcore-devel
 BuildRequires:  xz-devel
-BuildRequires:  zlib-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
@@ -101,10 +100,13 @@ BuildRequires:  pkgconfig(xcb-xfixes)
 BuildRequires:  pkgconfig(x264) >= 0.118
 BuildRequires:  pkgconfig(x265) >= 0.68
 #BuildRequires:  pkgconfig(zimg) >= 2.3.0
+BuildRequires:  pkgconfig(zlib)
 
 %ifarch %{ix86} x86_64
 BuildRequires:  libXvMC-devel
-BuildRequires:  libva-devel
+BuildRequires:  pkgconfig(libva) >= 0.35.0
+BuildRequires:  pkgconfig(libva-drm)
+BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  nasm
 %endif
 
@@ -327,6 +329,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Nov 12 2018 Simone Caronni <negativo17@gmail.com> - 1:4.1-1
+- Update to 4.1.
+
 * Sat Oct 20 2018 Simone Caronni <negativo17@gmail.com> - 1:4.0.2-5
 - Rebuild for updated dependencies.
 
