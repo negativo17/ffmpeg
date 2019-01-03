@@ -114,7 +114,7 @@ BuildRequires:  nasm
 %ifarch x86_64
 BuildRequires:  cuda-devel
 BuildRequires:  nvidia-driver-devel
-BuildRequires:  pkgconfig(ffnvcodec) >= 8.0.14.1
+BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 %endif
 
 %description
