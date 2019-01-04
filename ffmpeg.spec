@@ -56,6 +56,7 @@ BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(fdk-aac)
+BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(gnutls)
@@ -113,8 +114,6 @@ BuildRequires:  nasm
 # Nvidia CUVID support and Performance Primitives based code
 %ifarch x86_64
 BuildRequires:  cuda-devel
-BuildRequires:  nvidia-driver-devel
-BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 %endif
 
 %description
@@ -175,6 +174,7 @@ cp %{SOURCE1} .
     --enable-avfilter \
     --enable-avresample \
     --enable-bzlib \
+    --enable-cuvid \
     --enable-decklink \
     --enable-doc \
     --enable-fontconfig \
@@ -236,6 +236,7 @@ cp %{SOURCE1} .
     --enable-lzma \
     --enable-libndi_newtek \
     --enable-nonfree \
+    --enable-nvenc \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
@@ -255,10 +256,8 @@ cp %{SOURCE1} .
     --shlibdir=%{_libdir} \
 %ifarch x86_64
     --enable-cuda \
-    --enable-cuvid \
     --enable-libnpp \
     --enable-nvdec \
-    --enable-nvenc \
 %endif
 %ifarch %{ix86}
     --cpu=%{_target_cpu} \
