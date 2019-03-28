@@ -1,15 +1,25 @@
-# To check:
-#   libopenmpt
-#   libmysofa
-#   libflite
-#   libsrt
-#   libzimg
-#   mmal
+# To do:
+#   --enable-libdavs2       pkgconfig(davs2) >= 1.5.115
+#   --enable-libflite       flite-devel
+#   --enable-libiec61883    libiec61883-devel
+#   --enable-libklvanc      libklvanc-devel
+#   --enable-libmysofa      pkgconfig(libmysofa)
+#   --enable-libopencv      pkgconfig(opencv)
+#   --enable-libopenmpt     pkgconfig(libopenmpt) >= 0.2.6557
+#   --enable-libshine       pkgconfig(shine)
+#   --enable-libsmbclient   pkgconfig(smbclient)
+#   --enable-libsrt         pkgconfig(srt) >= 1.3.0
+#   --enable-libtensorflow  libtensorflow-devel
+#   --enable-tls            pkgconfig(libtls)
+#   --enable-libvmaf        pkgconfig(libvmaf) = 1.3.9
+#   --enable-libxavs        libxavs-devel
+#   --enable-libxavs2       pkgconfig(xavs2) >= 1.2.77
+#   --enable-vapoursynth    pkgconfig(vapoursynth-script) >= 42
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -21,6 +31,7 @@ Source1:        using_ffmpeg_with_nvidia_gpus.txt
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
+BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.6.1
 BuildRequires:  doxygen
 BuildRequires:  freetype-devel
@@ -28,8 +39,11 @@ BuildRequires:  frei0r-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
+BuildRequires:  ladspa-devel
 BuildRequires:  libcdio-paranoia-devel
+BuildRequires:  libchromaprint-devel
 BuildRequires:  libdrm-devel
+BuildRequires:  libgcrypt-devel
 BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
@@ -55,12 +69,16 @@ BuildRequires:  xz-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(aom) >= 1.0.0
+BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(gnutls)
+BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
+BuildRequires:  pkgconfig(lensfun)
 BuildRequires:  pkgconfig(libass)
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
@@ -69,7 +87,6 @@ BuildRequires:  pkgconfig(libgme)
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libmodplug)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
-#BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
@@ -80,27 +97,24 @@ BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq)
 %if 0%{?fedora}
 BuildRequires:  pkgconfig(lilv-0)
-BuildRequires:  pkgconfig(lv2)
 %endif
+BuildRequires:  pkgconfig(lv2)
 BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
-#BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(vidstab) >= 0.98
-%if 0%{?fedora}
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
-%endif
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
 BuildRequires:  pkgconfig(xcb-shm)
 BuildRequires:  pkgconfig(xcb-xfixes)
 BuildRequires:  pkgconfig(x264) >= 0.118
 BuildRequires:  pkgconfig(x265) >= 0.68
-#BuildRequires:  pkgconfig(zimg) >= 2.3.0
+BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 
 %ifarch %{ix86} x86_64
@@ -155,8 +169,6 @@ This package contains development files for %{name}.
 
 %prep
 %setup -q
-# Use CUDA entry point versioned library (SONAME)
-sed -i -e 's/libcuda.so/libcuda.so.1/g' libavcodec/nvenc.c
 cp %{SOURCE1} .
 
 # Uncomment to enable debugging while configuring
@@ -170,32 +182,47 @@ cp %{SOURCE1} .
     --disable-debug \
     --disable-static \
     --disable-stripping \
-    --enable-alsa \
+    --enable-avcodec \
+    --enable-avdevice \
     --enable-avfilter \
+    --enable-avformat \
     --enable-avresample \
+    --enable-alsa \
+    --enable-avisynth \
     --enable-bzlib \
-    --enable-cuvid \
+    --enable-chromaprint \
     --enable-decklink \
-    --enable-doc \
-    --enable-fontconfig \
+    --enable-ffnvcodec \
     --enable-frei0r \
-    --enable-gnutls \
+    --enable-gcrypt \
+    --enable-gmp \
     --enable-gpl \
+    --enable-gray \
     --enable-iconv \
+    --enable-ladspa \
+    --enable-libaom \
     --enable-libass \
     --enable-libbluray \
+    --enable-libbs2b \
+    --enable-libcaca \
     --enable-libcdio \
+    --enable-libcodec2 \
     --enable-libdc1394 \
     --enable-libdrm \
     --enable-libfdk-aac \
+    --enable-libfontconfig \
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libgme \
     --enable-libgsm \
     --enable-libilbc \
+    --enable-libjack \
     --enable-libkvazaar \
+    --enable-liblensfun \
     --enable-libmfx \
+    --enable-libmodplug \
     --enable-libmp3lame \
+    --enable-libndi_newtek \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -216,38 +243,37 @@ cp %{SOURCE1} .
     --enable-libvidstab \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
-%if 0%{?fedora}
     --enable-libvpx \
-%endif
     --enable-libwavpack \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
     --enable-libxcb \
+    --enable-libxcb-shape \
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
-    --enable-libxcb-shape \
     --enable-libxml2 \
     --enable-libxvid \
+    --enable-libzmq \
+    --enable-libzimg \
     --enable-libzvbi \
-%if 0%{?fedora}
     --enable-lv2 \
-%endif
     --enable-lzma \
-    --enable-libndi_newtek \
     --enable-nonfree \
-    --enable-nvenc \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
     --enable-postproc \
-    --enable-pthreads \
     --enable-sdl2 \
     --enable-shared \
+    --enable-swresample \
+    --enable-swscale \
+    --enable-v4l2-m2m \
+    --enable-vaapi \
     --enable-version3 \
+    --enable-vdpau \
     --enable-xlib \
     --enable-zlib \
-    --extra-cflags="-I%{_includedir}/cuda" \
     --incdir=%{_includedir}/%{name} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
@@ -256,8 +282,11 @@ cp %{SOURCE1} .
     --shlibdir=%{_libdir} \
 %ifarch x86_64
     --enable-cuda \
+    --enable-cuvid \
     --enable-libnpp \
     --enable-nvdec \
+    --enable-nvenc \
+    --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch %{ix86}
     --cpu=%{_target_cpu} \
@@ -328,6 +357,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed Mar 27 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.2-2
+- Update build options.
+
 * Sat Mar 23 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.2-1
 - Update to 4.1.2.
 
