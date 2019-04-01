@@ -69,7 +69,9 @@ BuildRequires:  xz-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
+%if 0%{?fedora}
 BuildRequires:  pkgconfig(aom) >= 1.0.0
+%endif
 BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
@@ -97,8 +99,8 @@ BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq)
 %if 0%{?fedora}
 BuildRequires:  pkgconfig(lilv-0)
-%endif
 BuildRequires:  pkgconfig(lv2)
+%endif
 BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(opus)
@@ -200,7 +202,9 @@ cp %{SOURCE1} .
     --enable-gray \
     --enable-iconv \
     --enable-ladspa \
+%if 0%{?fedora}
     --enable-libaom \
+%endif
     --enable-libass \
     --enable-libbluray \
     --enable-libbs2b \
@@ -257,7 +261,9 @@ cp %{SOURCE1} .
     --enable-libzmq \
     --enable-libzimg \
     --enable-libzvbi \
+%if 0%{?fedora}
     --enable-lv2 \
+%endif
     --enable-lzma \
     --enable-nonfree \
     --enable-openal \
@@ -268,7 +274,6 @@ cp %{SOURCE1} .
     --enable-shared \
     --enable-swresample \
     --enable-swscale \
-    --enable-v4l2-m2m \
     --enable-vaapi \
     --enable-version3 \
     --enable-vdpau \
