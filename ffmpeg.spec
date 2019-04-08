@@ -19,7 +19,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.1.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -198,6 +198,7 @@ cp %{SOURCE1} .
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
+    --enable-gnutls \
     --enable-gpl \
     --enable-gray \
     --enable-iconv \
@@ -362,6 +363,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Apr 08 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.2-4
+- Fix https transport #7.
+
 * Sun Apr 07 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.2-3
 - Rebuild for CUDA 10.1.
 
