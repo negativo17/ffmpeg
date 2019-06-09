@@ -1,5 +1,4 @@
 # To do:
-#   --enable-libdavs2       pkgconfig(davs2) >= 1.5.115
 #   --enable-libflite       flite-devel
 #   --enable-libiec61883    libiec61883-devel
 #   --enable-libklvanc      libklvanc-devel
@@ -13,13 +12,12 @@
 #   --enable-tls            pkgconfig(libtls)
 #   --enable-libvmaf        pkgconfig(libvmaf) = 1.3.9
 #   --enable-libxavs        libxavs-devel
-#   --enable-libxavs2       pkgconfig(xavs2) >= 1.2.77
 #   --enable-vapoursynth    pkgconfig(vapoursynth-script) >= 42
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.1.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -51,7 +49,9 @@ BuildRequires:  libvorbis-devel
 BuildRequires:  librsvg2-devel
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  libxml2-devel
+BuildRequires:  libXvMC-devel
 BuildRequires:  mesa-libGL-devel
+BuildRequires:  nasm
 BuildRequires:  ocl-icd-devel
 BuildRequires:  openal-soft-devel
 BuildRequires:  opencl-headers
@@ -93,6 +93,9 @@ BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
+BuildRequires:  pkgconfig(libva) >= 0.35.0
+BuildRequires:  pkgconfig(libva-drm)
+BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp) >= 0.4.0
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
@@ -119,17 +122,11 @@ BuildRequires:  pkgconfig(x265) >= 0.68
 BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 
-%ifarch %{ix86} x86_64
-BuildRequires:  libXvMC-devel
-BuildRequires:  pkgconfig(libva) >= 0.35.0
-BuildRequires:  pkgconfig(libva-drm)
-BuildRequires:  pkgconfig(libva-x11)
-BuildRequires:  nasm
-%endif
-
-# Nvidia CUVID support and Performance Primitives based code
 %ifarch x86_64
+# Nvidia CUVID support and Performance Primitives based code
 BuildRequires:  cuda-devel
+BuildRequires:  pkgconfig(davs2) >= 1.5.115
+BuildRequires:  pkgconfig(xavs2) >= 1.2.77
 %endif
 
 %description
@@ -292,6 +289,8 @@ cp %{SOURCE1} .
     --enable-libnpp \
     --enable-nvdec \
     --enable-nvenc \
+    --enable-libdavs2 \
+    --enable-libxavs2 \
     --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch %{ix86}
@@ -363,6 +362,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Jun 09 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.3-3
+- Enable davs2/xavs2 on x86_64.
+
 * Mon May 27 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.3-2
 - Rebuild for updated dependencies.
 
