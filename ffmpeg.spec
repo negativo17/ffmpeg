@@ -17,7 +17,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.1.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -362,6 +362,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Jul 07 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.3-4
+- Rebuild for updated dependencies.
+
 * Sun Jun 09 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.3-3
 - Enable davs2/xavs2 on x86_64.
 
