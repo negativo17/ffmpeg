@@ -12,11 +12,12 @@
 #   --enable-tls            pkgconfig(libtls)
 #   --enable-libvmaf        pkgconfig(libvmaf) = 1.3.9
 #   --enable-libxavs        libxavs-devel
+#   --enable-pocketsphinx   pkgconfig(pocketsphinx)
 #   --enable-vapoursynth    pkgconfig(vapoursynth-script) >= 42
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.1.4
+Version:        4.2
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -40,9 +41,9 @@ BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  ladspa-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libchromaprint-devel
+BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
-BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
@@ -210,6 +211,7 @@ cp %{SOURCE1} .
     --enable-libcdio \
     --enable-libcodec2 \
     --enable-libdc1394 \
+    --enable-libdav1d \
     --enable-libdrm \
     --enable-libfdk-aac \
     --enable-libfontconfig \
@@ -224,7 +226,6 @@ cp %{SOURCE1} .
     --enable-libmfx \
     --enable-libmodplug \
     --enable-libmp3lame \
-    --enable-libndi_newtek \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -362,6 +363,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Sep 03 2019 Simone Caronni <negativo17@gmail.com> - 1:4.2-1
+- Update to 4.2.
+
 * Tue Jul 09 2019 Simone Caronni <negativo17@gmail.com> - 1:4.1.4-1
 - Update to 4.1.4.
 
