@@ -1,6 +1,5 @@
 # To do:
 #   --enable-libflite       flite-devel
-#   --enable-libiec61883    libiec61883-devel
 #   --enable-libklvanc      libklvanc-devel
 #   --enable-libmysofa      pkgconfig(libmysofa)
 #   --enable-libopencv      pkgconfig(opencv)
@@ -44,6 +43,7 @@ BuildRequires:  libchromaprint-devel
 BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
+BuildRequires:  libiec61883-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
@@ -219,6 +219,7 @@ cp %{SOURCE1} .
     --enable-libfribidi \
     --enable-libgme \
     --enable-libgsm \
+    --enable-libiec6188 \
     --enable-libilbc \
     --enable-libjack \
     --enable-libkvazaar \
