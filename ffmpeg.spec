@@ -1,6 +1,5 @@
 # To do:
 #   --enable-libflite       flite-devel
-#   --enable-libiec61883    libiec61883-devel
 #   --enable-libklvanc      libklvanc-devel
 #   --enable-libmysofa      pkgconfig(libmysofa)
 #   --enable-libopencv      pkgconfig(opencv)
@@ -17,7 +16,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.2.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -38,11 +37,13 @@ BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  ladspa-devel
+BuildRequires:  libavc1394-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libchromaprint-devel
 BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
+BuildRequires:  libiec61883-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
@@ -223,6 +224,7 @@ cp %{SOURCE1} .
     --enable-libfribidi \
     --enable-libgme \
     --enable-libgsm \
+    --enable-libiec61883 \
     --enable-libilbc \
     --enable-libjack \
     --enable-libkvazaar \
@@ -370,6 +372,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri Mar 27 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-5
+- Enable iec6188 to support DV capure wia Firewire.
+
 * Sun Mar 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-4
 - Fix build on Fedora 32.
 
