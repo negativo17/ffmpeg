@@ -13,12 +13,11 @@
 #   --enable-libvmaf        pkgconfig(libvmaf) = 1.3.9
 #   --enable-libxavs        libxavs-devel
 #   --enable-pocketsphinx   pkgconfig(pocketsphinx)
-#   --enable-vapoursynth    pkgconfig(vapoursynth-script) >= 42
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -112,6 +111,9 @@ BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
+%if 0%{?fedora} || 0%{?rhel} >= 8
+BuildRequires:  pkgconfig(vapoursynth-script) >= 42
+%endif
 BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
 BuildRequires:  pkgconfig(xcb) >= 1.4
@@ -274,6 +276,9 @@ cp %{SOURCE1} .
     --enable-swresample \
     --enable-swscale \
     --enable-vaapi \
+%if 0%{?fedora} || 0%{?rhel} >= 8
+    --enable-vapoursynth \
+%endif
     --enable-version3 \
     --enable-vdpau \
     --enable-xlib \
@@ -363,6 +368,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Jan 16 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-2
+- Enable vapoursynth on Fedora & RHEL/CentOS 8.
+
 * Sat Jan 11 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-1
 - Update to 4.2.2.
 
