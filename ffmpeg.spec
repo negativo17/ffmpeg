@@ -17,7 +17,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.2.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -368,6 +368,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Jan 19 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-3
+- Rebuild for updated dependencies.
+
 * Thu Jan 16 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-2
 - Enable vapoursynth on Fedora & RHEL/CentOS 8.
 
