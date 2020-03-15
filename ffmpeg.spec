@@ -17,7 +17,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.2.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -49,6 +49,8 @@ BuildRequires:  libvorbis-devel
 BuildRequires:  librsvg2-devel
 BuildRequires:  libxcb-devel >= 1.4
 BuildRequires:  libxml2-devel
+BuildRequires:  libX11-devel
+BuildRequires:  libXv-devel
 BuildRequires:  libXvMC-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nasm
@@ -368,6 +370,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Mar 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-4
+- Fix build on Fedora 32.
+
 * Sun Jan 19 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-3
 - Rebuild for updated dependencies.
 
