@@ -16,7 +16,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.2.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -372,6 +372,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Fri May 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-6
+- Rebuild for updated dependencies.
+
 * Fri Mar 27 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-5
 - Enable iec6188 to support DV capure wia Firewire.
 
