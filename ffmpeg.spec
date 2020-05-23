@@ -10,13 +10,12 @@
 #   --enable-libtensorflow  libtensorflow-devel
 #   --enable-tls            pkgconfig(libtls)
 #   --enable-libvmaf        pkgconfig(libvmaf) = 1.3.9
-#   --enable-libxavs        libxavs-devel
 #   --enable-pocketsphinx   pkgconfig(pocketsphinx)
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.2.2
-Release:        6%{?dist}
+Version:        4.2.3
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -24,6 +23,8 @@ Epoch:          1
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 # Excerpt from Nvidia's Video Codec SDK document: Using_FFmpeg_with_NVIDIA_GPU_Hardware_Acceleration.pdf
 Source1:        using_ffmpeg_with_nvidia_gpus.txt
+
+Patch0:         http://git.videolan.org/?p=ffmpeg.git;a=patch;h=f32f9231dd4f74d9f95eef575b838bdc3e06a234;hp=95324ecf235a467f6804019e250e59bca576922a#/%{name}-decklink-11.5.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -72,12 +73,9 @@ BuildRequires:  xz-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
-%if 0%{?fedora}
-BuildRequires:  pkgconfig(aom) >= 1.0.0
-%endif
 BuildRequires:  pkgconfig(caca)
+BuildRequires:  pkgconfig(davs2) >= 1.5.115
 BuildRequires:  pkgconfig(fdk-aac)
-BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(gnutls)
@@ -89,7 +87,6 @@ BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
 BuildRequires:  pkgconfig(libdc1394-2)
 BuildRequires:  pkgconfig(libgme)
-BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libmodplug)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libpulse)
@@ -103,10 +100,6 @@ BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp) >= 0.4.0
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq)
-%if 0%{?fedora}
-BuildRequires:  pkgconfig(lilv-0)
-BuildRequires:  pkgconfig(lv2)
-%endif
 BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(opus)
@@ -114,11 +107,9 @@ BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
-%if 0%{?fedora} || 0%{?rhel} >= 8
-BuildRequires:  pkgconfig(vapoursynth-script) >= 42
-%endif
 BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
+BuildRequires:  pkgconfig(xavs2) >= 1.2.77
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
 BuildRequires:  pkgconfig(xcb-shm)
@@ -128,11 +119,20 @@ BuildRequires:  pkgconfig(x265) >= 0.68
 BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 
+%if 0%{?fedora}
+BuildRequires:  pkgconfig(aom) >= 1.0.0
+BuildRequires:  pkgconfig(lilv-0)
+BuildRequires:  pkgconfig(lv2)
+%endif
+
 %ifarch x86_64
 # Nvidia CUVID support and Performance Primitives based code
 BuildRequires:  cuda-devel
-BuildRequires:  pkgconfig(davs2) >= 1.5.115
-BuildRequires:  pkgconfig(xavs2) >= 1.2.77
+BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
+BuildRequires:  pkgconfig(libmfx)
+%if 0%{?fedora} || 0%{?rhel} >= 8
+BuildRequires:  pkgconfig(vapoursynth-script) >= 42
+%endif
 %endif
 
 %description
@@ -173,7 +173,7 @@ and video, MPEG4, h263, ac3, asf, avi, real, mjpeg, and flash.
 This package contains development files for %{name}.
 
 %prep
-%setup -q
+%autosetup -p1
 cp %{SOURCE1} .
 
 # Uncomment to enable debugging while configuring
@@ -197,7 +197,6 @@ cp %{SOURCE1} .
     --enable-bzlib \
     --enable-chromaprint \
     --enable-decklink \
-    --enable-ffnvcodec \
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
@@ -206,9 +205,6 @@ cp %{SOURCE1} .
     --enable-gray \
     --enable-iconv \
     --enable-ladspa \
-%if 0%{?fedora}
-    --enable-libaom \
-%endif
     --enable-libass \
     --enable-libbluray \
     --enable-libbs2b \
@@ -217,6 +213,7 @@ cp %{SOURCE1} .
     --enable-libcodec2 \
     --enable-libdc1394 \
     --enable-libdav1d \
+    --enable-libdavs2 \
     --enable-libdrm \
     --enable-libfdk-aac \
     --enable-libfontconfig \
@@ -229,7 +226,6 @@ cp %{SOURCE1} .
     --enable-libjack \
     --enable-libkvazaar \
     --enable-liblensfun \
-    --enable-libmfx \
     --enable-libmodplug \
     --enable-libmp3lame \
     --enable-libopencore-amrnb \
@@ -257,6 +253,7 @@ cp %{SOURCE1} .
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
+    --enable-libxavs2 \
     --enable-libxcb \
     --enable-libxcb-shape \
     --enable-libxcb-shm \
@@ -266,9 +263,6 @@ cp %{SOURCE1} .
     --enable-libzmq \
     --enable-libzimg \
     --enable-libzvbi \
-%if 0%{?fedora}
-    --enable-lv2 \
-%endif
     --enable-lzma \
     --enable-nonfree \
     --enable-openal \
@@ -280,9 +274,6 @@ cp %{SOURCE1} .
     --enable-swresample \
     --enable-swscale \
     --enable-vaapi \
-%if 0%{?fedora} || 0%{?rhel} >= 8
-    --enable-vapoursynth \
-%endif
     --enable-version3 \
     --enable-vdpau \
     --enable-xlib \
@@ -293,21 +284,23 @@ cp %{SOURCE1} .
     --optflags="%{optflags}" \
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
+%if 0%{?fedora}
+    --enable-libaom \
+    --enable-lv2 \
+%endif
 %ifarch x86_64
+%if 0%{?fedora} || 0%{?rhel} >= 8
+    --enable-vapoursynth \
+%endif
     --enable-cuda \
     --enable-cuvid \
+    --enable-ffnvcodec \
+    --enable-libmfx \
     --enable-libnpp \
     --enable-nvdec \
     --enable-nvenc \
-    --enable-libdavs2 \
-    --enable-libxavs2 \
     --extra-cflags="-I%{_includedir}/cuda" \
-%endif
-%ifarch %{ix86}
     --cpu=%{_target_cpu} \
-%endif
-%ifarch %{ix86} x86_64 ppc ppc64
-    --enable-runtime-cpudetect \
 %endif
 %ifarch ppc
     --cpu=g3 \
@@ -318,14 +311,11 @@ cp %{SOURCE1} .
     --enable-pic \
 %endif
 %ifarch %{arm}
-    --disable-runtime-cpudetect --arch=arm \
+    --arch=arm \
 %ifarch armv6hl
     --cpu=armv6 \
 %else
     --enable-thumb \
-%endif
-%ifarch armv7hnl
-    --enable-neon \
 %endif
 %endif
 
@@ -372,6 +362,10 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sat May 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.3-1
+- Update to 4.2.3.
+- Update SPEC file.
+
 * Fri May 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-6
 - Rebuild for updated dependencies.
 
