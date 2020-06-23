@@ -1,4 +1,5 @@
 # To do:
+#   --enable-avisynth
 #   --enable-libflite       flite-devel
 #   --enable-libklvanc      libklvanc-devel
 #   --enable-libmysofa      pkgconfig(libmysofa)
@@ -9,13 +10,12 @@
 #   --enable-libsrt         pkgconfig(srt) >= 1.3.0
 #   --enable-libtensorflow  libtensorflow-devel
 #   --enable-tls            pkgconfig(libtls)
-#   --enable-libvmaf        pkgconfig(libvmaf) = 1.3.9
 #   --enable-pocketsphinx   pkgconfig(pocketsphinx)
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.2.3
-Release:        2%{?dist}
+Version:        4.3
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -23,8 +23,6 @@ Epoch:          1
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 # Excerpt from Nvidia's Video Codec SDK document: Using_FFmpeg_with_NVIDIA_GPU_Hardware_Acceleration.pdf
 Source1:        using_ffmpeg_with_nvidia_gpus.txt
-
-Patch0:         http://git.videolan.org/?p=ffmpeg.git;a=patch;h=f32f9231dd4f74d9f95eef575b838bdc3e06a234;hp=95324ecf235a467f6804019e250e59bca576922a#/%{name}-decklink-11.5.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -99,7 +97,6 @@ BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp) >= 0.4.0
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
-BuildRequires:  pkgconfig(libzmq)
 BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(opus)
@@ -108,6 +105,7 @@ BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(vidstab) >= 0.98
+BuildRequires:  pkgconfig(libvmaf) >= 1.3.9
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
 BuildRequires:  pkgconfig(xavs2) >= 1.2.77
 BuildRequires:  pkgconfig(xcb) >= 1.4
@@ -123,6 +121,10 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(aom) >= 1.0.0
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
+%endif
+
+%if 0%{?fedora} || 0%{?rhel} >= 8
+BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 %endif
 
 %ifarch x86_64
@@ -193,7 +195,6 @@ cp %{SOURCE1} .
     --enable-avformat \
     --enable-avresample \
     --enable-alsa \
-    --enable-avisynth \
     --enable-bzlib \
     --enable-chromaprint \
     --enable-decklink \
@@ -246,6 +247,7 @@ cp %{SOURCE1} .
     --enable-libtwolame \
     --enable-libv4l2 \
     --enable-libvidstab \
+    --enable-libvmaf \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
@@ -260,7 +262,6 @@ cp %{SOURCE1} .
     --enable-libxcb-xfixes \
     --enable-libxml2 \
     --enable-libxvid \
-    --enable-libzmq \
     --enable-libzimg \
     --enable-libzvbi \
     --enable-lzma \
@@ -287,6 +288,9 @@ cp %{SOURCE1} .
 %if 0%{?fedora}
     --enable-libaom \
     --enable-lv2 \
+%endif
+%if 0%{?fedora} || 0%{?rhel} >= 8
+    --enable-libzmq \
 %endif
 %ifarch x86_64
 %if 0%{?fedora} || 0%{?rhel} >= 8
@@ -362,6 +366,11 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Jun 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-1
+- Update to 4.3.
+- Enable VMAF support.
+- Disable ZeroMQ support on RHEL/CentOS 7."
+
 * Mon Jun 08 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.3-2
 - Rebuild for updated dependencies.
 
