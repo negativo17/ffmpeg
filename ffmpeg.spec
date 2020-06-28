@@ -105,7 +105,6 @@ BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(vidstab) >= 0.98
-BuildRequires:  pkgconfig(libvmaf) >= 1.3.9
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
 BuildRequires:  pkgconfig(xavs2) >= 1.2.77
 BuildRequires:  pkgconfig(xcb) >= 1.4
@@ -132,6 +131,7 @@ BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 BuildRequires:  cuda-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(libmfx)
+BuildRequires:  pkgconfig(libvmaf) >= 1.3.9
 %if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
 %endif
@@ -247,7 +247,6 @@ cp %{SOURCE1} .
     --enable-libtwolame \
     --enable-libv4l2 \
     --enable-libvidstab \
-    --enable-libvmaf \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
@@ -301,6 +300,7 @@ cp %{SOURCE1} .
     --enable-ffnvcodec \
     --enable-libmfx \
     --enable-libnpp \
+    --enable-libvmaf \
     --enable-nvdec \
     --enable-nvenc \
     --extra-cflags="-I%{_includedir}/cuda" \
