@@ -15,7 +15,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -71,6 +71,7 @@ BuildRequires:  xz-devel
 BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(aom) >= 1.0.0
 BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(davs2) >= 1.5.115
 BuildRequires:  pkgconfig(fdk-aac)
@@ -117,7 +118,6 @@ BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 
 %if 0%{?fedora}
-BuildRequires:  pkgconfig(aom) >= 1.0.0
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
 %endif
@@ -207,6 +207,7 @@ cp %{SOURCE1} .
     --enable-iconv \
     --enable-ladspa \
     --enable-libass \
+    --enable-libaom \
     --enable-libbluray \
     --enable-libbs2b \
     --enable-libcaca \
@@ -285,7 +286,6 @@ cp %{SOURCE1} .
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %if 0%{?fedora}
-    --enable-libaom \
     --enable-lv2 \
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 8
@@ -366,6 +366,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Tue Jun 30 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-2
+- Enable AV1 support also on CentOS/RHEL.
+
 * Tue Jun 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-1
 - Update to 4.3.
 - Enable VMAF support.
