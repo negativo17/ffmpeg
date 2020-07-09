@@ -15,7 +15,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -366,6 +366,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Jul 09 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-3
+- Rebuild for updated dependencies.
+
 * Tue Jun 30 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-2
 - Enable AV1 support also on CentOS/RHEL.
 
