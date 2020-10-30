@@ -12,6 +12,8 @@
 #   --enable-tls            pkgconfig(libtls)
 #   --enable-pocketsphinx   pkgconfig(pocketsphinx)
 
+%global _lto_cflags %{nil}
+
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.3.1
@@ -23,6 +25,8 @@ Epoch:          1
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 # Excerpt from Nvidia's Video Codec SDK document: Using_FFmpeg_with_NVIDIA_GPU_Hardware_Acceleration.pdf
 Source1:        using_ffmpeg_with_nvidia_gpus.txt
+
+Patch0:         http://git.videolan.org/?p=ffmpeg.git;a=patch;h=0b2b03568f22fdb361d9a44c262bfb9269335f80#/ffmpeg-nasm.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
