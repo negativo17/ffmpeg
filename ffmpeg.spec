@@ -17,7 +17,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -27,6 +27,12 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 Source1:        using_ffmpeg_with_nvidia_gpus.txt
 
 Patch0:         http://git.videolan.org/?p=ffmpeg.git;a=patch;h=0b2b03568f22fdb361d9a44c262bfb9269335f80#/ffmpeg-nasm.patch
+# https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
+Patch1:         %{name}-svt-vp9.patch
+# https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
+Patch2:         %{name}-svt-hevc.patch
+# https://github.com/AOMediaCodec/SVT-AV1/tree/0e68b4a34d7baa387b98e2ccaa9beb0c6d41f627/ffmpeg_plugin
+Patch3:         %{name}-svt-av1.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -136,6 +142,9 @@ BuildRequires:  cuda-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 1.3.9
+BuildRequires:  pkgconfig(SvtAv1Enc)
+BuildRequires:  pkgconfig(SvtHevcEnc)
+BuildRequires:  pkgconfig(SvtVp9Enc)
 %if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
 %endif
@@ -304,6 +313,9 @@ cp %{SOURCE1} .
     --enable-ffnvcodec \
     --enable-libmfx \
     --enable-libnpp \
+    --enable-libsvtav1 \
+    --enable-libsvthevc \
+    --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-nvdec \
     --enable-nvenc \
@@ -370,6 +382,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Nov 26 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-3
+- Add SVT HEVC, AV1 and VP9 patches.
+
 * Tue Nov 17 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-2
 - Rebuild for updated CUDA libraries.
 
