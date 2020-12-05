@@ -17,7 +17,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -382,6 +382,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Sat Dec 05 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-4
+- Rebuild for updated dependencies.
+
 * Thu Nov 26 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-3
 - Add SVT HEVC, AV1 and VP9 patches.
 
