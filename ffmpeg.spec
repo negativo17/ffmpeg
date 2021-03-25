@@ -17,7 +17,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -32,12 +32,14 @@ Patch0:         %{name}-svt-vp9.patch
 Patch1:         %{name}-svt-hevc.patch
 # https://github.com/AOMediaCodec/SVT-AV1/tree/0e68b4a34d7baa387b98e2ccaa9beb0c6d41f627/ffmpeg_plugin
 Patch2:         %{name}-svt-av1.patch
+# https://framagit.org/tytan652/ffmpeg-ndi-patch
+Patch3:         %{name}-ndi.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
-BuildRequires:  decklink-devel >= 10.6.1
+BuildRequires:  decklink-devel >= 11.5
 BuildRequires:  doxygen
 BuildRequires:  freetype-devel
 BuildRequires:  frei0r-devel
@@ -52,6 +54,7 @@ BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
+BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
@@ -242,6 +245,7 @@ cp %{SOURCE1} .
     --enable-liblensfun \
     --enable-libmodplug \
     --enable-libmp3lame \
+    --enable-libndi_newtek \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -381,6 +385,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Mar 25 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-2
+- Re-enable NDI support.
+
 * Mon Mar 01 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-1
 - Update to 4.3.2.
 

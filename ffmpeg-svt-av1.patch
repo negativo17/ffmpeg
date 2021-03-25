@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
---- ffmpeg-4.3.1.old/configure	2020-11-28 15:28:22.941233144 +0100
-+++ ffmpeg-4.3.1/configure	2020-11-28 15:46:57.946213566 +0100
+diff -Naur ffmpeg-4.3.2.old/configure ffmpeg-4.3.2/configure
+--- ffmpeg-4.3.2.old/configure	2021-03-25 10:57:36.718039376 +0100
++++ ffmpeg-4.3.2/configure	2021-03-25 10:57:46.452203065 +0100
 @@ -249,6 +249,7 @@
    --enable-libmp3lame      enable MP3 encoding via libmp3lame [no]
    --enable-libopencore-amrnb enable AMR-NB de/encoding via libopencore-amrnb [no]
@@ -9,7 +9,7 @@ diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
    --enable-libopencv       enable video filtering via libopencv [no]
    --enable-libopenh264     enable H.264 encoding via OpenH264 [no]
    --enable-libopenjpeg     enable JPEG 2000 de/encoding via OpenJPEG [no]
-@@ -1790,6 +1791,7 @@
+@@ -1789,6 +1790,7 @@
      libmodplug
      libmp3lame
      libmysofa
@@ -17,7 +17,7 @@ diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
      libopencv
      libopenh264
      libopenjpeg
-@@ -3229,6 +3231,7 @@
+@@ -3227,6 +3229,7 @@
  libopencore_amrnb_encoder_deps="libopencore_amrnb"
  libopencore_amrnb_encoder_select="audio_frame_queue"
  libopencore_amrwb_decoder_deps="libopencore_amrwb"
@@ -25,7 +25,7 @@ diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
  libopenh264_decoder_deps="libopenh264"
  libopenh264_decoder_select="h264_mp4toannexb_bsf"
  libopenh264_encoder_deps="libopenh264"
-@@ -6348,6 +6351,7 @@
+@@ -6345,6 +6348,7 @@
                                 die "ERROR: libnpp not found"; }
  enabled libopencore_amrnb && require libopencore_amrnb opencore-amrnb/interf_dec.h Decoder_Interface_init -lopencore-amrnb
  enabled libopencore_amrwb && require libopencore_amrwb opencore-amrwb/dec_if.h D_IF_init -lopencore-amrwb
@@ -33,10 +33,10 @@ diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
  enabled libopencv         && { check_headers opencv2/core/core_c.h &&
                                 { check_pkg_config libopencv opencv opencv2/core/core_c.h cvCreateImageHeader ||
                                   require libopencv opencv2/core/core_c.h cvCreateImageHeader -lopencv_core -lopencv_imgproc; } ||
-diff -Naur ffmpeg-4.3.1.old/libavcodec/allcodecs.c ffmpeg-4.3.1/libavcodec/allcodecs.c
---- ffmpeg-4.3.1.old/libavcodec/allcodecs.c	2020-11-28 15:28:22.981233855 +0100
-+++ ffmpeg-4.3.1/libavcodec/allcodecs.c	2020-11-28 15:46:57.946213566 +0100
-@@ -719,6 +719,7 @@
+diff -Naur ffmpeg-4.3.2.old/libavcodec/allcodecs.c ffmpeg-4.3.2/libavcodec/allcodecs.c
+--- ffmpeg-4.3.2.old/libavcodec/allcodecs.c	2021-03-25 10:57:36.719039393 +0100
++++ ffmpeg-4.3.2/libavcodec/allcodecs.c	2021-03-25 10:57:46.453203082 +0100
+@@ -716,6 +716,7 @@
  extern AVCodec ff_libopencore_amrnb_encoder;
  extern AVCodec ff_libopencore_amrnb_decoder;
  extern AVCodec ff_libopencore_amrwb_decoder;
@@ -44,9 +44,9 @@ diff -Naur ffmpeg-4.3.1.old/libavcodec/allcodecs.c ffmpeg-4.3.1/libavcodec/allco
  extern AVCodec ff_libopenjpeg_encoder;
  extern AVCodec ff_libopenjpeg_decoder;
  extern AVCodec ff_libopus_encoder;
-diff -Naur ffmpeg-4.3.1.old/libavcodec/libsvt_av1.c ffmpeg-4.3.1/libavcodec/libsvt_av1.c
---- ffmpeg-4.3.1.old/libavcodec/libsvt_av1.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-4.3.1/libavcodec/libsvt_av1.c	2020-11-28 15:46:57.946213566 +0100
+diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_av1.c ffmpeg-4.3.2/libavcodec/libsvt_av1.c
+--- ffmpeg-4.3.2.old/libavcodec/libsvt_av1.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-4.3.2/libavcodec/libsvt_av1.c	2021-03-25 10:57:46.456203132 +0100
 @@ -0,0 +1,583 @@
 +
 +/*
@@ -631,9 +631,9 @@ diff -Naur ffmpeg-4.3.1.old/libavcodec/libsvt_av1.c ffmpeg-4.3.1/libavcodec/libs
 +    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
 +    .wrapper_name   = "libsvt_av1",
 +};
-diff -Naur ffmpeg-4.3.1.old/libavcodec/Makefile ffmpeg-4.3.1/libavcodec/Makefile
---- ffmpeg-4.3.1.old/libavcodec/Makefile	2020-11-28 15:28:22.982233873 +0100
-+++ ffmpeg-4.3.1/libavcodec/Makefile	2020-11-28 15:46:57.946213566 +0100
+diff -Naur ffmpeg-4.3.2.old/libavcodec/Makefile ffmpeg-4.3.2/libavcodec/Makefile
+--- ffmpeg-4.3.2.old/libavcodec/Makefile	2021-03-25 10:57:36.720039410 +0100
++++ ffmpeg-4.3.2/libavcodec/Makefile	2021-03-25 10:57:46.457203149 +0100
 @@ -971,6 +971,7 @@
  OBJS-$(CONFIG_ELBG_FILTER)             += elbg.o
  
