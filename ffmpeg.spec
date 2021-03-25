@@ -2,6 +2,7 @@
 #   --enable-avisynth
 #   --enable-libflite       flite-devel
 #   --enable-libklvanc      libklvanc-devel
+#   --enable-liblensfun     requires liblensfun 0.3.95+
 #   --enable-libmysofa      pkgconfig(libmysofa)
 #   --enable-libopencv      pkgconfig(opencv)
 #   --enable-libopenmpt     pkgconfig(libopenmpt) >= 0.2.6557
@@ -16,8 +17,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.3.2
-Release:        4%{?dist}
+Version:        4.4
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -30,10 +31,8 @@ Source1:        using_ffmpeg_with_nvidia_gpus.txt
 Patch0:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch1:         %{name}-svt-hevc.patch
-# https://github.com/AOMediaCodec/SVT-AV1/tree/0e68b4a34d7baa387b98e2ccaa9beb0c6d41f627/ffmpeg_plugin
-Patch2:         %{name}-svt-av1.patch
 # https://framagit.org/tytan652/ffmpeg-ndi-patch
-Patch3:         %{name}-ndi.patch
+Patch2:         %{name}-ndi.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -79,7 +78,6 @@ BuildRequires:  subversion
 BuildRequires:  texinfo
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
-BuildRequires:  wavpack-devel
 BuildRequires:  xvidcore-devel
 BuildRequires:  xz-devel
 BuildRequires:  zvbi-devel >= 0.2.28
@@ -94,7 +92,7 @@ BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(gnutls)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
-BuildRequires:  pkgconfig(lensfun)
+#BuildRequires:  pkgconfig(lensfun) >= 0.3.95
 BuildRequires:  pkgconfig(libass)
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
@@ -244,7 +242,6 @@ cp %{SOURCE1} .
     --enable-libilbc \
     --enable-libjack \
     --enable-libkvazaar \
-    --enable-liblensfun \
     --enable-libmodplug \
     --enable-libmp3lame \
 %ifarch i686 x86_64 armv7hl
@@ -271,7 +268,6 @@ cp %{SOURCE1} .
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
-    --enable-libwavpack \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
@@ -389,6 +385,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Apr 22 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4-1
+- Update to 4.4.
+
 * Tue Jul 20 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-4
 - Rebuild for updated dependencies.
 

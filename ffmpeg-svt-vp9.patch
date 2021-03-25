@@ -1,15 +1,15 @@
-diff -Naur ffmpeg-4.3.2.old/configure ffmpeg-4.3.2/configure
---- ffmpeg-4.3.2.old/configure	2021-02-20 21:27:47.000000000 +0100
-+++ ffmpeg-4.3.2/configure	2021-03-25 10:54:01.038412182 +0100
-@@ -281,6 +281,7 @@
+diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
+--- ffmpeg-4.4.old/configure	2021-04-22 18:05:24.928968338 +0200
++++ ffmpeg-4.4/configure	2021-04-22 18:08:02.921761217 +0200
+@@ -286,6 +286,7 @@
    --enable-libvorbis       enable Vorbis en/decoding via libvorbis,
                             native implementation exists [no]
    --enable-libvpx          enable VP8 and VP9 de/encoding via libvpx [no]
 +  --enable-libsvtvp9       enable VP9 encoding via svt [no]
-   --enable-libwavpack      enable wavpack encoding via libwavpack [no]
    --enable-libwebp         enable WebP encoding via libwebp [no]
    --enable-libx264         enable H.264 encoding via x264 [no]
-@@ -1798,6 +1799,7 @@
+   --enable-libx265         enable HEVC encoding via x265 [no]
+@@ -1803,6 +1804,7 @@
      librtmp
      libshine
      libsmbclient
@@ -17,36 +17,36 @@ diff -Naur ffmpeg-4.3.2.old/configure ffmpeg-4.3.2/configure
      libsnappy
      libsoxr
      libspeex
-@@ -3250,6 +3252,7 @@
+@@ -3283,6 +3285,7 @@
  libvpx_vp8_encoder_deps="libvpx"
  libvpx_vp9_decoder_deps="libvpx"
  libvpx_vp9_encoder_deps="libvpx"
 +libsvt_vp9_encoder_deps="libsvtvp9"
- libwavpack_encoder_deps="libwavpack"
- libwavpack_encoder_select="audio_frame_queue"
  libwebp_encoder_deps="libwebp"
-@@ -6405,6 +6408,7 @@
+ libwebp_anim_encoder_deps="libwebp"
+ libx262_encoder_deps="libx262"
+@@ -6467,6 +6470,7 @@
      fi
  }
  
-+enabled libsvtvp9         && require_pkg_config libsvtvp9 SvtVp9Enc EbSvtVp9Enc.h eb_vp9_svt_init_handle
- enabled libwavpack        && require libwavpack wavpack/wavpack.h WavpackOpenFileOutput  -lwavpack
++enabled libsvtvp9         && require_pkg_config libsvtvp9 SvtVp9Enc EbSvtVp9Enc.h       eb_vp9_svt_init_handle
  enabled libwebp           && {
      enabled libwebp_encoder      && require_pkg_config libwebp "libwebp >= 0.2.0" webp/encode.h WebPGetEncoderVersion
-diff -Naur ffmpeg-4.3.2.old/libavcodec/allcodecs.c ffmpeg-4.3.2/libavcodec/allcodecs.c
---- ffmpeg-4.3.2.old/libavcodec/allcodecs.c	2021-02-20 21:27:47.000000000 +0100
-+++ ffmpeg-4.3.2/libavcodec/allcodecs.c	2021-03-25 10:54:01.103413275 +0100
-@@ -734,6 +734,7 @@
+     enabled libwebp_anim_encoder && check_pkg_config libwebp_anim_encoder "libwebpmux >= 0.4.0" webp/mux.h WebPAnimEncoderOptionsInit; }
+diff -Naur ffmpeg-4.4.old/libavcodec/allcodecs.c ffmpeg-4.4/libavcodec/allcodecs.c
+--- ffmpeg-4.4.old/libavcodec/allcodecs.c	2021-04-22 18:05:24.895967755 +0200
++++ ffmpeg-4.4/libavcodec/allcodecs.c	2021-04-22 18:08:02.922761235 +0200
+@@ -758,6 +758,7 @@
  extern AVCodec ff_libvpx_vp8_decoder;
  extern AVCodec ff_libvpx_vp9_encoder;
  extern AVCodec ff_libvpx_vp9_decoder;
 +extern AVCodec ff_libsvt_vp9_encoder;
- extern AVCodec ff_libwavpack_encoder;
  /* preferred over libwebp */
  extern AVCodec ff_libwebp_anim_encoder;
-diff -Naur ffmpeg-4.3.2.old/libavcodec/avcodec.h ffmpeg-4.3.2/libavcodec/avcodec.h
---- ffmpeg-4.3.2.old/libavcodec/avcodec.h	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.2/libavcodec/avcodec.h	2021-03-25 10:54:01.107413343 +0100
+ extern AVCodec ff_libwebp_encoder;
+diff -Naur ffmpeg-4.4.old/libavcodec/avcodec.h ffmpeg-4.4/libavcodec/avcodec.h
+--- ffmpeg-4.4.old/libavcodec/avcodec.h	2021-04-22 18:05:24.860967136 +0200
++++ ffmpeg-4.4/libavcodec/avcodec.h	2021-04-22 18:08:02.923761253 +0200
 @@ -405,6 +405,10 @@
   * Export encoder Producer Reference Time through packet side data
   */
@@ -58,10 +58,10 @@ diff -Naur ffmpeg-4.3.2.old/libavcodec/avcodec.h ffmpeg-4.3.2/libavcodec/avcodec
  /**
   * Decoding only.
   * Export the AVVideoEncParams structure through frame side data.
-diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_vp9.c ffmpeg-4.3.2/libavcodec/libsvt_vp9.c
---- ffmpeg-4.3.2.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-4.3.2/libavcodec/libsvt_vp9.c	2021-03-25 10:54:01.109413376 +0100
-@@ -0,0 +1,509 @@
+diff -Naur ffmpeg-4.4.old/libavcodec/libsvt_vp9.c ffmpeg-4.4/libavcodec/libsvt_vp9.c
+--- ffmpeg-4.4.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-4.4/libavcodec/libsvt_vp9.c	2021-04-22 18:08:02.923761253 +0200
+@@ -0,0 +1,514 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
 +*
@@ -124,6 +124,8 @@ diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_vp9.c ffmpeg-4.3.2/libavcodec/libs
 +    int rc_mode;
 +    int tune;
 +    int qp;
++
++    int target_socket;
 +
 +    int forced_idr;
 +
@@ -238,7 +240,7 @@ diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_vp9.c ffmpeg-4.3.2/libavcodec/libs
 +    param->tune                     = svt_enc->tune;
 +    param->base_layer_switch_mode   = svt_enc->base_layer_switch_mode;
 +    param->qp                       = svt_enc->qp;
-+
++    param->target_socket            = svt_enc->target_socket;
 +    param->target_bit_rate          = avctx->bit_rate;
 +    if (avctx->gop_size > 0)
 +        param->intra_period  = avctx->gop_size - 1;
@@ -527,6 +529,9 @@ diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_vp9.c ffmpeg-4.3.2/libavcodec/libs
 +    { "qp", "QP value for intra frames", OFFSET(qp),
 +      AV_OPT_TYPE_INT, { .i64 = 32 }, 0, 51, VE },
 +
++    { "socket", "Target CPU socket to use.  -1 use all available", OFFSET(target_socket),
++      AV_OPT_TYPE_INT, { .i64 = -1 }, -1, 1, VE },
++
 +    { "bl_mode", "Random Access Prediction Structure type setting", OFFSET(base_layer_switch_mode),
 +      AV_OPT_TYPE_BOOL, { .i64 = 0 }, 0, 1, VE },
 +
@@ -571,21 +576,21 @@ diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_vp9.c ffmpeg-4.3.2/libavcodec/libs
 +    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
 +    .wrapper_name   = "libsvt_vp9",
 +};
-diff -Naur ffmpeg-4.3.2.old/libavcodec/Makefile ffmpeg-4.3.2/libavcodec/Makefile
---- ffmpeg-4.3.2.old/libavcodec/Makefile	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.2/libavcodec/Makefile	2021-03-25 10:54:01.109413376 +0100
-@@ -1034,6 +1034,7 @@
+diff -Naur ffmpeg-4.4.old/libavcodec/Makefile ffmpeg-4.4/libavcodec/Makefile
+--- ffmpeg-4.4.old/libavcodec/Makefile	2021-04-22 18:05:24.820966429 +0200
++++ ffmpeg-4.4/libavcodec/Makefile	2021-04-22 18:08:02.922761235 +0200
+@@ -1066,6 +1066,7 @@
  OBJS-$(CONFIG_LIBVPX_VP8_ENCODER)         += libvpxenc.o
  OBJS-$(CONFIG_LIBVPX_VP9_DECODER)         += libvpxdec.o libvpx.o
  OBJS-$(CONFIG_LIBVPX_VP9_ENCODER)         += libvpxenc.o libvpx.o
 +OBJS-$(CONFIG_LIBSVT_VP9_ENCODER)         += libsvt_vp9.o
- OBJS-$(CONFIG_LIBWAVPACK_ENCODER)         += libwavpackenc.o
  OBJS-$(CONFIG_LIBWEBP_ENCODER)            += libwebpenc_common.o libwebpenc.o
  OBJS-$(CONFIG_LIBWEBP_ANIM_ENCODER)       += libwebpenc_common.o libwebpenc_animencoder.o
-diff -Naur ffmpeg-4.3.2.old/libavformat/dashenc.c ffmpeg-4.3.2/libavformat/dashenc.c
---- ffmpeg-4.3.2.old/libavformat/dashenc.c	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.2/libavformat/dashenc.c	2021-03-25 10:54:01.111413410 +0100
-@@ -2258,6 +2258,48 @@
+ OBJS-$(CONFIG_LIBX262_ENCODER)            += libx264.o
+diff -Naur ffmpeg-4.4.old/libavformat/dashenc.c ffmpeg-4.4/libavformat/dashenc.c
+--- ffmpeg-4.4.old/libavformat/dashenc.c	2021-04-22 18:05:25.002969646 +0200
++++ ffmpeg-4.4/libavformat/dashenc.c	2021-04-22 18:08:02.923761253 +0200
+@@ -2271,6 +2271,48 @@
      return ret;
  }
  
@@ -634,7 +639,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/dashenc.c ffmpeg-4.3.2/libavformat/dashe
  static int dash_write_trailer(AVFormatContext *s)
  {
      DASHContext *c = s->priv_data;
-@@ -2305,6 +2347,11 @@
+@@ -2318,6 +2360,11 @@
      DASHContext *c = s->priv_data;
      OutputStream *os = &c->streams[avpkt->stream_index];
      AVFormatContext *oc = os->ctx;
@@ -646,7 +651,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/dashenc.c ffmpeg-4.3.2/libavformat/dashe
      if (oc->oformat->check_bitstream) {
          int ret;
          AVPacket pkt = *avpkt;
-@@ -2390,7 +2437,7 @@
+@@ -2405,7 +2452,7 @@
      .flags          = AVFMT_GLOBALHEADER | AVFMT_NOFILE | AVFMT_TS_NEGATIVE,
      .init           = dash_init,
      .write_header   = dash_write_header,
@@ -655,9 +660,9 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/dashenc.c ffmpeg-4.3.2/libavformat/dashe
      .write_trailer  = dash_write_trailer,
      .deinit         = dash_free,
      .check_bitstream = dash_check_bitstream,
-diff -Naur ffmpeg-4.3.2.old/libavformat/ivfenc.c ffmpeg-4.3.2/libavformat/ivfenc.c
---- ffmpeg-4.3.2.old/libavformat/ivfenc.c	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.2/libavformat/ivfenc.c	2021-03-25 10:54:01.112413426 +0100
+diff -Naur ffmpeg-4.4.old/libavformat/ivfenc.c ffmpeg-4.4/libavformat/ivfenc.c
+--- ffmpeg-4.4.old/libavformat/ivfenc.c	2021-04-22 18:05:24.984969328 +0200
++++ ffmpeg-4.4/libavformat/ivfenc.c	2021-04-22 18:08:02.924761270 +0200
 @@ -81,9 +81,33 @@
      AVIOContext *pb = s->pb;
      IVFEncContext *ctx = s->priv_data;
@@ -694,10 +699,10 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/ivfenc.c ffmpeg-4.3.2/libavformat/ivfenc
 +
      if (ctx->frame_cnt)
          ctx->sum_delta_pts += pkt->pts - ctx->last_pts;
-     ctx->frame_cnt++;
-diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/matroskaenc.c
---- ffmpeg-4.3.2.old/libavformat/matroskaenc.c	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.2/libavformat/matroskaenc.c	2021-03-25 10:54:01.113413443 +0100
+     ctx->last_pkt_duration = pkt->duration;
+diff -Naur ffmpeg-4.4.old/libavformat/matroskaenc.c ffmpeg-4.4/libavformat/matroskaenc.c
+--- ffmpeg-4.4.old/libavformat/matroskaenc.c	2021-04-22 18:05:25.008969752 +0200
++++ ffmpeg-4.4/libavformat/matroskaenc.c	2021-04-22 18:08:02.924761270 +0200
 @@ -142,6 +142,9 @@
      unsigned            nb_attachments;
      int                 have_video;
@@ -708,7 +713,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
      int                 wrote_chapters;
      int                 wrote_tags;
  
-@@ -2082,7 +2085,13 @@
+@@ -2107,7 +2110,13 @@
      put_ebml_id(pb, blockid);
      put_ebml_length(pb, size + track->track_num_size + 3, 0);
      put_ebml_num(pb, track_number, track->track_num_size);
@@ -723,7 +728,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
      avio_w8(pb, (blockid == MATROSKA_ID_SIMPLEBLOCK && keyframe) ? (1 << 7) : 0);
      avio_write(pb, data + offset, size);
      if (data != pkt->data)
-@@ -2268,7 +2277,7 @@
+@@ -2293,7 +2302,7 @@
      return 0;
  }
  
@@ -732,7 +737,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
  {
      MatroskaMuxContext *mkv = s->priv_data;
      AVIOContext *pb;
-@@ -2279,6 +2288,8 @@
+@@ -2304,6 +2313,8 @@
      int ret;
      int64_t ts = track->write_dts ? pkt->dts : pkt->pts;
      int64_t relative_packet_pos;
@@ -741,7 +746,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
  
      if (ts == AV_NOPTS_VALUE) {
          av_log(s, AV_LOG_ERROR, "Can't write packet with unknown timestamp\n");
-@@ -2296,6 +2307,11 @@
+@@ -2321,6 +2332,11 @@
          }
      }
  
@@ -753,7 +758,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
      if (mkv->cluster_pos == -1) {
          ret = start_ebml_master_crc32(&mkv->cluster_bc, mkv);
          if (ret < 0)
-@@ -2313,7 +2329,67 @@
+@@ -2338,7 +2354,67 @@
      relative_packet_pos = avio_tell(pb);
  
      if (par->codec_type != AVMEDIA_TYPE_SUBTITLE) {
@@ -822,7 +827,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
          if (ret < 0)
              return ret;
          if (keyframe && IS_SEEKABLE(s->pb, mkv) &&
-@@ -2377,8 +2453,14 @@
+@@ -2402,8 +2478,14 @@
      if (mkv->cluster_pos != -1) {
          if (mkv->tracks[pkt->stream_index].write_dts)
              cluster_time = pkt->dts - mkv->cluster_pts;
@@ -839,7 +844,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
          cluster_time += mkv->tracks[pkt->stream_index].ts_offset;
  
          cluster_size  = avio_tell(mkv->cluster_bc);
-@@ -2402,7 +2484,13 @@
+@@ -2427,7 +2509,13 @@
              start_new_cluster = 0;
  
          if (start_new_cluster) {
@@ -854,7 +859,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
              if (ret < 0)
                  return ret;
          }
-@@ -2739,6 +2827,10 @@
+@@ -2767,6 +2855,10 @@
      int ret = 1;
      AVStream *st = s->streams[pkt->stream_index];
  
@@ -865,10 +870,10 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/matroskaenc.c ffmpeg-4.3.2/libavformat/m
      if (st->codecpar->codec_id == AV_CODEC_ID_AAC) {
          if (pkt->size > 2 && (AV_RB16(pkt->data) & 0xfff0) == 0xfff0)
              ret = ff_stream_add_bitstream_filter(st, "aac_adtstoasc", NULL);
-diff -Naur ffmpeg-4.3.2.old/libavformat/movenc.c ffmpeg-4.3.2/libavformat/movenc.c
---- ffmpeg-4.3.2.old/libavformat/movenc.c	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.2/libavformat/movenc.c	2021-03-25 10:54:01.117413511 +0100
-@@ -5821,7 +5821,43 @@
+diff -Naur ffmpeg-4.4.old/libavformat/movenc.c ffmpeg-4.4/libavformat/movenc.c
+--- ffmpeg-4.4.old/libavformat/movenc.c	2021-04-22 18:05:25.002969646 +0200
++++ ffmpeg-4.4/libavformat/movenc.c	2021-04-22 18:08:02.925761288 +0200
+@@ -5967,7 +5967,43 @@
          }
      }
  
@@ -913,7 +918,7 @@ diff -Naur ffmpeg-4.3.2.old/libavformat/movenc.c ffmpeg-4.3.2/libavformat/movenc
  }
  
  static int mov_write_subtitle_end_packet(AVFormatContext *s,
-@@ -6979,6 +7015,10 @@
+@@ -7154,6 +7190,10 @@
      int ret = 1;
      AVStream *st = s->streams[pkt->stream_index];
  
