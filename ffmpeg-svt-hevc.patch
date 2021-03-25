@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
---- ffmpeg-4.3.1.old/configure	2020-11-28 15:18:59.807180827 +0100
-+++ ffmpeg-4.3.1/configure	2020-11-28 15:19:12.611411397 +0100
+diff -Naur ffmpeg-4.3.2.old/configure ffmpeg-4.3.2/configure
+--- ffmpeg-4.3.2.old/configure	2021-03-25 10:56:57.705383254 +0100
++++ ffmpeg-4.3.2/configure	2021-03-25 10:57:06.820536549 +0100
 @@ -286,6 +286,7 @@
    --enable-libwebp         enable WebP encoding via libwebp [no]
    --enable-libx264         enable H.264 encoding via x264 [no]
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-4.3.1.old/configure ffmpeg-4.3.1/configure
  enabled openal            && { { for al_extralibs in "${OPENAL_LIBS}" "-lopenal" "-lOpenAL32"; do
                                 check_lib openal 'AL/al.h' alGetError "${al_extralibs}" && break; done } ||
                                 die "ERROR: openal not found"; } &&
-diff -Naur ffmpeg-4.3.1.old/doc/encoders.texi ffmpeg-4.3.1/doc/encoders.texi
---- ffmpeg-4.3.1.old/doc/encoders.texi	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.1/doc/encoders.texi	2020-11-28 15:19:22.749593959 +0100
+diff -Naur ffmpeg-4.3.2.old/doc/encoders.texi ffmpeg-4.3.2/doc/encoders.texi
+--- ffmpeg-4.3.2.old/doc/encoders.texi	2021-03-25 10:56:57.628381959 +0100
++++ ffmpeg-4.3.2/doc/encoders.texi	2021-03-25 10:57:06.872537423 +0100
 @@ -1688,6 +1688,155 @@
  Allow skipping frames to hit the target bitrate if set to 1.
  @end table
@@ -192,9 +192,9 @@ diff -Naur ffmpeg-4.3.1.old/doc/encoders.texi ffmpeg-4.3.1/doc/encoders.texi
  @section libtheora
  
  libtheora Theora encoder wrapper.
-diff -Naur ffmpeg-4.3.1.old/doc/general.texi ffmpeg-4.3.1/doc/general.texi
---- ffmpeg-4.3.1.old/doc/general.texi	2020-07-11 12:39:30.000000000 +0200
-+++ ffmpeg-4.3.1/doc/general.texi	2020-11-28 15:19:22.755594067 +0100
+diff -Naur ffmpeg-4.3.2.old/doc/general.texi ffmpeg-4.3.2/doc/general.texi
+--- ffmpeg-4.3.2.old/doc/general.texi	2021-03-25 10:56:57.630381992 +0100
++++ ffmpeg-4.3.2/doc/general.texi	2021-03-25 10:57:06.872537423 +0100
 @@ -263,6 +263,14 @@
  the C library. To enable using rav1e in FFmpeg, pass @code{--enable-librav1e}
  to @file{./configure}.
@@ -210,10 +210,10 @@ diff -Naur ffmpeg-4.3.1.old/doc/general.texi ffmpeg-4.3.1/doc/general.texi
  @section TwoLAME
  
  FFmpeg can make use of the TwoLAME library for MP2 encoding.
-diff -Naur ffmpeg-4.3.1.old/libavcodec/allcodecs.c ffmpeg-4.3.1/libavcodec/allcodecs.c
---- ffmpeg-4.3.1.old/libavcodec/allcodecs.c	2020-11-28 15:18:59.890182321 +0100
-+++ ffmpeg-4.3.1/libavcodec/allcodecs.c	2020-11-28 15:19:12.625411649 +0100
-@@ -746,6 +746,7 @@
+diff -Naur ffmpeg-4.3.2.old/libavcodec/allcodecs.c ffmpeg-4.3.2/libavcodec/allcodecs.c
+--- ffmpeg-4.3.2.old/libavcodec/allcodecs.c	2021-03-25 10:56:57.574381051 +0100
++++ ffmpeg-4.3.2/libavcodec/allcodecs.c	2021-03-25 10:57:06.873537440 +0100
+@@ -743,6 +743,7 @@
  extern AVCodec ff_libx264_encoder;
  extern AVCodec ff_libx264rgb_encoder;
  extern AVCodec ff_libx265_encoder;
@@ -221,9 +221,9 @@ diff -Naur ffmpeg-4.3.1.old/libavcodec/allcodecs.c ffmpeg-4.3.1/libavcodec/allco
  extern AVCodec ff_libxavs_encoder;
  extern AVCodec ff_libxavs2_encoder;
  extern AVCodec ff_libxvid_encoder;
-diff -Naur ffmpeg-4.3.1.old/libavcodec/libsvt_hevc.c ffmpeg-4.3.1/libavcodec/libsvt_hevc.c
---- ffmpeg-4.3.1.old/libavcodec/libsvt_hevc.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-4.3.1/libavcodec/libsvt_hevc.c	2020-11-28 15:19:12.626411667 +0100
+diff -Naur ffmpeg-4.3.2.old/libavcodec/libsvt_hevc.c ffmpeg-4.3.2/libavcodec/libsvt_hevc.c
+--- ffmpeg-4.3.2.old/libavcodec/libsvt_hevc.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-4.3.2/libavcodec/libsvt_hevc.c	2021-03-25 10:57:06.876537491 +0100
 @@ -0,0 +1,578 @@
 +/*
 +* Scalable Video Technology for HEVC encoder library plugin
@@ -803,9 +803,9 @@ diff -Naur ffmpeg-4.3.1.old/libavcodec/libsvt_hevc.c ffmpeg-4.3.1/libavcodec/lib
 +    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
 +    .wrapper_name   = "libsvt_hevc",
 +};
-diff -Naur ffmpeg-4.3.1.old/libavcodec/Makefile ffmpeg-4.3.1/libavcodec/Makefile
---- ffmpeg-4.3.1.old/libavcodec/Makefile	2020-11-28 15:18:59.931183060 +0100
-+++ ffmpeg-4.3.1/libavcodec/Makefile	2020-11-28 15:19:12.625411649 +0100
+diff -Naur ffmpeg-4.3.2.old/libavcodec/Makefile ffmpeg-4.3.2/libavcodec/Makefile
+--- ffmpeg-4.3.2.old/libavcodec/Makefile	2021-03-25 10:56:57.575381068 +0100
++++ ffmpeg-4.3.2/libavcodec/Makefile	2021-03-25 10:57:06.876537491 +0100
 @@ -1041,6 +1041,7 @@
  OBJS-$(CONFIG_LIBX262_ENCODER)            += libx264.o
  OBJS-$(CONFIG_LIBX264_ENCODER)            += libx264.o
