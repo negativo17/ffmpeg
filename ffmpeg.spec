@@ -54,7 +54,9 @@ BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
+%ifarch i686 x86_64 armv7hl
 BuildRequires:  libndi-devel
+%endif
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
@@ -245,7 +247,9 @@ cp %{SOURCE1} .
     --enable-liblensfun \
     --enable-libmodplug \
     --enable-libmp3lame \
+%ifarch i686 x86_64 armv7hl
     --enable-libndi_newtek \
+%endif
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
