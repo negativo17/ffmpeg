@@ -136,7 +136,7 @@ BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 1.5.2
 BuildRequires:  pkgconfig(SvtAv1Enc)
-BuildRequires:  pkgconfig(SvtHevcEnc)
+BuildRequires:  pkgconfig(SvtHevcEnc) >= 1.5.1
 BuildRequires:  pkgconfig(SvtVp9Enc)
 %endif
 
@@ -380,6 +380,7 @@ mv doc/*.html doc/html
 %changelog
 * Fri Jul 23 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4-1
 - Update to 4.4, review libraries and options.
+- Update external patches.
 - Switch from GnuTLS to OpenSSL.
 - Trim changelog.
 
