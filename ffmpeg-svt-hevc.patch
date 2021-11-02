@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
---- ffmpeg-4.4.old/configure	2021-04-22 18:08:55.578692048 +0200
-+++ ffmpeg-4.4/configure	2021-04-22 18:14:10.921242147 +0200
+diff -Naur ffmpeg-4.4.1.old/configure ffmpeg-4.4.1/configure
+--- ffmpeg-4.4.1.old/configure	2021-11-02 14:13:08.523076753 +0100
++++ ffmpeg-4.4.1/configure	2021-11-02 14:13:19.612264237 +0100
 @@ -290,6 +290,7 @@
    --enable-libwebp         enable WebP encoding via libwebp [no]
    --enable-libx264         enable H.264 encoding via x264 [no]
@@ -17,7 +17,7 @@ diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
      libaom
      libass
      libbluray
-@@ -3294,6 +3296,7 @@
+@@ -3295,6 +3297,7 @@
  libx264rgb_encoder_deps="libx264 x264_csp_bgr"
  libx264rgb_encoder_select="libx264_encoder"
  libx265_encoder_deps="libx265"
@@ -25,7 +25,7 @@ diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
  libxavs_encoder_deps="libxavs"
  libxavs2_encoder_deps="libxavs2"
  libxvid_encoder_deps="libxvid"
-@@ -6502,6 +6505,7 @@
+@@ -6503,6 +6506,7 @@
                                   check_lib mmal interface/mmal/mmal.h mmal_port_connect -lmmal_core -lmmal_util -lmmal_vc_client -lbcm_host; } ||
                                 die "ERROR: mmal not found" &&
                                 check_func_headers interface/mmal/mmal.h "MMAL_PARAMETER_VIDEO_MAX_NUM_CALLBACKS"; }
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
  enabled openal            && { { for al_extralibs in "${OPENAL_LIBS}" "-lopenal" "-lOpenAL32"; do
                                 check_lib openal 'AL/al.h' alGetError "${al_extralibs}" && break; done } ||
                                 die "ERROR: openal not found"; } &&
-diff -Naur ffmpeg-4.4.old/doc/encoders.texi ffmpeg-4.4/doc/encoders.texi
---- ffmpeg-4.4.old/doc/encoders.texi	2021-04-22 18:05:25.013969841 +0200
-+++ ffmpeg-4.4/doc/encoders.texi	2021-04-22 18:12:13.133170665 +0200
+diff -Naur ffmpeg-4.4.1.old/doc/encoders.texi ffmpeg-4.4.1/doc/encoders.texi
+--- ffmpeg-4.4.1.old/doc/encoders.texi	2021-10-24 22:47:07.000000000 +0200
++++ ffmpeg-4.4.1/doc/encoders.texi	2021-11-02 14:13:19.613264254 +0100
 @@ -1884,6 +1884,158 @@
  Allow skipping frames to hit the target bitrate if set to 1.
  @end table
@@ -195,9 +195,9 @@ diff -Naur ffmpeg-4.4.old/doc/encoders.texi ffmpeg-4.4/doc/encoders.texi
  @section libtheora
  
  libtheora Theora encoder wrapper.
-diff -Naur ffmpeg-4.4.old/doc/general_contents.texi ffmpeg-4.4/doc/general_contents.texi
---- ffmpeg-4.4.old/doc/general_contents.texi	2021-04-22 18:05:25.015969876 +0200
-+++ ffmpeg-4.4/doc/general_contents.texi	2021-04-22 18:13:31.693552269 +0200
+diff -Naur ffmpeg-4.4.1.old/doc/general_contents.texi ffmpeg-4.4.1/doc/general_contents.texi
+--- ffmpeg-4.4.1.old/doc/general_contents.texi	2021-10-24 22:47:07.000000000 +0200
++++ ffmpeg-4.4.1/doc/general_contents.texi	2021-11-02 14:13:19.656264980 +0100
 @@ -267,6 +267,14 @@
  for installing the library. Then pass @code{--enable-libsvtav1} to configure to
  enable it.
@@ -213,9 +213,9 @@ diff -Naur ffmpeg-4.4.old/doc/general_contents.texi ffmpeg-4.4/doc/general_conte
  @section TwoLAME
  
  FFmpeg can make use of the TwoLAME library for MP2 encoding.
-diff -Naur ffmpeg-4.4.old/libavcodec/allcodecs.c ffmpeg-4.4/libavcodec/allcodecs.c
---- ffmpeg-4.4.old/libavcodec/allcodecs.c	2021-04-22 18:08:55.633693020 +0200
-+++ ffmpeg-4.4/libavcodec/allcodecs.c	2021-04-22 18:14:10.921242147 +0200
+diff -Naur ffmpeg-4.4.1.old/libavcodec/allcodecs.c ffmpeg-4.4.1/libavcodec/allcodecs.c
+--- ffmpeg-4.4.1.old/libavcodec/allcodecs.c	2021-11-02 14:13:08.567077497 +0100
++++ ffmpeg-4.4.1/libavcodec/allcodecs.c	2021-11-02 14:13:19.657264997 +0100
 @@ -766,6 +766,7 @@
  extern AVCodec ff_libx264_encoder;
  extern AVCodec ff_libx264rgb_encoder;
@@ -224,9 +224,9 @@ diff -Naur ffmpeg-4.4.old/libavcodec/allcodecs.c ffmpeg-4.4/libavcodec/allcodecs
  extern AVCodec ff_libxavs_encoder;
  extern AVCodec ff_libxavs2_encoder;
  extern AVCodec ff_libxvid_encoder;
-diff -Naur ffmpeg-4.4.old/libavcodec/libsvt_hevc.c ffmpeg-4.4/libavcodec/libsvt_hevc.c
---- ffmpeg-4.4.old/libavcodec/libsvt_hevc.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-4.4/libavcodec/libsvt_hevc.c	2021-04-22 18:14:10.922242165 +0200
+diff -Naur ffmpeg-4.4.1.old/libavcodec/libsvt_hevc.c ffmpeg-4.4.1/libavcodec/libsvt_hevc.c
+--- ffmpeg-4.4.1.old/libavcodec/libsvt_hevc.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-4.4.1/libavcodec/libsvt_hevc.c	2021-11-02 14:13:19.657264997 +0100
 @@ -0,0 +1,583 @@
 +/*
 +* Scalable Video Technology for HEVC encoder library plugin
@@ -811,9 +811,9 @@ diff -Naur ffmpeg-4.4.old/libavcodec/libsvt_hevc.c ffmpeg-4.4/libavcodec/libsvt_
 +    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
 +    .wrapper_name   = "libsvt_hevc",
 +};
-diff -Naur ffmpeg-4.4.old/libavcodec/Makefile ffmpeg-4.4/libavcodec/Makefile
---- ffmpeg-4.4.old/libavcodec/Makefile	2021-04-22 18:08:55.634693038 +0200
-+++ ffmpeg-4.4/libavcodec/Makefile	2021-04-22 18:14:10.921242147 +0200
+diff -Naur ffmpeg-4.4.1.old/libavcodec/Makefile ffmpeg-4.4.1/libavcodec/Makefile
+--- ffmpeg-4.4.1.old/libavcodec/Makefile	2021-11-02 14:13:08.569077531 +0100
++++ ffmpeg-4.4.1/libavcodec/Makefile	2021-11-02 14:13:19.658265014 +0100
 @@ -1072,6 +1072,7 @@
  OBJS-$(CONFIG_LIBX262_ENCODER)            += libx264.o
  OBJS-$(CONFIG_LIBX264_ENCODER)            += libx264.o

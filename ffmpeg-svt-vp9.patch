@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
---- ffmpeg-4.4.old/configure	2021-07-24 09:55:22.079885357 +0200
-+++ ffmpeg-4.4/configure	2021-07-24 09:58:58.180685626 +0200
+diff -Naur ffmpeg-4.4.1.old/configure ffmpeg-4.4.1/configure
+--- ffmpeg-4.4.1.old/configure	2021-10-24 22:47:11.000000000 +0200
++++ ffmpeg-4.4.1/configure	2021-11-02 14:11:48.182718444 +0100
 @@ -286,6 +286,7 @@
    --enable-libvorbis       enable Vorbis en/decoding via libvorbis,
                             native implementation exists [no]
@@ -17,7 +17,7 @@ diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
      libsnappy
      libsoxr
      libspeex
-@@ -3283,6 +3285,7 @@
+@@ -3284,6 +3286,7 @@
  libvpx_vp8_encoder_deps="libvpx"
  libvpx_vp9_decoder_deps="libvpx"
  libvpx_vp9_encoder_deps="libvpx"
@@ -25,7 +25,7 @@ diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
  libwebp_encoder_deps="libwebp"
  libwebp_anim_encoder_deps="libwebp"
  libx262_encoder_deps="libx262"
-@@ -6467,6 +6470,7 @@
+@@ -6468,6 +6471,7 @@
      fi
  }
  
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-4.4.old/configure ffmpeg-4.4/configure
  enabled libwebp           && {
      enabled libwebp_encoder      && require_pkg_config libwebp "libwebp >= 0.2.0" webp/encode.h WebPGetEncoderVersion
      enabled libwebp_anim_encoder && check_pkg_config libwebp_anim_encoder "libwebpmux >= 0.4.0" webp/mux.h WebPAnimEncoderOptionsInit; }
-diff -Naur ffmpeg-4.4.old/libavcodec/allcodecs.c ffmpeg-4.4/libavcodec/allcodecs.c
---- ffmpeg-4.4.old/libavcodec/allcodecs.c	2021-07-24 09:55:22.150886605 +0200
-+++ ffmpeg-4.4/libavcodec/allcodecs.c	2021-07-24 09:58:58.180685626 +0200
+diff -Naur ffmpeg-4.4.1.old/libavcodec/allcodecs.c ffmpeg-4.4.1/libavcodec/allcodecs.c
+--- ffmpeg-4.4.1.old/libavcodec/allcodecs.c	2021-10-24 22:47:07.000000000 +0200
++++ ffmpeg-4.4.1/libavcodec/allcodecs.c	2021-11-02 14:11:48.184718478 +0100
 @@ -758,6 +758,7 @@
  extern AVCodec ff_libvpx_vp8_decoder;
  extern AVCodec ff_libvpx_vp9_encoder;
@@ -44,9 +44,9 @@ diff -Naur ffmpeg-4.4.old/libavcodec/allcodecs.c ffmpeg-4.4/libavcodec/allcodecs
  /* preferred over libwebp */
  extern AVCodec ff_libwebp_anim_encoder;
  extern AVCodec ff_libwebp_encoder;
-diff -Naur ffmpeg-4.4.old/libavcodec/libsvt_vp9.c ffmpeg-4.4/libavcodec/libsvt_vp9.c
---- ffmpeg-4.4.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-4.4/libavcodec/libsvt_vp9.c	2021-07-24 09:58:58.181685643 +0200
+diff -Naur ffmpeg-4.4.1.old/libavcodec/libsvt_vp9.c ffmpeg-4.4.1/libavcodec/libsvt_vp9.c
+--- ffmpeg-4.4.1.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-4.4.1/libavcodec/libsvt_vp9.c	2021-11-02 14:11:48.185718495 +0100
 @@ -0,0 +1,705 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
@@ -753,9 +753,9 @@ diff -Naur ffmpeg-4.4.old/libavcodec/libsvt_vp9.c ffmpeg-4.4/libavcodec/libsvt_v
 +    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
 +    .wrapper_name   = "libsvt_vp9",
 +};
-diff -Naur ffmpeg-4.4.old/libavcodec/Makefile ffmpeg-4.4/libavcodec/Makefile
---- ffmpeg-4.4.old/libavcodec/Makefile	2021-07-24 09:55:22.097885673 +0200
-+++ ffmpeg-4.4/libavcodec/Makefile	2021-07-24 09:58:58.180685626 +0200
+diff -Naur ffmpeg-4.4.1.old/libavcodec/Makefile ffmpeg-4.4.1/libavcodec/Makefile
+--- ffmpeg-4.4.1.old/libavcodec/Makefile	2021-10-24 22:47:07.000000000 +0200
++++ ffmpeg-4.4.1/libavcodec/Makefile	2021-11-02 14:11:48.186718511 +0100
 @@ -1066,6 +1066,7 @@
  OBJS-$(CONFIG_LIBVPX_VP8_ENCODER)         += libvpxenc.o
  OBJS-$(CONFIG_LIBVPX_VP9_DECODER)         += libvpxdec.o libvpx.o
