@@ -10,12 +10,13 @@ Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
+Patch0:         https://aur.archlinux.org/cgit/aur.git/plain/015-ffmpeg-cuda11-fix.patch?h=ffmpeg-full#/%{name}-cuda11.patch
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
-Patch0:         %{name}-svt-vp9.patch
+Patch1:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
-Patch1:         %{name}-svt-hevc.patch
+Patch2:         %{name}-svt-hevc.patch
 # https://framagit.org/tytan652/ffmpeg-ndi-patch
-Patch2:         %{name}-ndi.patch
+Patch3:         %{name}-ndi.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
@@ -131,7 +132,9 @@ BuildRequires:  pkgconfig(vulkan) >= 1.1.97
 
 %ifarch x86_64
 # Nvidia CUVID support and Performance Primitives based code
-BuildRequires:  cuda-devel
+BuildRequires:  cuda-cudart-devel
+BuildRequires:  cuda-nvcc
+BuildRequires:  libnpp-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 1.5.2
@@ -306,6 +309,7 @@ This package contains development files for %{name}.
 %endif
 %ifarch x86_64
     --enable-cuda \
+    --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
     --enable-libmfx \
@@ -388,6 +392,7 @@ mv doc/*.html doc/html
 %changelog
 * Sun Feb 06 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-2
 - Stop putting headers under a subfolder.
+- Reorganize CUDA build.
 
 * Tue Nov 02 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-1
 - Update to 4.4.1.
