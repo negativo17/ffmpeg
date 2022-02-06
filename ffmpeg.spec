@@ -3,7 +3,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -285,7 +285,7 @@ This package contains development files for %{name}.
     --enable-vdpau \
     --enable-xlib \
     --enable-zlib \
-    --incdir=%{_includedir}/%{name} \
+    --incdir=%{_includedir} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
     --optflags="%{optflags}" \
@@ -373,11 +373,22 @@ mv doc/*.html doc/html
 %files devel
 %doc doc/APIchanges doc/*.txt
 %doc doc/html doc/examples
-%{_includedir}/%{name}
+%{_includedir}/libavcodec
+%{_includedir}/libavdevice
+%{_includedir}/libavfilter
+%{_includedir}/libavformat
+%{_includedir}/libavresample
+%{_includedir}/libavutil
+%{_includedir}/libpostproc
+%{_includedir}/libswresample
+%{_includedir}/libswscale
 %{_libdir}/pkgconfig/lib*.pc
 %{_libdir}/lib*.so
 
 %changelog
+* Sun Feb 06 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-2
+- Stop putting headers under a subfolder.
+
 * Tue Nov 02 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-1
 - Update to 4.4.1.
 
