@@ -3,7 +3,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.4.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -38,9 +38,7 @@ BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
-%ifarch i686 x86_64 armv7hl
 BuildRequires:  libndi-devel
-%endif
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libvorbis-devel
@@ -235,9 +233,7 @@ This package contains development files for %{name}.
     --enable-libkvazaar \
     --enable-libmodplug \
     --enable-libmp3lame \
-%ifarch i686 x86_64 armv7hl
     --enable-libndi_newtek \
-%endif
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -392,6 +388,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Mon Mar 14 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-4
+- Enable NDI support also for aarch64.
+
 * Thu Feb 10 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-3
 - Enable Advanced Media Framework support (Mesa/PRO AMD encoding).
 
