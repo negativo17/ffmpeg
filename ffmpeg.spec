@@ -3,7 +3,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.4.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -20,6 +20,7 @@ Patch3:         %{name}-ndi.patch
 
 Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
 
+BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 11.5
@@ -194,6 +195,7 @@ This package contains development files for %{name}.
     --disable-debug \
     --disable-static \
     --disable-stripping \
+    --enable-amf \
     --enable-avcodec \
     --enable-avdevice \
     --enable-avfilter \
@@ -390,6 +392,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Thu Feb 10 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-3
+- Enable Advanced Media Framework support (Mesa/PRO AMD encoding).
+
 * Sun Feb 06 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-2
 - Stop putting headers under a subfolder.
 - Reorganize CUDA build.
