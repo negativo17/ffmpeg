@@ -3,7 +3,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.4.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -102,6 +102,7 @@ BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
+BuildRequires:  pkgconfig(uavs3d) >= 1.1.41
 BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
 BuildRequires:  pkgconfig(xavs2) >= 1.2.77
@@ -388,6 +389,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-5
+- Enable AVS3 decoder.
+
 * Mon Mar 14 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-4
 - Enable NDI support also for aarch64.
 
