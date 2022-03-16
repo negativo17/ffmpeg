@@ -3,7 +3,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        4.4.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -254,6 +254,7 @@ This package contains development files for %{name}.
     --enable-libtesseract \
     --enable-libtheora \
     --enable-libtwolame \
+    --enable-libuavs3d \
     --enable-libv4l2 \
     --enable-libvidstab \
     --enable-libvo-amrwbenc \
@@ -389,6 +390,9 @@ mv doc/*.html doc/html
 %{_libdir}/lib*.so
 
 %changelog
+* Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-6
+- Enable AVS3 decoder for real.
+
 * Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-5
 - Enable AVS3 decoder.
 
