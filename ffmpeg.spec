@@ -1,26 +1,25 @@
 %global _lto_cflags %{nil}
 
-%global avcodec_soversion 58
-%global avdevice_soversion 58
-%global avfilter_soversion 7
-%global avformat_soversion 58
-%global avresample_soversion 4
-%global avutil_soversion 56
-%global postproc_soversion 55
-%global swresample_soversion 3
-%global swscale_soversion 5
+%global avcodec_soversion 59
+%global avdevice_soversion 59
+%global avfilter_soversion 8
+%global avformat_soversion 59
+%global avutil_soversion 57
+%global postproc_soversion 56
+%global swresample_soversion 4
+%global swscale_soversion 6
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        4.4.1
-Release:        7%{?dist}
+Version:        5.0
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
-Patch0:         https://aur.archlinux.org/cgit/aur.git/plain/015-ffmpeg-cuda11-fix.patch?h=ffmpeg-full#/%{name}-cuda11.patch
+Patch0:         %{name}-cuda11.patch
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch1:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
@@ -33,34 +32,23 @@ BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 11.5
 BuildRequires:  doxygen
-BuildRequires:  freetype-devel
 BuildRequires:  frei0r-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  ladspa-devel
 BuildRequires:  libavc1394-devel
-BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libchromaprint-devel
-BuildRequires:  libdav1d-devel
-BuildRequires:  libdrm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
 BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
-BuildRequires:  libvorbis-devel
-BuildRequires:  librsvg2-devel
-BuildRequires:  libxcb-devel >= 1.4
-BuildRequires:  libxml2-devel
-BuildRequires:  libX11-devel
-BuildRequires:  libXv-devel
 BuildRequires:  libXvMC-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nasm
 BuildRequires:  ocl-icd-devel
 BuildRequires:  openal-soft-devel
-BuildRequires:  opencl-headers
 BuildRequires:  opencore-amr-devel
 BuildRequires:  perl(Pod::Man)
 BuildRequires:  snappy-devel
@@ -71,28 +59,35 @@ BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
 BuildRequires:  xvidcore-devel
 BuildRequires:  xz-devel
-BuildRequires:  zvbi-devel >= 0.2.28
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(aom) >= 1.0.0
+#BuildRequires:  pkgconfig(aribb24) >= 1.0.3
 BuildRequires:  pkgconfig(caca)
-BuildRequires:  pkgconfig(davs2) >= 1.5.115
+BuildRequires:  pkgconfig(dav1d) >= 0.5.0
+BuildRequires:  pkgconfig(davs2) >= 1.6.0
 BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(fontconfig)
+BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 #BuildRequires:  pkgconfig(lensfun) >= 0.3.95
-BuildRequires:  pkgconfig(libass)
+BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
+BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdc1394-2)
+BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libgme)
 BuildRequires:  pkgconfig(libmodplug)
+#BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
+#BuildRequires:  pkgconfig(librist) >= 0.2
+BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
@@ -100,34 +95,49 @@ BuildRequires:  pkgconfig(libva) >= 0.35.0
 BuildRequires:  pkgconfig(libva-drm)
 BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  pkgconfig(libv4l2)
-BuildRequires:  pkgconfig(libwebp) >= 0.4.0
+BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
+BuildRequires:  pkgconfig(libxml-2.0)
+#BuildRequires:  pkgconfig(OpenCL)
+BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
+#BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(uavs3d) >= 1.1.41
 BuildRequires:  pkgconfig(vidstab) >= 0.98
+BuildRequires:  pkgconfig(vorbis)
+BuildRequires:  pkgconfig(vorbisenc)
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
-BuildRequires:  pkgconfig(xavs2) >= 1.2.77
+BuildRequires:  pkgconfig(xavs2) >= 1.3.0
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
 BuildRequires:  pkgconfig(xcb-shm)
 BuildRequires:  pkgconfig(xcb-xfixes)
-BuildRequires:  pkgconfig(x264) >= 0.118
-BuildRequires:  pkgconfig(x265) >= 0.68
+BuildRequires:  pkgconfig(xext)
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(x264)
+BuildRequires:  pkgconfig(x265)
+BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
+BuildRequires:  pkgconfig(zvbi-0.2)
+
+%if 0%{?fedora} >= 36
+BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
+%endif
 
 %if 0%{?fedora}
 BuildRequires:  glslang-devel
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
 BuildRequires:  pkgconfig(pocketsphinx)
+BuildRequires:  pkgconfig(shaderc) >= 2019.1
 BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 %endif
 
@@ -135,7 +145,7 @@ BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 BuildRequires:  pkgconfig(srt) >= 1.3.0
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
-BuildRequires:  pkgconfig(vulkan) >= 1.1.97
+BuildRequires:  pkgconfig(vulkan) >= 1.2.189
 %endif
 
 %ifarch x86_64
@@ -143,13 +153,16 @@ BuildRequires:  pkgconfig(vulkan) >= 1.1.97
 BuildRequires:  cuda-cudart-devel
 BuildRequires:  cuda-nvcc
 BuildRequires:  libnpp-devel
-BuildRequires:  pkgconfig(ffnvcodec) >= 8.1.24.2
+BuildRequires:  pkgconfig(ffnvcodec) >= 9.1.23.1
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 1.5.2
-BuildRequires:  pkgconfig(SvtAv1Enc)
-BuildRequires:  pkgconfig(SvtHevcEnc) >= 1.5.1
+BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.8.4
+BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
 %endif
+
+Obsoletes:      %{name}-free < %{epoch}:%{version}-%{release}
+Provides:       %{name}-free = %{epoch}:%{version}-%{release}
 
 %description
 FFmpeg is a complete and free Internet live audio and video
@@ -169,8 +182,8 @@ This package contains the libraries for %{name}.
 
 %package        devel
 Summary:        Development package for %{name}
-Requires:       %{name}-libs%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavdevice%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavdevice%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description    devel
@@ -188,8 +201,8 @@ and several bitstream filters.
 
 %package     -n libavcodec-devel
 Summary:        Development files for FFmpeg's codec library
-Requires:       libavcodec%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavcodec%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description -n libavcodec-devel
@@ -209,11 +222,11 @@ devices, audio capture and playback etc.
 
 %package     -n libavdevice-devel
 Summary:        Development files for FFMpeg devices muxing/demuxing library
-Requires:       libavcodec-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavdevice%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavfilter-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavformat-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavcodec-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavdevice%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavfilter-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavformat-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description -n libavdevice-devel
@@ -221,12 +234,12 @@ This subpackage contains the headers for FFmpeg libavdevice.
 
 %package     -n libavfilter
 Summary:        FFmpeg audio and video filtering library
-Requires:       libavcodec%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavformat%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavutil%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libpostproc%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswresample%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswscale%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavcodec%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavformat%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description -n libavfilter
 The libavfilter library provides a generic audio/video filtering framework
@@ -234,13 +247,13 @@ containing several filters, sources and sinks.
 
 %package     -n libavfilter-devel
 Summary:        Development files for FFmpeg's audio/video filter library
-Requires:       libavcodec-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavfilter%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavformat-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libpostproc-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswresample-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswscale-devel%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavcodec-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavfilter%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavformat-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libpostproc-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswscale-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description -n libavfilter-devel
@@ -256,30 +269,14 @@ It encompasses multiple muxers and demuxers for multimedia container formats.
 
 %package     -n libavformat-devel
 Summary:        Development files for FFmpeg's stream format library
-Requires:       libavcodec-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavformat%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswresample-devel%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavcodec-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavformat%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description -n libavformat-devel
 This subpackage contains the headers for FFmpeg libavformat.
-
-%package     -n libavresample
-Summary:        FFmpeg's stream format library
-
-%description -n libavresample
-Libavresample (lavr) is a library that handles audio resampling, sample format
-conversion and mixing.
-
-%package     -n libavresample-devel
-Summary:        Development files for FFmpeg's stream format library
-Requires:       libavresample%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       pkgconfig
-
-%description -n libavresample-devel
-This subpackage contains the headers for FFmpeg libavresample.
 
 %package     -n libavutil
 Summary:        FFmpeg's utility library
@@ -293,7 +290,7 @@ for pixel and sample formats).
 
 %package     -n libavutil-devel
 Summary:        Development files for FFmpeg's utility library
-Requires:       libavutil%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description -n libavutil-devel
@@ -309,8 +306,8 @@ correction, linear/cubic interpolating deinterlacing.
 
 %package     -n libpostproc-devel
 Summary:        Development files for the FFmpeg post-processing library
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libpostproc%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description -n libpostproc-devel
@@ -318,7 +315,9 @@ This subpackage contains the headers for FFmpeg libpostproc.
 
 %package     -n libswresample
 Summary:        FFmpeg software resampling library
-Requires:       libavutil%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes:      libavresemple < %{epoch}:%{version}-%{release}
+Provides:       libavresemple = %{epoch}:%{version}-%{release}
 
 %description -n libswresample
 The libswresample library performs audio conversion between different
@@ -326,8 +325,10 @@ sample rates, channel layout and channel formats.
 
 %package     -n libswresample-devel
 Summary:        Development files for the FFmpeg software resampling library
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswresample%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes:      libavresemple-devel < %{epoch}:%{version}-%{release}
+Provides:       libavresemple-devel = %{epoch}:%{version}-%{release}
 
 %description -n libswresample-devel
 This subpackage contains the headers for FFmpeg libswresample.
@@ -341,8 +342,8 @@ pixel format conversion operations.
 
 %package     -n libswscale-devel
 Summary:        Development files for FFmpeg's image scaling and colorspace library
-Requires:       libavutil-devel%{?_isa} = %{?epoch}:%{version}-%{release}
-Requires:       libswscale%{?_isa} = %{?epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description -n libswscale-devel
 This subpackage contains the headers for FFmpeg libswscale.
@@ -366,7 +367,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-avdevice \
     --enable-avfilter \
     --enable-avformat \
-    --enable-avresample \
     --enable-alsa \
     --enable-bzlib \
     --enable-chromaprint \
@@ -523,7 +523,6 @@ mv doc/*.html doc/html
 %ldconfig_scriptlets -n libavdevice
 %ldconfig_scriptlets -n libavfilter
 %ldconfig_scriptlets -n libavformat
-%ldconfig_scriptlets -n libavresample
 %ldconfig_scriptlets -n libavutil
 %ldconfig_scriptlets -n libpostproc
 %ldconfig_scriptlets -n libswresample
@@ -596,15 +595,6 @@ mv doc/*.html doc/html
 %{_libdir}/libavutil.so
 %{_mandir}/man3/libavutil.3*
 
-%files -n libavresample
-%license COPYING.GPLv2 LICENSE.md
-%{_libdir}/libavresample.so.%{avresample_soversion}*
-
-%files -n libavresample-devel
-%{_includedir}/libavresample
-%{_libdir}/pkgconfig/libavresample.pc
-%{_libdir}/libavresample.so
-
 %files -n libpostproc
 %license COPYING.GPLv2 LICENSE.md
 %{_libdir}/libpostproc.so.%{postproc_soversion}*
@@ -635,6 +625,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Mar 30 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0-1
+- Update to 5.0.
+
 * Thu Mar 17 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-7
 - Split libraries in subpackages like in Fedora 36.
 
