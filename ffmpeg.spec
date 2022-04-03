@@ -196,7 +196,7 @@ Requires:       pkgconfig
 The libavcodec library provides a generic encoding/decoding framework and
 contains multiple decoders and encoders for audio, video and subtitle streams,
 and several bitstream filters.
- 
+
 This subpackage contains the headers for FFmpeg libavcodec.
 
 %package     -n libavdevice
