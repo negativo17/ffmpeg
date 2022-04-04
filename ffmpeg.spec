@@ -193,6 +193,8 @@ time in many formats. This package contains development files for %{name}.
 
 %package     -n libavcodec
 Summary:        FFmpeg codec library
+Obsoletes:      libavcodec-free < %{epoch}:%{version}-%{release}
+Provides:       libavcodec-free = %{epoch}:%{version}-%{release}
 
 %description -n libavcodec
 The libavcodec library provides a generic encoding/decoding framework and
@@ -204,6 +206,8 @@ Summary:        Development files for FFmpeg's codec library
 Requires:       libavcodec%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
+Obsoletes:      libavcodec-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libavcodec-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavcodec-devel
 The libavcodec library provides a generic encoding/decoding framework and
@@ -214,6 +218,8 @@ This subpackage contains the headers for FFmpeg libavcodec.
 
 %package     -n libavdevice
 Summary:        FFMpeg devices muxing/demuxing library
+Obsoletes:      libavdevice-free < %{epoch}:%{version}-%{release}
+Provides:       libavdevice-free = %{epoch}:%{version}-%{release}
 
 %description -n libavdevice
 Libavdevice is a complementary library to libavf "libavformat". It provides
@@ -228,6 +234,8 @@ Requires:       libavfilter-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavformat-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
+Obsoletes:      libavdevice-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libavdevice-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavdevice-devel
 This subpackage contains the headers for FFmpeg libavdevice.
@@ -240,6 +248,8 @@ Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes:      libavfilter-free < %{epoch}:%{version}-%{release}
+Provides:       libavfilter-free = %{epoch}:%{version}-%{release}
 
 %description -n libavfilter
 The libavfilter library provides a generic audio/video filtering framework
@@ -255,12 +265,16 @@ Requires:       libpostproc-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
+Obsoletes:      libavfilter-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libavfilter-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavfilter-devel
 This subpackage contains the headers for FFmpeg libavfilter.
 
 %package     -n libavformat
 Summary:        FFmpeg's stream format library
+Obsoletes:      libavformat-free < %{epoch}:%{version}-%{release}
+Provides:       libavformat-free = %{epoch}:%{version}-%{release}
 
 %description -n libavformat
 The libavformat library provides a generic framework for multiplexing and
@@ -274,12 +288,16 @@ Requires:       libavformat%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
+Obsoletes:      libavformat-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libavformat-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavformat-devel
 This subpackage contains the headers for FFmpeg libavformat.
 
 %package     -n libavutil
 Summary:        FFmpeg's utility library
+Obsoletes:      libavutil-free < %{epoch}:%{version}-%{release}
+Provides:       libavutil-free = %{epoch}:%{version}-%{release}
 
 %description -n libavutil
 The libavutil library is a utility library to aid portable multimedia
@@ -292,12 +310,16 @@ for pixel and sample formats).
 Summary:        Development files for FFmpeg's utility library
 Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
+Obsoletes:      libavutil-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libavutil-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavutil-devel
 This subpackage contains the headers for FFmpeg libavutil.
 
 %package     -n libpostproc
 Summary:        FFmpeg post-processing library
+Obsoletes:      libpostproc-free < %{epoch}:%{version}-%{release}
+Provides:       libpostproc-free = %{epoch}:%{version}-%{release}
 
 %description -n libpostproc
 A library with video postprocessing filters, such as deblocking and
@@ -309,6 +331,8 @@ Summary:        Development files for the FFmpeg post-processing library
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
+Obsoletes:      libpostproc-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libpostproc-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libpostproc-devel
 This subpackage contains the headers for FFmpeg libpostproc.
@@ -318,6 +342,8 @@ Summary:        FFmpeg software resampling library
 Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes:      libavresemple < %{epoch}:%{version}-%{release}
 Provides:       libavresemple = %{epoch}:%{version}-%{release}
+Obsoletes:      libswresample-free < %{epoch}:%{version}-%{release}
+Provides:       libswresample-free = %{epoch}:%{version}-%{release}
 
 %description -n libswresample
 The libswresample library performs audio conversion between different
@@ -329,12 +355,16 @@ Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes:      libavresemple-devel < %{epoch}:%{version}-%{release}
 Provides:       libavresemple-devel = %{epoch}:%{version}-%{release}
+Obsoletes:      libswresample-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libswresample-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libswresample-devel
 This subpackage contains the headers for FFmpeg libswresample.
 
 %package     -n libswscale
 Summary:        FFmpeg image scaling and colorspace/pixel conversion library
+Obsoletes:      libswscale-free < %{epoch}:%{version}-%{release}
+Provides:       libswscale-free = %{epoch}:%{version}-%{release}
 
 %description -n libswscale
 The libswscale library performs image scaling and colorspace and
@@ -344,6 +374,8 @@ pixel format conversion operations.
 Summary:        Development files for FFmpeg's image scaling and colorspace library
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes:      libswscale-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libswscale-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libswscale-devel
 This subpackage contains the headers for FFmpeg libswscale.
