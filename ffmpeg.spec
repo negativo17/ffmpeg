@@ -11,7 +11,7 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        5.0
+Version:        5.0.1
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -171,19 +171,26 @@ VCR. It can encode in real time in many formats including MPEG1 audio
 and video, MPEG4, h263, ac3, asf, avi, real, mjpeg, and flash.
 
 %package        libs
-Summary:        Libraries for %{name}
+Summary:        Metapackage for %{name} libraries
+Requires:       libavcodec%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavdevice%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavfilter%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavformat%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description    libs
 FFmpeg is a complete and free Internet live audio and video
 broadcasting solution for Linux/Unix. It also includes a digital
 VCR. It can encode in real time in many formats including MPEG1 audio
 and video, MPEG4, h263, ac3, asf, avi, real, mjpeg, and flash.
-This package contains the libraries for %{name}.
+This metapackage pulls in all the %{name} libraries.
 
 %package        devel
-Summary:        Development package for %{name}
+Summary:        Metapackage for %{name} development files
 Requires:       %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libavdevice%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description    devel
@@ -657,6 +664,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Apr 06 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-1
+- Update to 5.0.1.
+- Adjust dependencies for libs-devel/subpackages.
+
 * Wed Mar 30 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0-1
 - Update to 5.0.
 
