@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -44,7 +44,6 @@ BuildRequires:  libiec61883-devel
 BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
-BuildRequires:  libXvMC-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nasm
 BuildRequires:  ocl-icd-devel
@@ -664,6 +663,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue May 24 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-2
+- Drop XVideo Motion Compensation support.
+
 * Wed Apr 06 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-1
 - Update to 5.0.1.
 - Adjust dependencies for libs-devel/subpackages.
