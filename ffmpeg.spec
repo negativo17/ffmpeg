@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.0.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -32,7 +32,6 @@ BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 11.5
 BuildRequires:  doxygen
-BuildRequires:  frei0r-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
@@ -98,7 +97,6 @@ BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libxml-2.0)
 #BuildRequires:  pkgconfig(OpenCL)
-BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
@@ -145,6 +143,11 @@ BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 BuildRequires:  pkgconfig(srt) >= 1.3.0
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
 BuildRequires:  pkgconfig(vulkan) >= 1.2.189
+%endif
+
+%if 0%{?fedora} || 0%{?rhel} == 7   || 0%{?rhel} == 8
+BuildRequires:  frei0r-devel
+BuildRequires:  pkgconfig(opencv)
 %endif
 
 %ifarch x86_64
@@ -409,7 +412,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-bzlib \
     --enable-chromaprint \
     --enable-decklink \
-    --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
     --enable-gpl \
@@ -511,6 +513,10 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-v4l2-m2m \
     --enable-vapoursynth \
     --enable-vulkan \
+%endif
+%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
+    --enable-frei0r \
+    --enable-libopencv \
 %endif
 %ifarch x86_64
     --enable-cuda \
@@ -663,6 +669,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Jul 05 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-3
+- Disable opencv and frei0r on CentOS/RHEL 9.
+
 * Tue May 24 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-2
 - Drop XVideo Motion Compensation support.
 
