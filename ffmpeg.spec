@@ -11,8 +11,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        5.0.1
-Release:        3%{?dist}
+Version:        5.1.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -30,7 +30,7 @@ Patch3:         %{name}-ndi.patch
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
-BuildRequires:  decklink-devel >= 11.5
+BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
@@ -84,7 +84,7 @@ BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
-#BuildRequires:  pkgconfig(librist) >= 0.2
+#BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
@@ -123,16 +123,16 @@ BuildRequires:  pkgconfig(x265)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
-BuildRequires:  pkgconfig(zvbi-0.2)
+BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %if 0%{?fedora} >= 36
+BuildRequires:  pkgconfig(lcms2) >= 2.13
 BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 %endif
 
 %if 0%{?fedora}
 BuildRequires:  glslang-devel
 BuildRequires:  pkgconfig(lilv-0)
-BuildRequires:  pkgconfig(lv2)
 BuildRequires:  pkgconfig(pocketsphinx)
 BuildRequires:  pkgconfig(shaderc) >= 2019.1
 BuildRequires:  pkgconfig(rav1e) >= 0.4.0
@@ -140,14 +140,14 @@ BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:  pkgconfig(libzmq) >= 4.2.1
+BuildRequires:  pkgconfig(lv2)
 BuildRequires:  pkgconfig(srt) >= 1.3.0
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
 BuildRequires:  pkgconfig(vulkan) >= 1.2.189
 %endif
 
-%if 0%{?fedora} || 0%{?rhel} == 7   || 0%{?rhel} == 8
+%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
 BuildRequires:  frei0r-devel
-BuildRequires:  pkgconfig(opencv)
 %endif
 
 %ifarch x86_64
@@ -157,8 +157,8 @@ BuildRequires:  cuda-nvcc
 BuildRequires:  libnpp-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 9.1.23.1
 BuildRequires:  pkgconfig(libmfx)
-BuildRequires:  pkgconfig(libvmaf) >= 1.5.2
-BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.8.4
+BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
+BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
 %endif
@@ -501,6 +501,10 @@ This subpackage contains the headers for FFmpeg libswscale.
     --optflags="%{optflags}" \
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
+%if 0%{?fedora} >= 36
+    --enable-lcms2 \
+    --enable-libplacebo \
+%endif
 %if 0%{?fedora}
     --enable-libglslang \
     --enable-librav1e \
@@ -516,7 +520,6 @@ This subpackage contains the headers for FFmpeg libswscale.
 %endif
 %if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
     --enable-frei0r \
-    --enable-libopencv \
 %endif
 %ifarch x86_64
     --enable-cuda \
@@ -669,6 +672,11 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Thu Sep 22 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.1-1
+- Update to 5.1.1.
+- Disable OpenCV everywhere.
+- Enable more plugins for CentOS/RHEL 7+.
+
 * Tue Jul 05 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-3
 - Disable opencv and frei0r on CentOS/RHEL 9.
 

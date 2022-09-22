@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-5.0.old/configure ffmpeg-5.0/configure
---- ffmpeg-5.0.old/configure	2022-04-03 17:00:14.676949199 +0200
-+++ ffmpeg-5.0/configure	2022-04-03 17:00:23.518099582 +0200
+diff -Naur ffmpeg-5.1.1.old/configure ffmpeg-5.1.1/configure
+--- ffmpeg-5.1.1.old/configure	2022-08-31 20:58:25.000000000 +0200
++++ ffmpeg-5.1.1/configure	2022-09-22 10:38:52.250588827 +0200
 @@ -4437,10 +4437,10 @@
  
  if enabled cuda_nvcc; then

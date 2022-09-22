@@ -1,7 +1,7 @@
-diff -Naur ffmpeg-5.0.old/configure ffmpeg-5.0/configure
---- ffmpeg-5.0.old/configure	2022-04-03 17:01:30.131232632 +0200
-+++ ffmpeg-5.0/configure	2022-04-03 17:02:44.399495892 +0200
-@@ -286,6 +286,7 @@
+diff -Naur ffmpeg-5.1.1.old/configure ffmpeg-5.1.1/configure
+--- ffmpeg-5.1.1.old/configure	2022-09-22 10:41:11.225070608 +0200
++++ ffmpeg-5.1.1/configure	2022-09-22 10:41:26.576343046 +0200
+@@ -288,6 +288,7 @@
    --enable-libvorbis       enable Vorbis en/decoding via libvorbis,
                             native implementation exists [no]
    --enable-libvpx          enable VP8 and VP9 de/encoding via libvpx [no]
@@ -9,7 +9,7 @@ diff -Naur ffmpeg-5.0.old/configure ffmpeg-5.0/configure
    --enable-libwebp         enable WebP encoding via libwebp [no]
    --enable-libx264         enable H.264 encoding via x264 [no]
    --enable-libx265         enable HEVC encoding via x265 [no]
-@@ -1853,6 +1854,7 @@
+@@ -1858,6 +1859,7 @@
      libshaderc
      libshine
      libsmbclient
@@ -17,7 +17,7 @@ diff -Naur ffmpeg-5.0.old/configure ffmpeg-5.0/configure
      libsnappy
      libsoxr
      libspeex
-@@ -3369,6 +3371,7 @@
+@@ -3379,6 +3381,7 @@
  libvpx_vp8_encoder_deps="libvpx"
  libvpx_vp9_decoder_deps="libvpx"
  libvpx_vp9_encoder_deps="libvpx"
@@ -25,7 +25,7 @@ diff -Naur ffmpeg-5.0.old/configure ffmpeg-5.0/configure
  libwebp_encoder_deps="libwebp"
  libwebp_anim_encoder_deps="libwebp"
  libx262_encoder_deps="libx262"
-@@ -6642,6 +6645,7 @@
+@@ -6663,6 +6666,7 @@
      fi
  }
  
@@ -33,21 +33,21 @@ diff -Naur ffmpeg-5.0.old/configure ffmpeg-5.0/configure
  enabled libwebp           && {
      enabled libwebp_encoder      && require_pkg_config libwebp "libwebp >= 0.2.0" webp/encode.h WebPGetEncoderVersion
      enabled libwebp_anim_encoder && check_pkg_config libwebp_anim_encoder "libwebpmux >= 0.4.0" webp/mux.h WebPAnimEncoderOptionsInit; }
-diff -Naur ffmpeg-5.0.old/libavcodec/allcodecs.c ffmpeg-5.0/libavcodec/allcodecs.c
---- ffmpeg-5.0.old/libavcodec/allcodecs.c	2022-04-03 17:00:14.719949930 +0200
-+++ ffmpeg-5.0/libavcodec/allcodecs.c	2022-04-03 17:02:44.399495892 +0200
-@@ -768,6 +768,7 @@
- extern const AVCodec ff_libvpx_vp8_decoder;
- extern AVCodec ff_libvpx_vp9_encoder;
- extern AVCodec ff_libvpx_vp9_decoder;
-+extern AVCodec ff_libsvt_vp9_encoder;
+diff -Naur ffmpeg-5.1.1.old/libavcodec/allcodecs.c ffmpeg-5.1.1/libavcodec/allcodecs.c
+--- ffmpeg-5.1.1.old/libavcodec/allcodecs.c	2022-07-22 19:58:38.000000000 +0200
++++ ffmpeg-5.1.1/libavcodec/allcodecs.c	2022-09-22 10:41:26.577343064 +0200
+@@ -781,6 +781,7 @@
+ extern const FFCodec ff_libvpx_vp8_decoder;
+ extern FFCodec ff_libvpx_vp9_encoder;
+ extern FFCodec ff_libvpx_vp9_decoder;
++extern FFCodec ff_libsvt_vp9_encoder;
  /* preferred over libwebp */
- extern const AVCodec ff_libwebp_anim_encoder;
- extern const AVCodec ff_libwebp_encoder;
-diff -Naur ffmpeg-5.0.old/libavcodec/libsvt_vp9.c ffmpeg-5.0/libavcodec/libsvt_vp9.c
---- ffmpeg-5.0.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-5.0/libavcodec/libsvt_vp9.c	2022-04-03 17:02:44.399495892 +0200
-@@ -0,0 +1,705 @@
+ extern const FFCodec ff_libwebp_anim_encoder;
+ extern const FFCodec ff_libwebp_encoder;
+diff -Naur ffmpeg-5.1.1.old/libavcodec/libsvt_vp9.c ffmpeg-5.1.1/libavcodec/libsvt_vp9.c
+--- ffmpeg-5.1.1.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-5.1.1/libavcodec/libsvt_vp9.c	2022-09-22 10:41:26.578343082 +0200
+@@ -0,0 +1,699 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
 +*
@@ -79,11 +79,9 @@ diff -Naur ffmpeg-5.0.old/libavcodec/libsvt_vp9.c ffmpeg-5.0/libavcodec/libsvt_v
 +#include "libavutil/opt.h"
 +#include "libavcodec/get_bits.h"
 +
++#include "codec_internal.h"
 +#include "internal.h"
-+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 93, 100)
 +#include "encode.h"
-+#endif
-+
 +#include "avcodec.h"
 +
 +#define SUPERFRAME_INDEX_MAX_SIZE 128
@@ -591,7 +589,6 @@ diff -Naur ffmpeg-5.0.old/libavcodec/libsvt_vp9.c ffmpeg-5.0/libavcodec/libsvt_v
 +        return AVERROR_EOF;
 +    }
 +
-+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 93, 100)
 +    AVFrame *frame = svt_enc->frame;
 +    ret = ff_encode_get_frame(avctx, frame);
 +    if (ret < 0 && ret != AVERROR_EOF) {
@@ -600,10 +597,10 @@ diff -Naur ffmpeg-5.0.old/libavcodec/libsvt_vp9.c ffmpeg-5.0/libavcodec/libsvt_v
 +    if (ret == AVERROR_EOF)
 +        frame = NULL;
 +
-+    eb_send_frame(avctx, frame);
++    ret = eb_send_frame(avctx, frame);
++    if (ret < 0)
++        return ret;
 +    av_frame_unref(svt_enc->frame);
-+#endif
-+
 +
 +    for (;;) {
 +        svt_ret = eb_vp9_svt_get_packet(svt_enc->svt_handle, &headerPtr, svt_enc->eos_flag);
@@ -725,7 +722,7 @@ diff -Naur ffmpeg-5.0.old/libavcodec/libsvt_vp9.c ffmpeg-5.0/libavcodec/libsvt_v
 +    .version    = LIBAVUTIL_VERSION_INT,
 +};
 +
-+static const AVCodecDefault eb_enc_defaults[] = {
++static const FFCodecDefault eb_enc_defaults[] = {
 +    { "b",         "7M"    },
 +    { "flags",     "-cgop" },
 +    { "qmin",      "10"    },
@@ -733,30 +730,27 @@ diff -Naur ffmpeg-5.0.old/libavcodec/libsvt_vp9.c ffmpeg-5.0/libavcodec/libsvt_v
 +    { NULL },
 +};
 +
-+AVCodec ff_libsvt_vp9_encoder = {
-+    .name           = "libsvt_vp9",
-+    .long_name      = NULL_IF_CONFIG_SMALL("SVT-VP9(Scalable Video Technology for VP9) encoder"),
++FFCodec ff_libsvt_vp9_encoder = {
++    .p.name           = "libsvt_vp9",
++    .p.long_name      = NULL_IF_CONFIG_SMALL("SVT-VP9(Scalable Video Technology for VP9) encoder"),
 +    .priv_data_size = sizeof(SvtContext),
-+    .type           = AVMEDIA_TYPE_VIDEO,
-+    .id             = AV_CODEC_ID_VP9,
-+    .init           = eb_enc_init,
-+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 93, 100)
-+     .send_frame     = eb_send_frame,
-+#endif
-+    .receive_packet = eb_receive_packet,
-+    .close          = eb_enc_close,
-+    .capabilities   = AV_CODEC_CAP_DELAY | AV_CODEC_CAP_AUTO_THREADS,
-+    .pix_fmts       = (const enum AVPixelFormat[]){ AV_PIX_FMT_YUV420P,
++    .p.type           = AVMEDIA_TYPE_VIDEO,
++    .p.id             = AV_CODEC_ID_VP9,
++    .init             = eb_enc_init,
++    FF_CODEC_RECEIVE_PACKET_CB(eb_receive_packet),
++    .close            = eb_enc_close,
++    .p.capabilities   = AV_CODEC_CAP_DELAY | AV_CODEC_CAP_AUTO_THREADS,
++    .p.pix_fmts       = (const enum AVPixelFormat[]){ AV_PIX_FMT_YUV420P,
 +                                                    AV_PIX_FMT_NONE },
-+    .priv_class     = &class,
-+    .defaults       = eb_enc_defaults,
-+    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
-+    .wrapper_name   = "libsvt_vp9",
++    .p.priv_class     = &class,
++    .defaults         = eb_enc_defaults,
++    .caps_internal    = FF_CODEC_CAP_INIT_CLEANUP,
++    .p.wrapper_name   = "libsvt_vp9",
 +};
-diff -Naur ffmpeg-5.0.old/libavcodec/Makefile ffmpeg-5.0/libavcodec/Makefile
---- ffmpeg-5.0.old/libavcodec/Makefile	2022-04-03 17:00:14.680949267 +0200
-+++ ffmpeg-5.0/libavcodec/Makefile	2022-04-03 17:02:44.399495892 +0200
-@@ -1082,6 +1082,7 @@
+diff -Naur ffmpeg-5.1.1.old/libavcodec/Makefile ffmpeg-5.1.1/libavcodec/Makefile
+--- ffmpeg-5.1.1.old/libavcodec/Makefile	2022-07-22 19:58:38.000000000 +0200
++++ ffmpeg-5.1.1/libavcodec/Makefile	2022-09-22 10:41:26.577343064 +0200
+@@ -1099,6 +1099,7 @@
  OBJS-$(CONFIG_LIBVPX_VP8_ENCODER)         += libvpxenc.o
  OBJS-$(CONFIG_LIBVPX_VP9_DECODER)         += libvpxdec.o libvpx.o
  OBJS-$(CONFIG_LIBVPX_VP9_ENCODER)         += libvpxenc.o libvpx.o
