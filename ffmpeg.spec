@@ -11,7 +11,7 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        5.1.1
+Version:        5.1.2
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -672,6 +672,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Oct 08 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-1
+- Update to 5.1.2.
+
 * Thu Sep 22 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.1-1
 - Update to 5.1.1.
 - Disable OpenCV everywhere.
