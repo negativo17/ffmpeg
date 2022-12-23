@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -32,6 +32,7 @@ BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
+BuildRequires:  gmp-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
@@ -86,7 +87,6 @@ BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 #BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librsvg-2.0)
-BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
 BuildRequires:  pkgconfig(libva) >= 0.35.0
@@ -451,7 +451,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libpulse \
     --enable-librabbitmq \
     --enable-librsvg \
-    --enable-librtmp \
     --enable-librubberband \
     --enable-libsmbclient \
     --enable-libsnappy \
@@ -672,6 +671,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Fri Dec 23 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-5
+- Drop librtmp support, use native rtmp (#11).
+
 * Thu Dec 15 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-4
 - Rebuild for updated dependencies.
 
