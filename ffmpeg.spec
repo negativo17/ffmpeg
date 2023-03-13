@@ -1,18 +1,18 @@
 %global _lto_cflags %{nil}
 
-%global avcodec_soversion 59
-%global avdevice_soversion 59
-%global avfilter_soversion 8
-%global avformat_soversion 59
-%global avutil_soversion 57
-%global postproc_soversion 56
+%global avcodec_soversion 60
+%global avdevice_soversion 60
+%global avfilter_soversion 9
+%global avformat_soversion 60
+%global avutil_soversion 58
+%global postproc_soversion 57
 %global swresample_soversion 4
-%global swscale_soversion 6
+%global swscale_soversion 7
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        5.1.2
-Release:        8%{?dist}
+Version:        6.0
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -24,10 +24,8 @@ Patch0:         %{name}-cuda11.patch
 Patch1:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch2:         %{name}-svt-hevc.patch
-# https://framagit.org/tytan652/ffmpeg-ndi-patch
-Patch3:         %{name}-ndi.patch
 
-BuildRequires:  AMF-devel
+BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.11
@@ -41,7 +39,6 @@ BuildRequires:  libavc1394-devel
 BuildRequires:  libchromaprint-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
-BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  mesa-libGL-devel
@@ -161,6 +158,7 @@ BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
+BuildRequires:  pkgconfig(vpl) >= 2.6
 %endif
 
 Obsoletes:      %{name}-free < %{epoch}:%{version}-%{release}
@@ -441,7 +439,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libkvazaar \
     --enable-libmodplug \
     --enable-libmp3lame \
-    --enable-libndi_newtek \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -525,12 +522,12 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
-    --enable-libmfx \
     --enable-libnpp \
     --enable-libsvtav1 \
     --enable-libsvthevc \
     --enable-libsvtvp9 \
     --enable-libvmaf \
+    --enable-libvpl \
     --enable-nvdec \
     --enable-nvenc \
     --extra-cflags="-I%{_includedir}/cuda" \
@@ -671,6 +668,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Mar 13 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-1
+- Update to 6.0.
+
 * Sat Mar 11 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-8
 - Rebuild for updated depdendencies.
 
