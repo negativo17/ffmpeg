@@ -152,7 +152,7 @@ BuildRequires:  frei0r-devel
 BuildRequires:  cuda-cudart-devel
 BuildRequires:  cuda-nvcc
 BuildRequires:  libnpp-devel
-BuildRequires:  pkgconfig(ffnvcodec) >= 9.1.23.1
+BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
