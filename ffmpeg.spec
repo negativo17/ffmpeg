@@ -30,6 +30,8 @@ BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
+BuildRequires:  frei0r-devel
+BuildRequires:  glslang-devel
 BuildRequires:  gmp-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
@@ -68,6 +70,7 @@ BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
+BuildRequires:  pkgconfig(lcms2) >= 2.13
 #BuildRequires:  pkgconfig(lensfun) >= 0.3.95
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
@@ -80,6 +83,7 @@ BuildRequires:  pkgconfig(libmodplug)
 #BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
+BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 #BuildRequires:  pkgconfig(librist) >= 0.2.7
@@ -93,21 +97,30 @@ BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(libzmq) >= 4.2.1
+BuildRequires:  pkgconfig(lilv-0)
+BuildRequires:  pkgconfig(lv2)
 #BuildRequires:  pkgconfig(OpenCL)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
+BuildRequires:  pkgconfig(pocketsphinx)
+BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(shaderc) >= 2019.1
 #BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(speex)
+BuildRequires:  pkgconfig(srt) >= 1.3.0
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(uavs3d) >= 1.1.41
+BuildRequires:  pkgconfig(vapoursynth-script) >= 42
 BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vorbis)
 BuildRequires:  pkgconfig(vorbisenc)
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
+BuildRequires:  pkgconfig(vulkan) >= 1.2.189
 BuildRequires:  pkgconfig(xavs2) >= 1.3.0
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
@@ -121,31 +134,6 @@ BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
-
-%if 0%{?fedora} >= 36
-BuildRequires:  pkgconfig(lcms2) >= 2.13
-BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
-%endif
-
-%if 0%{?fedora}
-BuildRequires:  glslang-devel
-BuildRequires:  pkgconfig(lilv-0)
-BuildRequires:  pkgconfig(pocketsphinx)
-BuildRequires:  pkgconfig(shaderc) >= 2019.1
-BuildRequires:  pkgconfig(rav1e) >= 0.4.0
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} >= 8
-BuildRequires:  pkgconfig(libzmq) >= 4.2.1
-BuildRequires:  pkgconfig(lv2)
-BuildRequires:  pkgconfig(srt) >= 1.3.0
-BuildRequires:  pkgconfig(vapoursynth-script) >= 42
-BuildRequires:  pkgconfig(vulkan) >= 1.2.189
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
-BuildRequires:  frei0r-devel
-%endif
 
 %ifarch x86_64
 # Nvidia CUVID support and Performance Primitives based code
@@ -410,12 +398,14 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-bzlib \
     --enable-chromaprint \
     --enable-decklink \
+    --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
     --enable-gpl \
     --enable-gray \
     --enable-iconv \
     --enable-ladspa \
+    --enable-lcms2 \
     --enable-libass \
     --enable-libaom \
     --enable-libbluray \
@@ -431,6 +421,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libfontconfig \
     --enable-libfreetype \
     --enable-libfribidi \
+    --enable-libglslang \
     --enable-libgme \
     --enable-libgsm \
     --enable-libiec61883 \
@@ -445,14 +436,17 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libopenjpeg \
     --enable-libopenmpt \
     --enable-libopus \
+    --enable-libplacebo \
     --enable-libpulse \
     --enable-librabbitmq \
+    --enable-librav1e \
     --enable-librsvg \
     --enable-librubberband \
     --enable-libsmbclient \
     --enable-libsnappy \
     --enable-libsoxr \
     --enable-libspeex \
+    --enable-libsrt \
     --enable-libssh \
     --enable-libtesseract \
     --enable-libtheora \
@@ -474,21 +468,27 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libxml2 \
     --enable-libxvid \
     --enable-libzimg \
+    --enable-libzmq \
     --enable-libzvbi \
+    --enable-lv2 \
     --enable-lzma \
     --enable-nonfree \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
     --enable-openssl \
+    --enable-pocketsphinx \
     --enable-postproc \
     --enable-sdl2 \
     --enable-shared \
     --enable-swresample \
     --enable-swscale \
+    --enable-v4l2-m2m \
     --enable-vaapi \
+    --enable-vapoursynth \
     --enable-version3 \
     --enable-vdpau \
+    --enable-vulkan \
     --enable-xlib \
     --enable-zlib \
     --incdir=%{_includedir} \
@@ -497,26 +497,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --optflags="%{optflags}" \
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
-%if 0%{?fedora} >= 36
-    --enable-lcms2 \
-    --enable-libplacebo \
-%endif
-%if 0%{?fedora}
-    --enable-libglslang \
-    --enable-librav1e \
-    --enable-lv2 \
-    --enable-pocketsphinx \
-%endif
-%if 0%{?fedora} || 0%{?rhel} >= 8
-    --enable-libsrt \
-    --enable-libzmq \
-    --enable-v4l2-m2m \
-    --enable-vapoursynth \
-    --enable-vulkan \
-%endif
-%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
-    --enable-frei0r \
-%endif
 %ifarch x86_64
     --enable-cuda \
     --enable-cuda-nvcc \
@@ -670,6 +650,7 @@ mv doc/*.html doc/html
 %changelog
 * Mon Mar 13 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-1
 - Update to 6.0.
+- Split out SPEC file per distribution.
 
 * Sat Mar 11 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-8
 - Rebuild for updated depdendencies.
