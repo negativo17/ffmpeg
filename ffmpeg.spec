@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -396,6 +396,8 @@ This subpackage contains the headers for FFmpeg libswscale.
 #sed -i -e 's|#!/bin/sh|#!/bin/sh -x|g' configure
 
 %build
+%set_build_flags
+
 ./configure \
     --arch=%{_target_cpu} \
     --bindir=%{_bindir} \
@@ -494,10 +496,11 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-vdpau \
     --enable-xlib \
     --enable-zlib \
+    --extra-ldflags="%{build_ldflags}" \
     --incdir=%{_includedir} \
     --libdir=%{_libdir} \
     --mandir=%{_mandir} \
-    --optflags="%{optflags}" \
+    --optflags="%{build_cflags}" \
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %if 0%{?fedora} >= 36
@@ -553,9 +556,9 @@ This subpackage contains the headers for FFmpeg libswscale.
 %endif
 %endif
 
-%make_build
-make documentation
-make alltools
+%make_build V=1
+make documentation V=1
+make alltools V=1
 
 %install
 %make_install
@@ -671,6 +674,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Mar 29 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.3-2
+- Adjust build flags.
+
 * Tue Mar 28 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.3-1
 - Update to 5.1.3.
 
