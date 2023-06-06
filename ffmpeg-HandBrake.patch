@@ -1,0 +1,1482 @@
+diff -Naur ffmpeg-6.0.old/doc/APIchanges ffmpeg-6.0/doc/APIchanges
+--- ffmpeg-6.0.old/doc/APIchanges	2023-06-06 08:34:50.229452278 +0200
++++ ffmpeg-6.0/doc/APIchanges	2023-06-06 08:34:50.560458240 +0200
+@@ -2,6 +2,11 @@
+ 
+ API changes, most recent first:
+ 
++2023-03-02 - xxxxxxxxxx - lavc 60.6.100 - avcodec.h
++  Add FF_PROFILE_EAC3_DDP_ATMOS, FF_PROFILE_TRUEHD_ATMOS,
++  FF_PROFILE_DTS_HD_MA_X and FF_PROFILE_DTS_HD_MA_X_IMAX.
++
++
+ -------- 8< --------- FFmpeg 6.0 was cut here -------- 8< ---------
+ 
+ 2023-02-16 - 927042b409 - lavf 60.2.100 - avformat.h
+diff -Naur ffmpeg-6.0.old/fftools/ffprobe.c ffmpeg-6.0/fftools/ffprobe.c
+--- ffmpeg-6.0.old/fftools/ffprobe.c	2023-06-06 08:34:50.370454818 +0200
++++ ffmpeg-6.0/fftools/ffprobe.c	2023-06-06 08:34:50.568458384 +0200
+@@ -2352,6 +2352,9 @@
+             AVContentLightMetadata *metadata = (AVContentLightMetadata *)sd->data;
+             print_int("max_content", metadata->MaxCLL);
+             print_int("max_average", metadata->MaxFALL);
++        } else if (sd->type == AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT) {
++            print_ambient_viewing_environment(
++                w, (const AVAmbientViewingEnvironment *)sd->data);
+         } else if (sd->type == AV_PKT_DATA_DOVI_CONF) {
+             AVDOVIDecoderConfigurationRecord *dovi = (AVDOVIDecoderConfigurationRecord *)sd->data;
+             print_int("dv_version_major", dovi->dv_version_major);
+diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec.c ffmpeg-6.0/libavcodec/ac3dec.c
+--- ffmpeg-6.0.old/libavcodec/ac3dec.c	2023-06-06 08:34:50.008448298 +0200
++++ ffmpeg-6.0/libavcodec/ac3dec.c	2023-06-06 08:34:50.560458240 +0200
+@@ -1714,6 +1714,7 @@
+     if (!err) {
+         avctx->sample_rate = s->sample_rate;
+         avctx->bit_rate    = s->bit_rate + s->prev_bit_rate;
++        avctx->profile     = s->eac3_extension_type_a == 1 ? FF_PROFILE_EAC3_DDP_ATMOS : FF_PROFILE_UNKNOWN;
+     }
+ 
+     if (!avctx->sample_rate) {
+diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec_float.c ffmpeg-6.0/libavcodec/ac3dec_float.c
+--- ffmpeg-6.0.old/libavcodec/ac3dec_float.c	2023-06-06 08:34:50.064449307 +0200
++++ ffmpeg-6.0/libavcodec/ac3dec_float.c	2023-06-06 08:34:50.561458258 +0200
+@@ -33,6 +33,7 @@
+ 
+ #include "ac3dec.h"
+ #include "codec_internal.h"
++#include "profiles.h"
+ #include "eac3dec.c"
+ #include "ac3dec.c"
+ 
+@@ -92,6 +93,7 @@
+     .p.sample_fmts  = (const enum AVSampleFormat[]) { AV_SAMPLE_FMT_FLTP,
+                                                       AV_SAMPLE_FMT_NONE },
+     .p.priv_class   = &ac3_eac3_decoder_class,
++    .p.profiles     = NULL_IF_CONFIG_SMALL(ff_eac3_profiles),
+     .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
+ };
+ #endif
+diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec.h ffmpeg-6.0/libavcodec/ac3dec.h
+--- ffmpeg-6.0.old/libavcodec/ac3dec.h	2023-06-06 08:34:50.094449847 +0200
++++ ffmpeg-6.0/libavcodec/ac3dec.h	2023-06-06 08:34:50.561458258 +0200
+@@ -102,6 +102,7 @@
+     int eac3;                               ///< indicates if current frame is E-AC-3
+     int eac3_frame_dependent_found;         ///< bitstream has E-AC-3 dependent frame(s)
+     int eac3_subsbtreamid_found;            ///< bitstream has E-AC-3 additional substream(s)
++    int eac3_extension_type_a;              ///< bitstream has E-AC-3 extension type A enabled frame(s)
+     int dolby_surround_mode;                ///< dolby surround mode                    (dsurmod)
+     int dolby_surround_ex_mode;             ///< dolby surround ex mode                 (dsurexmod)
+     int dolby_headphone_mode;               ///< dolby headphone mode                   (dheadphonmod)
+diff -Naur ffmpeg-6.0.old/libavcodec/amfenc.c ffmpeg-6.0/libavcodec/amfenc.c
+--- ffmpeg-6.0.old/libavcodec/amfenc.c	2023-06-06 08:34:50.050449055 +0200
++++ ffmpeg-6.0/libavcodec/amfenc.c	2023-06-06 08:34:50.554458132 +0200
+@@ -36,6 +36,57 @@
+ #include "amfenc.h"
+ #include "encode.h"
+ #include "internal.h"
++#include "libavutil/mastering_display_metadata.h"
++
++static int amf_save_hdr_metadata(AVCodecContext *avctx, const AVFrame *frame, AMFHDRMetadata *hdrmeta)
++{
++    AVFrameSideData            *sd_display;
++    AVFrameSideData            *sd_light;
++    AVMasteringDisplayMetadata *display_meta;
++    AVContentLightMetadata     *light_meta;
++
++    sd_display = av_frame_get_side_data(frame, AV_FRAME_DATA_MASTERING_DISPLAY_METADATA);
++    if (sd_display) {
++        display_meta = (AVMasteringDisplayMetadata *)sd_display->data;
++        if (display_meta->has_luminance) {
++            const unsigned int luma_den = 10000;
++            hdrmeta->maxMasteringLuminance =
++                (amf_uint32)(luma_den * av_q2d(display_meta->max_luminance));
++            hdrmeta->minMasteringLuminance =
++                FFMIN((amf_uint32)(luma_den * av_q2d(display_meta->min_luminance)), hdrmeta->maxMasteringLuminance);
++        }
++        if (display_meta->has_primaries) {
++            const unsigned int chroma_den = 50000;
++            hdrmeta->redPrimary[0] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->display_primaries[0][0])), chroma_den);
++            hdrmeta->redPrimary[1] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->display_primaries[0][1])), chroma_den);
++            hdrmeta->greenPrimary[0] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->display_primaries[1][0])), chroma_den);
++            hdrmeta->greenPrimary[1] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->display_primaries[1][1])), chroma_den);
++            hdrmeta->bluePrimary[0] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->display_primaries[2][0])), chroma_den);
++            hdrmeta->bluePrimary[1] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->display_primaries[2][1])), chroma_den);
++            hdrmeta->whitePoint[0] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->white_point[0])), chroma_den);
++            hdrmeta->whitePoint[1] =
++                FFMIN((amf_uint16)(chroma_den * av_q2d(display_meta->white_point[1])), chroma_den);
++        }
++
++        sd_light = av_frame_get_side_data(frame, AV_FRAME_DATA_CONTENT_LIGHT_LEVEL);
++        if (sd_light) {
++            light_meta = (AVContentLightMetadata *)sd_light->data;
++            if (light_meta) {
++                hdrmeta->maxContentLightLevel = (amf_uint16)light_meta->MaxCLL;
++                hdrmeta->maxFrameAverageLightLevel = (amf_uint16)light_meta->MaxFALL;
++            }
++        }
++        return 0;
++    }
++    return 1;
++}
+ 
+ #if CONFIG_D3D11VA
+ #include <d3d11.h>
+@@ -60,6 +111,7 @@
+ #if CONFIG_DXVA2
+     AV_PIX_FMT_DXVA2_VLD,
+ #endif
++    AV_PIX_FMT_P010,
+     AV_PIX_FMT_NONE
+ };
+ 
+@@ -72,6 +124,7 @@
+ {
+     { AV_PIX_FMT_NONE,       AMF_SURFACE_UNKNOWN },
+     { AV_PIX_FMT_NV12,       AMF_SURFACE_NV12 },
++    { AV_PIX_FMT_P010,       AMF_SURFACE_P010 },
+     { AV_PIX_FMT_BGR0,       AMF_SURFACE_BGRA },
+     { AV_PIX_FMT_RGB0,       AMF_SURFACE_RGBA },
+     { AV_PIX_FMT_GRAY8,      AMF_SURFACE_GRAY8 },
+@@ -679,6 +732,26 @@
+             frame_ref_storage_buffer->pVtbl->Release(frame_ref_storage_buffer);
+         }
+ 
++        // HDR10 metadata
++        if (frame->color_trc == AVCOL_TRC_SMPTE2084) {
++            AMFBuffer * hdrmeta_buffer = NULL;
++            res = ctx->context->pVtbl->AllocBuffer(ctx->context, AMF_MEMORY_HOST, sizeof(AMFHDRMetadata), &hdrmeta_buffer);
++            if (res == AMF_OK) {
++                AMFHDRMetadata * hdrmeta = (AMFHDRMetadata*)hdrmeta_buffer->pVtbl->GetNative(hdrmeta_buffer);
++                if (amf_save_hdr_metadata(avctx, frame, hdrmeta) == 0) {
++                    switch (avctx->codec->id) {
++                    case AV_CODEC_ID_H264:
++                        AMF_ASSIGN_PROPERTY_INTERFACE(res, ctx->encoder, AMF_VIDEO_ENCODER_INPUT_HDR_METADATA, hdrmeta_buffer); break;
++                    case AV_CODEC_ID_HEVC:
++                        AMF_ASSIGN_PROPERTY_INTERFACE(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_INPUT_HDR_METADATA, hdrmeta_buffer); break;
++                    }
++                    res = amf_set_property_buffer(surface, L"av_frame_hdrmeta", hdrmeta_buffer);
++                    AMF_RETURN_IF_FALSE(avctx, res == AMF_OK, AVERROR_UNKNOWN, "SetProperty failed for \"av_frame_hdrmeta\" with error %d\n", res);
++                }
++                hdrmeta_buffer->pVtbl->Release(hdrmeta_buffer);
++            }
++        }
++
+         surface->pVtbl->SetPts(surface, frame->pts);
+         AMF_ASSIGN_PROPERTY_INT64(res, surface, PTS_PROP, frame->pts);
+ 
+@@ -694,6 +767,53 @@
+             break;
+         }
+ 
++        // Override Picture Type for Frame
++        if (avctx->codec->id == AV_CODEC_ID_H264) {
++            switch (frame->pict_type) {
++            case AV_PICTURE_TYPE_I:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_PICTURE_TYPE_I);
++                break;
++            case AV_PICTURE_TYPE_P:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_PICTURE_TYPE_P);
++                break;
++            case AV_PICTURE_TYPE_B:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_PICTURE_TYPE_B);
++                break;
++            case AV_PICTURE_TYPE_S:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_PICTURE_TYPE_SKIP);
++                break;
++            default:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_PICTURE_TYPE_NONE);
++                break;
++            }
++            // Keyframe overrides previous assignment.
++            if (frame->key_frame) {
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_PICTURE_TYPE_IDR);
++            }
++        } else if (avctx->codec->id == AV_CODEC_ID_HEVC) {
++            switch (frame->pict_type) {
++            case AV_PICTURE_TYPE_I:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_I);
++                break;
++            case AV_PICTURE_TYPE_P:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_P);
++                break;
++            case AV_PICTURE_TYPE_B:
++                av_log(ctx, AV_LOG_WARNING, "Ignoring B-Frame, unsupported by AMD AMF H.265 Encoder.");
++                break;
++            case AV_PICTURE_TYPE_S:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_SKIP);
++                break;
++            default:
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_NONE);
++                break;
++            }
++            // Keyframe overrides previous assignment.
++            if (frame->key_frame) {
++                AMF_ASSIGN_PROPERTY_INT64(res, surface, AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_IDR);
++            }
++        }
++
+         // submit surface
+         res = ctx->encoder->pVtbl->SubmitInput(ctx->encoder, (AMFData*)surface);
+         if (res == AMF_INPUT_FULL) { // handle full queue
+@@ -738,6 +858,18 @@
+             AMF_RETURN_IF_FALSE(ctx, ret >= 0, ret, "amf_copy_buffer() failed with error %d\n", ret);
+ 
+             if (ctx->delayed_surface != NULL) { // try to resubmit frame
++                if (ctx->delayed_surface->pVtbl->HasProperty(ctx->delayed_surface, L"av_frame_hdrmeta")) {
++                    AMFBuffer * hdrmeta_buffer = NULL;
++                    res = amf_get_property_buffer((AMFData *)ctx->delayed_surface, L"av_frame_hdrmeta", &hdrmeta_buffer);
++                    AMF_RETURN_IF_FALSE(avctx, res == AMF_OK, AVERROR_UNKNOWN, "GetProperty failed for \"av_frame_hdrmeta\" with error %d\n", res);
++                    switch (avctx->codec->id) {
++                    case AV_CODEC_ID_H264:
++                        AMF_ASSIGN_PROPERTY_INTERFACE(res, ctx->encoder, AMF_VIDEO_ENCODER_INPUT_HDR_METADATA, hdrmeta_buffer); break;
++                    case AV_CODEC_ID_HEVC:
++                        AMF_ASSIGN_PROPERTY_INTERFACE(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_INPUT_HDR_METADATA, hdrmeta_buffer); break;
++                    }
++                    hdrmeta_buffer->pVtbl->Release(hdrmeta_buffer);
++                }
+                 res = ctx->encoder->pVtbl->SubmitInput(ctx->encoder, (AMFData*)ctx->delayed_surface);
+                 if (res != AMF_INPUT_FULL) {
+                     int64_t pts = ctx->delayed_surface->pVtbl->GetPts(ctx->delayed_surface);
+diff -Naur ffmpeg-6.0.old/libavcodec/amfenc.h ffmpeg-6.0/libavcodec/amfenc.h
+--- ffmpeg-6.0.old/libavcodec/amfenc.h	2023-06-06 08:34:50.040448875 +0200
++++ ffmpeg-6.0/libavcodec/amfenc.h	2023-06-06 08:34:50.551458078 +0200
+@@ -21,6 +21,7 @@
+ 
+ #include <AMF/core/Factory.h>
+ 
++#include <AMF/components/ColorSpace.h>
+ #include <AMF/components/VideoEncoderVCE.h>
+ #include <AMF/components/VideoEncoderHEVC.h>
+ #include <AMF/components/VideoEncoderAV1.h>
+diff -Naur ffmpeg-6.0.old/libavcodec/amfenc_h264.c ffmpeg-6.0/libavcodec/amfenc_h264.c
+--- ffmpeg-6.0.old/libavcodec/amfenc_h264.c	2023-06-06 08:34:50.099449937 +0200
++++ ffmpeg-6.0/libavcodec/amfenc_h264.c	2023-06-06 08:34:50.552458096 +0200
+@@ -138,6 +138,9 @@
+     AMFRate                          framerate;
+     AMFSize                          framesize = AMFConstructSize(avctx->width, avctx->height);
+     int                              deblocking_filter = (avctx->flags & AV_CODEC_FLAG_LOOP_FILTER) ? 1 : 0;
++    amf_int64                        color_depth;
++    amf_int64                        color_profile;
++    enum                             AVPixelFormat pix_fmt;
+ 
+     if (avctx->framerate.num > 0 && avctx->framerate.den > 0) {
+         framerate = AMFConstructRate(avctx->framerate.num, avctx->framerate.den);
+@@ -195,10 +198,51 @@
+         AMF_ASSIGN_PROPERTY_RATIO(res, ctx->encoder, AMF_VIDEO_ENCODER_ASPECT_RATIO, ratio);
+     }
+ 
+-    /// Color Range (Partial/TV/MPEG or Full/PC/JPEG)
++    // Color Metadata
++    /// Color Range (Support for older Drivers)
+     if (avctx->color_range == AVCOL_RANGE_JPEG) {
+         AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_FULL_RANGE_COLOR, 1);
++    } else {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_FULL_RANGE_COLOR, 0);
++    }
++    /// Color Space & Depth
++    pix_fmt = avctx->hw_frames_ctx ? ((AVHWFramesContext*)avctx->hw_frames_ctx->data)->sw_format
++                                : avctx->pix_fmt;
++    color_depth = AMF_COLOR_BIT_DEPTH_8;
++    if (pix_fmt == AV_PIX_FMT_P010) {
++        color_depth = AMF_COLOR_BIT_DEPTH_10;
++    }
++    color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_UNKNOWN;
++    switch (avctx->colorspace) {
++    case AVCOL_SPC_SMPTE170M:
++        if (avctx->color_range == AVCOL_RANGE_JPEG) {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_FULL_601;
++        } else {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_601;
++        }
++        break;
++    case AVCOL_SPC_BT709:
++        if (avctx->color_range == AVCOL_RANGE_JPEG) {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_FULL_709;
++        } else {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_709;
++        }
++        break;
++    case AVCOL_SPC_BT2020_NCL:
++    case AVCOL_SPC_BT2020_CL:
++        if (avctx->color_range == AVCOL_RANGE_JPEG) {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_FULL_2020;
++        } else {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_2020;
++        }
++        break;
+     }
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_COLOR_BIT_DEPTH, color_depth);
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_OUTPUT_COLOR_PROFILE, color_profile);
++    /// Color Transfer Characteristics (AMF matches ISO/IEC)
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_OUTPUT_TRANSFER_CHARACTERISTIC, (amf_int64)avctx->color_trc);
++    /// Color Primaries (AMF matches ISO/IEC)
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_OUTPUT_COLOR_PRIMARIES, (amf_int64)avctx->color_primaries);
+ 
+     // autodetect rate control method
+     if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_RATE_CONTROL_METHOD_UNKNOWN) {
+diff -Naur ffmpeg-6.0.old/libavcodec/amfenc_hevc.c ffmpeg-6.0/libavcodec/amfenc_hevc.c
+--- ffmpeg-6.0.old/libavcodec/amfenc_hevc.c	2023-06-06 08:34:50.040448875 +0200
++++ ffmpeg-6.0/libavcodec/amfenc_hevc.c	2023-06-06 08:34:50.553458114 +0200
+@@ -31,8 +31,9 @@
+     { "lowlatency",     "", 0, AV_OPT_TYPE_CONST, { .i64 = AMF_VIDEO_ENCODER_HEVC_USAGE_LOW_LATENCY },          0, 0, VE, "usage" },
+     { "webcam",         "", 0, AV_OPT_TYPE_CONST, { .i64 = AMF_VIDEO_ENCODER_HEVC_USAGE_WEBCAM },               0, 0, VE, "usage" },
+ 
+-    { "profile",        "Set the profile (default main)",           OFFSET(profile),   AV_OPT_TYPE_INT,{ .i64 = AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN }, AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN, AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN, VE, "profile" },
++    { "profile",        "Set the profile (default main)",           OFFSET(profile),   AV_OPT_TYPE_INT,{ .i64 = AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN }, AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN, AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN_10, VE, "profile" },
+     { "main",           "", 0,                      AV_OPT_TYPE_CONST,{ .i64 = AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN }, 0, 0, VE, "profile" },
++    { "main10",         "", 0,                      AV_OPT_TYPE_CONST,{ .i64 = AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN_10 }, 0, 0, VE, "profile" },
+ 
+     { "profile_tier",   "Set the profile tier (default main)",      OFFSET(tier), AV_OPT_TYPE_INT,{ .i64 = AMF_VIDEO_ENCODER_HEVC_TIER_MAIN }, AMF_VIDEO_ENCODER_HEVC_TIER_MAIN, AMF_VIDEO_ENCODER_HEVC_TIER_HIGH, VE, "tier" },
+     { "main",           "", 0, AV_OPT_TYPE_CONST, { .i64 = AMF_VIDEO_ENCODER_HEVC_TIER_MAIN }, 0, 0, VE, "tier" },
+@@ -105,6 +106,9 @@
+     AMFRate             framerate;
+     AMFSize             framesize = AMFConstructSize(avctx->width, avctx->height);
+     int                 deblocking_filter = (avctx->flags & AV_CODEC_FLAG_LOOP_FILTER) ? 1 : 0;
++    amf_int64           color_depth;
++    amf_int64           color_profile;
++    enum                AVPixelFormat pix_fmt;
+ 
+     if (avctx->framerate.num > 0 && avctx->framerate.den > 0) {
+         framerate = AMFConstructRate(avctx->framerate.num, avctx->framerate.den);
+@@ -122,10 +126,14 @@
+ 
+     AMF_ASSIGN_PROPERTY_RATE(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_FRAMERATE, framerate);
+ 
++    color_depth = AMF_COLOR_BIT_DEPTH_8;
+     switch (avctx->profile) {
+     case FF_PROFILE_HEVC_MAIN:
+         profile = AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN;
+         break;
++    case FF_PROFILE_HEVC_MAIN_10:
++        profile = AMF_VIDEO_ENCODER_HEVC_PROFILE_MAIN_10;
++        break;
+     default:
+         break;
+     }
+@@ -154,6 +162,51 @@
+         AMF_ASSIGN_PROPERTY_RATIO(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_ASPECT_RATIO, ratio);
+     }
+ 
++    // Color Metadata
++    /// Color Range (Support for older Drivers)
++    if (avctx->color_range == AVCOL_RANGE_JPEG) {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_NOMINAL_RANGE, 1);
++    } else {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_NOMINAL_RANGE, 0);
++    }
++    /// Color Space & Depth
++    pix_fmt = avctx->hw_frames_ctx ? ((AVHWFramesContext*)avctx->hw_frames_ctx->data)->sw_format
++                                    : avctx->pix_fmt;
++    if (pix_fmt == AV_PIX_FMT_P010) {
++        color_depth = AMF_COLOR_BIT_DEPTH_10;
++    }
++    color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_UNKNOWN;
++    switch (avctx->colorspace) {
++    case AVCOL_SPC_SMPTE170M:
++        if (avctx->color_range == AVCOL_RANGE_JPEG) {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_FULL_601;
++        } else {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_601;
++        }
++        break;
++    case AVCOL_SPC_BT709:
++        if (avctx->color_range == AVCOL_RANGE_JPEG) {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_FULL_709;
++        } else {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_709;
++        }
++        break;
++    case AVCOL_SPC_BT2020_NCL:
++    case AVCOL_SPC_BT2020_CL:
++        if (avctx->color_range == AVCOL_RANGE_JPEG) {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_FULL_2020;
++        } else {
++            color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_2020;
++        }
++        break;
++    }
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_COLOR_BIT_DEPTH, color_depth);
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_OUTPUT_COLOR_PROFILE, color_profile);
++    /// Color Transfer Characteristics (AMF matches ISO/IEC)
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_OUTPUT_TRANSFER_CHARACTERISTIC, (amf_int64)avctx->color_trc);
++    /// Color Primaries (AMF matches ISO/IEC)
++    AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_OUTPUT_COLOR_PRIMARIES, (amf_int64)avctx->color_primaries);
++
+     // Picture control properties
+     AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_NUM_GOPS_PER_IDR, ctx->gops_per_idr);
+     AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_GOP_SIZE, avctx->gop_size);
+diff -Naur ffmpeg-6.0.old/libavcodec/avcodec.h ffmpeg-6.0/libavcodec/avcodec.h
+--- ffmpeg-6.0.old/libavcodec/avcodec.h	2023-06-06 08:34:50.052449091 +0200
++++ ffmpeg-6.0/libavcodec/avcodec.h	2023-06-06 08:34:50.562458276 +0200
+@@ -1584,12 +1584,19 @@
+ #define FF_PROFILE_DNXHR_HQX     4
+ #define FF_PROFILE_DNXHR_444     5
+ 
+-#define FF_PROFILE_DTS         20
+-#define FF_PROFILE_DTS_ES      30
+-#define FF_PROFILE_DTS_96_24   40
+-#define FF_PROFILE_DTS_HD_HRA  50
+-#define FF_PROFILE_DTS_HD_MA   60
+-#define FF_PROFILE_DTS_EXPRESS 70
++#define FF_PROFILE_DTS                20
++#define FF_PROFILE_DTS_ES             30
++#define FF_PROFILE_DTS_96_24          40
++#define FF_PROFILE_DTS_HD_HRA         50
++#define FF_PROFILE_DTS_HD_MA          60
++#define FF_PROFILE_DTS_EXPRESS        70
++#define FF_PROFILE_DTS_HD_MA_X        61
++#define FF_PROFILE_DTS_HD_MA_X_IMAX   62
++
++
++#define FF_PROFILE_EAC3_DDP_ATMOS         30
++
++#define FF_PROFILE_TRUEHD_ATMOS           30
+ 
+ #define FF_PROFILE_MPEG2_422    0
+ #define FF_PROFILE_MPEG2_HIGH   1
+diff -Naur ffmpeg-6.0.old/libavcodec/avpacket.c ffmpeg-6.0/libavcodec/avpacket.c
+--- ffmpeg-6.0.old/libavcodec/avpacket.c	2023-06-06 08:34:50.044448946 +0200
++++ ffmpeg-6.0/libavcodec/avpacket.c	2023-06-06 08:34:50.568458384 +0200
+@@ -300,6 +300,7 @@
+     case AV_PKT_DATA_DOVI_CONF:                  return "DOVI configuration record";
+     case AV_PKT_DATA_S12M_TIMECODE:              return "SMPTE ST 12-1:2014 timecode";
+     case AV_PKT_DATA_DYNAMIC_HDR10_PLUS:         return "HDR10+ Dynamic Metadata (SMPTE 2094-40)";
++    case AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT:return "Ambient viewing environment";
+     }
+     return NULL;
+ }
+diff -Naur ffmpeg-6.0.old/libavcodec/ccaption_dec.c ffmpeg-6.0/libavcodec/ccaption_dec.c
+--- ffmpeg-6.0.old/libavcodec/ccaption_dec.c	2023-06-06 08:34:50.096449883 +0200
++++ ffmpeg-6.0/libavcodec/ccaption_dec.c	2023-06-06 08:34:50.542457915 +0200
+@@ -879,12 +879,13 @@
+ 
+         if (ctx->buffer[bidx].str[0] || ctx->real_time) {
+             ff_dlog(ctx, "cdp writing data (%s)\n", ctx->buffer[bidx].str);
+-            start_time = ctx->buffer_time[0];
+-            sub->pts = start_time;
+-            end_time = ctx->buffer_time[1];
+-            if (!ctx->real_time)
++            if (!ctx->real_time) {
++                start_time = ctx->buffer_time[0];
++                sub->pts = start_time;
++                end_time = ctx->buffer_time[1];
+                 sub->end_display_time = av_rescale_q(end_time - start_time,
+                                                      AV_TIME_BASE_Q, ms_tb);
++            }
+             else
+                 sub->end_display_time = -1;
+             ret = ff_ass_add_rect2(sub, ctx->buffer[bidx].str, ctx->readorder++, 0, NULL, NULL, &nb_rect_allocated);
+@@ -922,7 +923,7 @@
+     }
+ 
+     *got_sub = sub->num_rects > 0;
+-    return ret;
++    return len;
+ }
+ 
+ #define OFFSET(x) offsetof(CCaptionSubContext, x)
+diff -Naur ffmpeg-6.0.old/libavcodec/codec_desc.c ffmpeg-6.0/libavcodec/codec_desc.c
+--- ffmpeg-6.0.old/libavcodec/codec_desc.c	2023-06-06 08:34:50.089449757 +0200
++++ ffmpeg-6.0/libavcodec/codec_desc.c	2023-06-06 08:34:50.563458294 +0200
+@@ -2931,6 +2931,7 @@
+         .name      = "eac3",
+         .long_name = NULL_IF_CONFIG_SMALL("ATSC A/52B (AC-3, E-AC-3)"),
+         .props     = AV_CODEC_PROP_INTRA_ONLY | AV_CODEC_PROP_LOSSY,
++        .profiles  = NULL_IF_CONFIG_SMALL(ff_eac3_profiles),
+     },
+     {
+         .id        = AV_CODEC_ID_SIPR,
+@@ -2959,6 +2960,7 @@
+         .name      = "truehd",
+         .long_name = NULL_IF_CONFIG_SMALL("TrueHD"),
+         .props     = AV_CODEC_PROP_LOSSLESS,
++        .profiles  = NULL_IF_CONFIG_SMALL(ff_truehd_profiles),
+     },
+     {
+         .id        = AV_CODEC_ID_MP4ALS,
+diff -Naur ffmpeg-6.0.old/libavcodec/dca_syncwords.h ffmpeg-6.0/libavcodec/dca_syncwords.h
+--- ffmpeg-6.0.old/libavcodec/dca_syncwords.h	2023-06-06 08:34:50.084449667 +0200
++++ ffmpeg-6.0/libavcodec/dca_syncwords.h	2023-06-06 08:34:50.563458294 +0200
+@@ -33,4 +33,7 @@
+ #define    DCA_SYNCWORD_SUBSTREAM_CORE       0x02B09261U
+ #define    DCA_SYNCWORD_REV1AUX              0x9A1105A0U
+ 
++#define    DCA_SYNCWORD_XLL_X                0x02000850U
++#define    DCA_SYNCWORD_XLL_X_IMAX           0xF14000D0U
++
+ #endif /* AVCODEC_DCA_SYNCWORDS_H */
+diff -Naur ffmpeg-6.0.old/libavcodec/dca_xll.c ffmpeg-6.0/libavcodec/dca_xll.c
+--- ffmpeg-6.0.old/libavcodec/dca_xll.c	2023-06-06 08:34:50.062449270 +0200
++++ ffmpeg-6.0/libavcodec/dca_xll.c	2023-06-06 08:34:50.564458312 +0200
+@@ -18,6 +18,7 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  */
+ 
++#include "avcodec.h"
+ #include "libavutil/channel_layout.h"
+ #include "dcadec.h"
+ #include "dcadata.h"
+@@ -1054,6 +1055,22 @@
+         return ret;
+     if ((ret = parse_band_data(s)) < 0)
+         return ret;
++
++     if (s->frame_size * 8 > FFALIGN(get_bits_count(&s->gb), 32)) {
++        unsigned int extradata_syncword;
++
++        // Align to dword
++        skip_bits_long(&s->gb, -get_bits_count(&s->gb) & 31);
++
++        extradata_syncword = show_bits_long(&s->gb, 32);
++
++        if (extradata_syncword == DCA_SYNCWORD_XLL_X) {
++            s->x_syncword_present = 1;
++        } else if ((extradata_syncword >> 1) == (DCA_SYNCWORD_XLL_X_IMAX >> 1)) {
++            s->x_imax_syncword_present = 1;
++        }
++    }
++
+     if (ff_dca_seek_bits(&s->gb, s->frame_size * 8)) {
+         av_log(s->avctx, AV_LOG_ERROR, "Read past end of XLL frame\n");
+         return AVERROR_INVALIDDATA;
+@@ -1428,8 +1445,15 @@
+         return AVERROR(EINVAL);
+     }
+ 
++    if (s->x_imax_syncword_present) {
++        avctx->profile = FF_PROFILE_DTS_HD_MA_X_IMAX;
++    } else if (s->x_syncword_present) {
++        avctx->profile = FF_PROFILE_DTS_HD_MA_X;
++    } else {
++        avctx->profile = FF_PROFILE_DTS_HD_MA;
++    }
++
+     avctx->bits_per_raw_sample = p->storage_bit_res;
+-    avctx->profile = FF_PROFILE_DTS_HD_MA;
+     avctx->bit_rate = 0;
+ 
+     frame->nb_samples = nsamples = s->nframesamples << (s->nfreqbands - 1);
+diff -Naur ffmpeg-6.0.old/libavcodec/dca_xll.h ffmpeg-6.0/libavcodec/dca_xll.h
+--- ffmpeg-6.0.old/libavcodec/dca_xll.h	2023-06-06 08:34:50.068449379 +0200
++++ ffmpeg-6.0/libavcodec/dca_xll.h	2023-06-06 08:34:50.564458312 +0200
+@@ -135,6 +135,9 @@
+ 
+     DCADSPContext   *dcadsp;
+ 
++    int    x_syncword_present;        ///< Syncword for extension data at end of frame (DTS:X) is present
++    int    x_imax_syncword_present;   ///< Syncword for extension data at end of frame (DTS:X IMAX) is present
++
+     int     output_mask;
+     int32_t *output_samples[DCA_SPEAKER_COUNT];
+ } DCAXllDecoder;
+diff -Naur ffmpeg-6.0.old/libavcodec/decode.c ffmpeg-6.0/libavcodec/decode.c
+--- ffmpeg-6.0.old/libavcodec/decode.c	2023-06-06 08:34:50.061449253 +0200
++++ ffmpeg-6.0/libavcodec/decode.c	2023-06-06 08:34:50.568458384 +0200
+@@ -1309,6 +1309,7 @@
+         { AV_PKT_DATA_ICC_PROFILE,                AV_FRAME_DATA_ICC_PROFILE },
+         { AV_PKT_DATA_S12M_TIMECODE,              AV_FRAME_DATA_S12M_TIMECODE },
+         { AV_PKT_DATA_DYNAMIC_HDR10_PLUS,         AV_FRAME_DATA_DYNAMIC_HDR_PLUS },
++        { AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT,AV_FRAME_DATA_AMBIENT_VIEWING_ENVIRONMENT },
+     };
+ 
+     frame->pts          = pkt->pts;
+diff -Naur ffmpeg-6.0.old/libavcodec/dvdsubdec.c ffmpeg-6.0/libavcodec/dvdsubdec.c
+--- ffmpeg-6.0.old/libavcodec/dvdsubdec.c	2023-06-06 08:34:50.034448766 +0200
++++ ffmpeg-6.0/libavcodec/dvdsubdec.c	2023-06-06 08:34:50.536457808 +0200
+@@ -44,6 +44,7 @@
+   int      buf_size;
+   int      forced_subs_only;
+   uint8_t  used_color[256];
++  int64_t  pts;
+ } DVDSubContext;
+ 
+ static void yuv_a_to_rgba(const uint8_t *ycbcr, const uint8_t *alpha, uint32_t *rgba, int num_values)
+@@ -230,7 +231,7 @@
+     int64_t offset1, offset2;
+ 
+     if (buf_size < 10)
+-        return -1;
++        return AVERROR(EAGAIN);
+ 
+     if (AV_RB16(buf) == 0) {   /* HD subpicture with 4-byte offsets */
+         big_offsets = 1;
+@@ -245,12 +246,12 @@
+     size = READ_OFFSET(buf + (big_offsets ? 2 : 0));
+     cmd_pos = READ_OFFSET(buf + cmd_pos);
+ 
+-    if (cmd_pos < 0 || cmd_pos > buf_size - 2 - offset_size) {
+-        if (cmd_pos > size) {
+-            av_log(ctx, AV_LOG_ERROR, "Discarding invalid packet\n");
+-            return 0;
+-        }
++    if (buf_size < size)
+         return AVERROR(EAGAIN);
++
++    if (cmd_pos < 0 || cmd_pos > size) {
++        av_log(ctx, AV_LOG_ERROR, "Discarding invalid packet\n");
++        return AVERROR_INVALIDDATA;
+     }
+ 
+     while (cmd_pos > 0 && cmd_pos < buf_size - 2 - offset_size) {
+@@ -523,10 +524,13 @@
+     int appended = 0;
+     int is_menu;
+ 
++    if (ctx->pts == AV_NOPTS_VALUE && sub->pts != AV_NOPTS_VALUE)
++        ctx->pts = sub->pts;
+     if (ctx->buf_size) {
+         int ret = append_to_cached_buf(avctx, buf, buf_size);
+         if (ret < 0) {
+             *data_size = 0;
++            ctx->pts = AV_NOPTS_VALUE;
+             return ret;
+         }
+         buf = ctx->buf;
+@@ -537,7 +541,12 @@
+     is_menu = decode_dvd_subtitles(ctx, sub, buf, buf_size);
+     if (is_menu == AVERROR(EAGAIN)) {
+         *data_size = 0;
+-        return appended ? 0 : append_to_cached_buf(avctx, buf, buf_size);
++        int ret = appended ? 0 : append_to_cached_buf(avctx, buf, buf_size);
++        if (ret < 0) {
++            ctx->pts = AV_NOPTS_VALUE;
++            return ret;
++        }
++        return buf_size;
+     }
+ 
+     if (is_menu < 0) {
+@@ -546,6 +555,7 @@
+         reset_rects(sub);
+         *data_size = 0;
+ 
++        ctx->pts = AV_NOPTS_VALUE;
+         return buf_size;
+     }
+     if (!is_menu && find_smallest_bounding_rectangle(ctx, sub) == 0)
+@@ -556,6 +566,8 @@
+ 
+     ctx->buf_size = 0;
+     *data_size = 1;
++    sub->pts = ctx->pts;
++    ctx->pts = AV_NOPTS_VALUE;
+     return buf_size;
+ }
+ 
+@@ -681,6 +693,7 @@
+             av_log(avctx, AV_LOG_DEBUG, " 0x%06"PRIx32, ctx->palette[i]);
+         av_log(avctx, AV_LOG_DEBUG, "\n");
+     }
++    ctx->pts = AV_NOPTS_VALUE;
+ 
+     return 1;
+ }
+diff -Naur ffmpeg-6.0.old/libavcodec/eac3dec.c ffmpeg-6.0/libavcodec/eac3dec.c
+--- ffmpeg-6.0.old/libavcodec/eac3dec.c	2023-06-06 08:34:50.071449433 +0200
++++ ffmpeg-6.0/libavcodec/eac3dec.c	2023-06-06 08:34:50.564458312 +0200
+@@ -464,7 +464,16 @@
+     if (get_bits1(gbc)) {
+         int addbsil = get_bits(gbc, 6);
+         for (i = 0; i < addbsil + 1; i++) {
+-            skip_bits(gbc, 8); // skip additional bit stream info
++            if (i == 0) {
++                /* In this 8 bit chunk, the LSB is equal to flag_ec3_extension_type_a
++                   which can be used to detect Atmos presence */
++                skip_bits(gbc, 7);
++                if (get_bits1(gbc)) {
++                    s->eac3_extension_type_a = 1;
++                }
++            } else {
++                skip_bits(gbc, 8); // skip additional bit stream info
++            }
+         }
+     }
+ 
+diff -Naur ffmpeg-6.0.old/libavcodec/h2645_sei.c ffmpeg-6.0/libavcodec/h2645_sei.c
+--- ffmpeg-6.0.old/libavcodec/h2645_sei.c	2023-06-06 08:34:50.046448982 +0200
++++ ffmpeg-6.0/libavcodec/h2645_sei.c	2023-06-06 08:34:50.566458348 +0200
+@@ -650,6 +650,8 @@
+         dst_env->ambient_illuminance = av_make_q(env->ambient_illuminance, 10000);
+         dst_env->ambient_light_x     = av_make_q(env->ambient_light_x,     50000);
+         dst_env->ambient_light_y     = av_make_q(env->ambient_light_y,     50000);
++
++        env->present = 0;
+     }
+ 
+     return 0;
+@@ -665,6 +667,4 @@
+     av_freep(&s->unregistered.buf_ref);
+     av_buffer_unref(&s->dynamic_hdr_plus.info);
+     av_buffer_unref(&s->dynamic_hdr_vivid.info);
+-
+-    s->ambient_viewing_environment.present = 0;
+ }
+diff -Naur ffmpeg-6.0.old/libavcodec/hevc_mp4toannexb_bsf.c ffmpeg-6.0/libavcodec/hevc_mp4toannexb_bsf.c
+--- ffmpeg-6.0.old/libavcodec/hevc_mp4toannexb_bsf.c	2023-06-06 08:34:50.019448496 +0200
++++ ffmpeg-6.0/libavcodec/hevc_mp4toannexb_bsf.c	2023-06-06 08:34:50.373454872 +0200
+@@ -121,7 +121,7 @@
+     HEVCBSFContext *s = ctx->priv_data;
+     AVPacket *in;
+     GetByteContext gb;
+-
++    int has_sps = 0, has_pps = 0;
+     int got_irap = 0;
+     int i, ret = 0;
+ 
+@@ -155,10 +155,13 @@
+         }
+ 
+         nalu_type = (bytestream2_peek_byte(&gb) >> 1) & 0x3f;
++        has_sps = (has_sps || nalu_type == HEVC_NAL_SPS);
++        has_pps = (has_pps || nalu_type == HEVC_NAL_PPS);
+ 
+         /* prepend extradata to IRAP frames */
+         is_irap       = nalu_type >= 16 && nalu_type <= 23;
+-        add_extradata = is_irap && !got_irap;
++        /* ignore the extradata if IRAP frame has sps and pps */
++        add_extradata = is_irap && !got_irap && !(has_sps && has_pps);
+         extra_size    = add_extradata * ctx->par_out->extradata_size;
+         got_irap     |= is_irap;
+ 
+diff -Naur ffmpeg-6.0.old/libavcodec/libdav1d.c ffmpeg-6.0/libavcodec/libdav1d.c
+--- ffmpeg-6.0.old/libavcodec/libdav1d.c	2023-06-06 08:34:50.067449361 +0200
++++ ffmpeg-6.0/libavcodec/libdav1d.c	2023-06-06 08:34:50.559458222 +0200
+@@ -33,6 +33,7 @@
+ #include "bytestream.h"
+ #include "codec_internal.h"
+ #include "decode.h"
++#include "dynamic_hdr10_plus.h"
+ #include "internal.h"
+ 
+ #define FF_DAV1D_VERSION_AT_LEAST(x,y) \
+@@ -511,12 +512,14 @@
+     }
+     if (p->itut_t35) {
+         GetByteContext gb;
+-        unsigned int user_identifier;
++        int provider_code;
+ 
+         bytestream2_init(&gb, p->itut_t35->payload, p->itut_t35->payload_size);
+-        bytestream2_skip(&gb, 1); // terminal provider code
+-        bytestream2_skip(&gb, 1); // terminal provider oriented code
+-        user_identifier = bytestream2_get_be32(&gb);
++
++        provider_code = bytestream2_get_be16(&gb);
++        switch (provider_code) {
++        case 0x31: { // atsc_provider_code
++        uint32_t user_identifier = bytestream2_get_be32(&gb);
+         switch (user_identifier) {
+         case MKBETAG('G', 'A', '9', '4'): { // closed captions
+             AVBufferRef *buf = NULL;
+@@ -536,6 +539,30 @@
+         default: // ignore unsupported identifiers
+             break;
+         }
++        }
++        case 0x3C: { // smpte_provider_code
++            AVDynamicHDRPlus *hdrplus;
++            int provider_oriented_code = bytestream2_get_be16(&gb);
++            int application_identifier = bytestream2_get_byte(&gb);
++
++            if (provider_oriented_code != 1 || application_identifier != 4)
++                break;
++
++            hdrplus = av_dynamic_hdr_plus_create_side_data(frame);
++            if (!hdrplus) {
++                res = AVERROR(ENOMEM);
++                goto fail;
++            }
++
++            res = ff_parse_itu_t_t35_to_dynamic_hdr10_plus(hdrplus, gb.buffer,
++                                                           bytestream2_get_bytes_left(&gb));
++            if (res < 0)
++                goto fail;
++            break;
++        }
++        default: // ignore unsupported provider codes
++            break;
++        }
+     }
+     if (p->frame_hdr->film_grain.present && (!dav1d->apply_grain ||
+         (c->export_side_data & AV_CODEC_EXPORT_DATA_FILM_GRAIN))) {
+diff -Naur ffmpeg-6.0.old/libavcodec/mlpdec.c ffmpeg-6.0/libavcodec/mlpdec.c
+--- ffmpeg-6.0.old/libavcodec/mlpdec.c	2023-06-06 08:34:50.068449379 +0200
++++ ffmpeg-6.0/libavcodec/mlpdec.c	2023-06-06 08:34:50.565458329 +0200
+@@ -42,6 +42,7 @@
+ #include "mlpdsp.h"
+ #include "mlp.h"
+ #include "config.h"
++#include "profiles.h"
+ 
+ /** number of bits used for VLC lookup - longest Huffman code is 9 */
+ #if ARCH_ARM
+@@ -392,6 +393,14 @@
+     m->num_substreams        = mh.num_substreams;
+     m->substream_info        = mh.substream_info;
+ 
++    /*  If there is a 4th substream and the MSB of substream_info is set,
++     *  there is a 16-channel spatial presentation (Atmos in TrueHD).
++     */
++    if (m->avctx->codec_id == AV_CODEC_ID_TRUEHD
++            && m->num_substreams == 4 && m->substream_info >> 7 == 1) {
++        m->avctx->profile     = FF_PROFILE_TRUEHD_ATMOS;
++    }
++
+     /* limit to decoding 3 substreams, as the 4th is used by Dolby Atmos for non-audio data */
+     m->max_decoded_substream = FFMIN(m->num_substreams - 1, 2);
+ 
+@@ -1452,5 +1461,6 @@
+     FF_CODEC_DECODE_CB(read_access_unit),
+     .flush          = mlp_decode_flush,
+     .p.capabilities = AV_CODEC_CAP_DR1 | AV_CODEC_CAP_CHANNEL_CONF,
++    .p.profiles     = NULL_IF_CONFIG_SMALL(ff_truehd_profiles),
+ };
+ #endif /* CONFIG_TRUEHD_DECODER */
+diff -Naur ffmpeg-6.0.old/libavcodec/nvenc.c ffmpeg-6.0/libavcodec/nvenc.c
+--- ffmpeg-6.0.old/libavcodec/nvenc.c	2023-06-06 08:34:50.004448226 +0200
++++ ffmpeg-6.0/libavcodec/nvenc.c	2023-06-06 08:34:50.566458348 +0200
+@@ -457,7 +457,7 @@
+ static int nvenc_check_capabilities(AVCodecContext *avctx)
+ {
+     NvencContext *ctx = avctx->priv_data;
+-    int ret;
++    int tmp, ret;
+ 
+     ret = nvenc_check_codec_support(avctx);
+     if (ret < 0) {
+@@ -538,16 +538,18 @@
+     }
+ 
+ #ifdef NVENC_HAVE_BFRAME_REF_MODE
++    tmp = (ctx->b_ref_mode >= 0) ? ctx->b_ref_mode : NV_ENC_BFRAME_REF_MODE_DISABLED;
+     ret = nvenc_check_cap(avctx, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE);
+-    if (ctx->b_ref_mode == NV_ENC_BFRAME_REF_MODE_EACH && ret != 1 && ret != 3) {
++    if (tmp == NV_ENC_BFRAME_REF_MODE_EACH && ret != 1 && ret != 3) {
+         av_log(avctx, AV_LOG_WARNING, "Each B frame as reference is not supported\n");
+         return AVERROR(ENOSYS);
+-    } else if (ctx->b_ref_mode != NV_ENC_BFRAME_REF_MODE_DISABLED && ret == 0) {
++    } else if (tmp != NV_ENC_BFRAME_REF_MODE_DISABLED && ret == 0) {
+         av_log(avctx, AV_LOG_WARNING, "B frames as references are not supported\n");
+         return AVERROR(ENOSYS);
+     }
+ #else
+-    if (ctx->b_ref_mode != 0) {
++    tmp = (ctx->b_ref_mode >= 0) ? ctx->b_ref_mode : 0;
++    if (tmp > 0) {
+         av_log(avctx, AV_LOG_WARNING, "B frames as references need SDK 8.1 at build time\n");
+         return AVERROR(ENOSYS);
+     }
+diff -Naur ffmpeg-6.0.old/libavcodec/packet.h ffmpeg-6.0/libavcodec/packet.h
+--- ffmpeg-6.0.old/libavcodec/packet.h	2023-06-06 08:34:50.066449343 +0200
++++ ffmpeg-6.0/libavcodec/packet.h	2023-06-06 08:34:50.569458402 +0200
+@@ -300,6 +300,13 @@
+     AV_PKT_DATA_DYNAMIC_HDR10_PLUS,
+ 
+     /**
++     * Ambient viewing environment metadata, as defined by H.274.. This metadata
++     * should be associated with a video stream and contains data in the form
++     * of the AVAmbientViewingEnvironment struct.
++     */
++    AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT,
++
++    /**
+      * The number of side data types.
+      * This is not part of the public API/ABI in the sense that it may
+      * change when new side data types are added.
+diff -Naur ffmpeg-6.0.old/libavcodec/profiles.c ffmpeg-6.0/libavcodec/profiles.c
+--- ffmpeg-6.0.old/libavcodec/profiles.c	2023-06-06 08:34:50.059449217 +0200
++++ ffmpeg-6.0/libavcodec/profiles.c	2023-06-06 08:34:50.565458329 +0200
+@@ -36,15 +36,27 @@
+ };
+ 
+ const AVProfile ff_dca_profiles[] = {
+-    { FF_PROFILE_DTS,         "DTS"         },
+-    { FF_PROFILE_DTS_ES,      "DTS-ES"      },
+-    { FF_PROFILE_DTS_96_24,   "DTS 96/24"   },
+-    { FF_PROFILE_DTS_HD_HRA,  "DTS-HD HRA"  },
+-    { FF_PROFILE_DTS_HD_MA,   "DTS-HD MA"   },
+-    { FF_PROFILE_DTS_EXPRESS, "DTS Express" },
++    { FF_PROFILE_DTS,                "DTS"                    },
++    { FF_PROFILE_DTS_ES,             "DTS-ES"                 },
++    { FF_PROFILE_DTS_96_24,          "DTS 96/24"              },
++    { FF_PROFILE_DTS_HD_HRA,         "DTS-HD HRA"             },
++    { FF_PROFILE_DTS_HD_MA,          "DTS-HD MA"              },
++    { FF_PROFILE_DTS_HD_MA_X,        "DTS-HD MA + DTS:X"      },
++    { FF_PROFILE_DTS_HD_MA_X_IMAX,   "DTS-HD MA + DTS:X IMAX" },
++    { FF_PROFILE_DTS_EXPRESS,        "DTS Express"            },
+     { FF_PROFILE_UNKNOWN },
+ };
+ 
++const AVProfile ff_eac3_profiles[] = {
++  { FF_PROFILE_EAC3_DDP_ATMOS, "Dolby Digital Plus + Dolby Atmos"},
++  { FF_PROFILE_UNKNOWN },
++};
++
++const AVProfile ff_truehd_profiles[] = {
++  { FF_PROFILE_TRUEHD_ATMOS,   "Dolby TrueHD + Dolby Atmos"},
++  { FF_PROFILE_UNKNOWN },
++};
++
+ const AVProfile ff_dnxhd_profiles[] = {
+   { FF_PROFILE_DNXHD,      "DNXHD"},
+   { FF_PROFILE_DNXHR_LB,   "DNXHR LB"},
+diff -Naur ffmpeg-6.0.old/libavcodec/profiles.h ffmpeg-6.0/libavcodec/profiles.h
+--- ffmpeg-6.0.old/libavcodec/profiles.h	2023-06-06 08:34:50.017448460 +0200
++++ ffmpeg-6.0/libavcodec/profiles.h	2023-06-06 08:34:50.565458329 +0200
+@@ -58,6 +58,8 @@
+ 
+ extern const AVProfile ff_aac_profiles[];
+ extern const AVProfile ff_dca_profiles[];
++extern const AVProfile ff_eac3_profiles[];
++extern const AVProfile ff_truehd_profiles[];
+ extern const AVProfile ff_dnxhd_profiles[];
+ extern const AVProfile ff_h264_profiles[];
+ extern const AVProfile ff_hevc_profiles[];
+diff -Naur ffmpeg-6.0.old/libavformat/dump.c ffmpeg-6.0/libavformat/dump.c
+--- ffmpeg-6.0.old/libavformat/dump.c	2023-06-06 08:34:50.214452008 +0200
++++ ffmpeg-6.0/libavformat/dump.c	2023-06-06 08:34:50.569458402 +0200
+@@ -27,6 +27,7 @@
+ #include "libavutil/intreadwrite.h"
+ #include "libavutil/log.h"
+ #include "libavutil/mastering_display_metadata.h"
++#include "libavutil/ambient_viewing_environment.h"
+ #include "libavutil/dovi_meta.h"
+ #include "libavutil/mathematics.h"
+ #include "libavutil/opt.h"
+@@ -366,6 +367,17 @@
+            metadata->MaxCLL, metadata->MaxFALL);
+ }
+ 
++static void dump_ambient_viewing_environment_metadata(void *ctx, const AVPacketSideData *sd)
++{
++    const AVAmbientViewingEnvironment *ambient =
++        (const AVAmbientViewingEnvironment *)sd->data;
++    av_log(ctx, AV_LOG_INFO, "Ambvient Viewing Environment, "
++           "ambient_illuminance=%f, ambient_light_x=%f, ambient_light_y=%f",
++           av_q2d(ambient->ambient_illuminance),
++           av_q2d(ambient->ambient_light_x),
++           av_q2d(ambient->ambient_light_y));
++}
++
+ static void dump_spherical(void *ctx, const AVCodecParameters *par,
+                            const AVPacketSideData *sd)
+ {
+@@ -497,6 +509,9 @@
+             av_log(ctx, AV_LOG_INFO, "SMPTE ST 12-1:2014: ");
+             dump_s12m_timecode(ctx, st, sd);
+             break;
++        case AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT:
++            dump_ambient_viewing_environment_metadata(ctx, sd);
++            break;
+         default:
+             av_log(ctx, AV_LOG_INFO, "unknown side data type %d "
+                    "(%"SIZE_SPECIFIER" bytes)", sd->type, sd->size);
+diff -Naur ffmpeg-6.0.old/libavformat/isom.h ffmpeg-6.0/libavformat/isom.h
+--- ffmpeg-6.0.old/libavformat/isom.h	2023-06-06 08:34:50.211451954 +0200
++++ ffmpeg-6.0/libavformat/isom.h	2023-06-06 08:34:50.569458402 +0200
+@@ -29,6 +29,7 @@
+ 
+ #include "libavutil/encryption_info.h"
+ #include "libavutil/mastering_display_metadata.h"
++#include "libavutil/ambient_viewing_environment.h"
+ #include "libavutil/spherical.h"
+ #include "libavutil/stereo3d.h"
+ 
+@@ -249,6 +250,7 @@
+     AVMasteringDisplayMetadata *mastering;
+     AVContentLightMetadata *coll;
+     size_t coll_size;
++    AVAmbientViewingEnvironment *ambient;
+ 
+     uint32_t format;
+ 
+diff -Naur ffmpeg-6.0.old/libavformat/matroskaenc.c ffmpeg-6.0/libavformat/matroskaenc.c
+--- ffmpeg-6.0.old/libavformat/matroskaenc.c	2023-06-06 08:34:50.224452188 +0200
++++ ffmpeg-6.0/libavformat/matroskaenc.c	2023-06-06 08:34:50.544457951 +0200
+@@ -2698,6 +2698,16 @@
+     case AV_CODEC_ID_AAC:
+         if (side_data_size && mkv->track.bc) {
+             int output_sample_rate = 0;
++            if (par->extradata && par->extradata_size) {
++                if (par->extradata_size != side_data_size ||
++                    memcmp(par->extradata, side_data, side_data_size)) {
++                    av_log(s, AV_LOG_ERROR, "Error, AAC extradata changed mid-stream.\n");
++                    return AVERROR(EINVAL);
++                } else {
++                    // Already written
++                    break;
++                }
++            }
+             ret = get_aac_sample_rates(s, mkv, side_data, side_data_size,
+                                        &track->sample_rate, &output_sample_rate);
+             if (ret < 0)
+diff -Naur ffmpeg-6.0.old/libavformat/mov.c ffmpeg-6.0/libavformat/mov.c
+--- ffmpeg-6.0.old/libavformat/mov.c	2023-06-06 08:34:50.205451846 +0200
++++ ffmpeg-6.0/libavformat/mov.c	2023-06-06 08:34:50.574458492 +0200
+@@ -55,6 +55,7 @@
+ #include "libavcodec/mpegaudiodecheader.h"
+ #include "libavcodec/mlp_parse.h"
+ #include "avformat.h"
++#include "avlanguage.h"
+ #include "internal.h"
+ #include "avio_internal.h"
+ #include "demux.h"
+@@ -296,6 +297,73 @@
+     return 0;
+ }
+ 
++static int mov_read_3gp_udta_tag(MOVContext *c, AVIOContext *pb, MOVAtom atom)
++{
++    const char *key;
++    AVDictionary *metadata;
++    uint16_t langcode = 0;
++    char key2[32], language[4] = {0};
++    uint32_t str_size, version;
++    char *str;
++    if (atom.size < 6)
++        return AVERROR_INVALIDDATA;
++    switch (atom.type) {
++    case MKTAG( 'a','l','b','m'): key = "album"; break;
++    case MKTAG( 'a','u','t','h'): key = "author"; break;
++    case MKTAG( 'c','p','r','t'): key = "copyright"; break;
++    case MKTAG( 'd','s','c','p'): key = "comment"; break;
++    case MKTAG( 'g','n','r','e'): key = "genre"; break;
++    case MKTAG( 'p','e','r','f'): key = "artist"; break;
++    case MKTAG( 't','i','t','l'): key = "title"; break;
++    case MKTAG( 'y','r','r','c'): key = "date"; break;
++    default: return 0;
++    }
++    version = avio_rb32(pb); // version + flags
++    if (version != 0)
++        av_log(c->fc, AV_LOG_WARNING, "udta %s unknown version number: %u\n", str, version);
++    if (MKTAG( 'y','r','r','c') == atom.type) {
++        int year;
++        year = avio_rb16(pb);
++        str = av_asprintf("%d", year);
++        if (!str)
++            return AVERROR(ENOMEM);
++    } else {
++        int ret;
++        const char *tmp;
++        langcode = avio_rb16(pb);
++        ff_mov_lang_to_iso639(langcode, language);
++        tmp = ff_convert_lang_to(language, AV_LANG_ISO639_2_BIBL);
++        if (!tmp)
++           av_log(c->fc, AV_LOG_WARNING, "udta %s unknown language code: %u\n", str, langcode);
++        str_size = atom.size - 6;
++        if (str_size <= 0 || str_size >= INT_MAX/2)
++            return AVERROR_INVALIDDATA;
++        str = av_mallocz(str_size + 1);
++        if (!str)
++            return AVERROR(ENOMEM);
++        ret = ffio_read_size(pb, str, str_size);
++        if (ret < 0) {
++            av_free(str);
++            return ret;
++        }
++        str[str_size] = 0;
++    }
++    if (c->trak_index < 0) {
++        metadata = c->fc->metadata;
++        c->fc->event_flags |= AVFMT_EVENT_FLAG_METADATA_UPDATED;
++    }
++    else {
++        metadata = c->fc->streams[c->trak_index]->metadata;
++    }
++    av_dict_set(&metadata, key, str, 0);
++    if (*language && strcmp(language, "und")) {
++        snprintf(key2, sizeof(key2), "%s-%s", key, language);
++        av_dict_set(&metadata, key2, str, 0);
++    }
++    av_freep(&str);
++    return 0;
++}
++
+ static int mov_read_udta_string(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+ {
+     char tmp_key[AV_FOURCC_MAX_STRING_SIZE] = {0};
+@@ -307,6 +375,7 @@
+     int (*parse)(MOVContext*, AVIOContext*, unsigned, const char*) = NULL;
+     int raw = 0;
+     int num = 0;
++    AVDictionary *metadata;
+ 
+     switch (atom.type) {
+     case MKTAG( '@','P','R','M'): key = "premiere_version"; raw = 1; break;
+@@ -320,15 +389,33 @@
+     case MKTAG( 'c','a','t','g'): key = "category"; break;
+     case MKTAG( 'c','p','i','l'): key = "compilation";
+         parse = mov_metadata_int8_no_padding; break;
+-    case MKTAG( 'c','p','r','t'): key = "copyright"; break;
++    case MKTAG( 'c','p','r','t'):
++        key = "copyright";
++        if (!c->itunes_metadata) {
++            int64_t pos = avio_tell(pb);
++            int ret = mov_read_3gp_udta_tag(c, pb, atom);
++            if (ret != AVERROR_INVALIDDATA)
++                return ret;
++            avio_seek(pb, pos, SEEK_SET);
++        }
++        break;
+     case MKTAG( 'd','e','s','c'): key = "description"; break;
+     case MKTAG( 'd','i','s','k'): key = "disc";
+         parse = mov_metadata_track_or_disc_number; break;
+     case MKTAG( 'e','g','i','d'): key = "episode_uid";
+         parse = mov_metadata_int8_no_padding; break;
+     case MKTAG( 'F','I','R','M'): key = "firmware"; raw = 1; break;
+-    case MKTAG( 'g','n','r','e'): key = "genre";
+-        parse = mov_metadata_gnre; break;
++    case MKTAG( 'g','n','r','e'):
++        key = "genre";
++        parse = mov_metadata_gnre;
++        if (!c->itunes_metadata) {
++            int64_t pos = avio_tell(pb);
++            int ret = mov_read_3gp_udta_tag(c, pb, atom);
++            if (ret != AVERROR_INVALIDDATA)
++                return ret;
++            avio_seek(pb, pos, SEEK_SET);
++        }
++        break;
+     case MKTAG( 'h','d','v','d'): key = "hd_video";
+         parse = mov_metadata_int8_no_padding; break;
+     case MKTAG( 'H','M','M','T'):
+@@ -339,6 +426,7 @@
+         return mov_metadata_loci(c, pb, atom.size);
+     case MKTAG( 'm','a','n','u'): key = "make"; break;
+     case MKTAG( 'm','o','d','l'): key = "model"; break;
++    case MKTAG( 'n','a','m','e'): key = "title"; raw = 1; break;
+     case MKTAG( 'p','c','s','t'): key = "podcast";
+         parse = mov_metadata_int8_no_padding; break;
+     case MKTAG( 'p','g','a','p'): key = "gapless_playback";
+@@ -398,6 +486,15 @@
+     case MKTAG(0xa9,'w','r','n'): key = "warning";   break;
+     case MKTAG(0xa9,'w','r','t'): key = "composer";  break;
+     case MKTAG(0xa9,'x','y','z'): key = "location";  break;
++    case MKTAG( 'a','l','b','m'):
++    case MKTAG( 'a','u','t','h'):
++    case MKTAG( 'd','s','c','p'):
++    case MKTAG( 'p','e','r','f'):
++    case MKTAG( 't','i','t','l'):
++    case MKTAG( 'y','r','r','c'):
++        if (!c->itunes_metadata) {
++            return mov_read_3gp_udta_tag(c, pb, atom);
++        }
+     }
+ retry:
+     if (c->itunes_metadata && atom.size > 8) {
+@@ -524,17 +621,23 @@
+             }
+             str[str_size] = 0;
+         }
+-        c->fc->event_flags |= AVFMT_EVENT_FLAG_METADATA_UPDATED;
+-        av_dict_set(&c->fc->metadata, key, str, 0);
++        if (c->trak_index < 0) {
++            metadata = c->fc->metadata;
++            c->fc->event_flags |= AVFMT_EVENT_FLAG_METADATA_UPDATED;
++            if (!strcmp(key, "encoder")) {
++                int major, minor, micro;
++                if (sscanf(str, "HandBrake %d.%d.%d", &major, &minor, &micro) == 3) {
++                    c->handbrake_version = 1000000*major + 1000*minor + micro;
++                }
++            }
++        }
++        else {
++            metadata = c->fc->streams[c->trak_index]->metadata;
++        }
++        av_dict_set(&metadata, key, str, 0);
+         if (*language && strcmp(language, "und")) {
+             snprintf(key2, sizeof(key2), "%s-%s", key, language);
+-            av_dict_set(&c->fc->metadata, key2, str, 0);
+-        }
+-        if (!strcmp(key, "encoder")) {
+-            int major, minor, micro;
+-            if (sscanf(str, "HandBrake %d.%d.%d", &major, &minor, &micro) == 3) {
+-                c->handbrake_version = 1000000*major + 1000*minor + micro;
+-            }
++            av_dict_set(&metadata, key2, str, 0);
+         }
+     }
+ 
+@@ -5874,6 +5977,38 @@
+     return 0;
+ }
+ 
++static int mov_read_amve(MOVContext *c, AVIOContext *pb, MOVAtom atom)
++{
++    MOVStreamContext *sc;
++    const int illuminance_den = 10000;
++    const int ambient_den = 50000;
++
++    if (c->fc->nb_streams < 1)
++        return AVERROR_INVALIDDATA;
++
++    sc = c->fc->streams[c->fc->nb_streams - 1]->priv_data;
++
++    if (atom.size < 6) {
++        av_log(c->fc, AV_LOG_ERROR, "Empty Ambient Viewing Environment Info box\n");
++        return AVERROR_INVALIDDATA;
++    }
++
++    if (sc->ambient){
++        av_log(c->fc, AV_LOG_WARNING, "Ignoring duplicate AMVE\n");
++        return 0;
++    }
++
++    sc->ambient = av_ambient_viewing_environment_alloc(NULL);
++    if (!sc->ambient)
++        return AVERROR(ENOMEM);
++
++    sc->ambient->ambient_illuminance  = av_make_q(avio_rb32(pb), illuminance_den);
++    sc->ambient->ambient_light_x = av_make_q(avio_rb16(pb), ambient_den);
++    sc->ambient->ambient_light_y = av_make_q(avio_rb16(pb), ambient_den);
++
++    return 0;
++}
++
+ static int mov_read_st3d(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+ {
+     AVStream *st;
+@@ -7796,6 +7931,7 @@
+ { MKTAG('i','l','o','c'), mov_read_iloc },
+ { MKTAG('p','c','m','C'), mov_read_pcmc }, /* PCM configuration box */
+ { MKTAG('p','i','t','m'), mov_read_pitm },
++{ MKTAG('a','m','v','e'), mov_read_amve }, /* ambient viewing environment box */
+ { 0, NULL }
+ };
+ 
+@@ -8264,6 +8400,7 @@
+         av_freep(&sc->spherical);
+         av_freep(&sc->mastering);
+         av_freep(&sc->coll);
++        av_freep(&sc->ambient);
+     }
+ 
+     av_freep(&mov->dv_demux);
+@@ -8629,6 +8766,15 @@
+ 
+                 sc->coll = NULL;
+             }
++            if (sc->ambient) {
++                err = av_stream_add_side_data(st, AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT,
++                                                (uint8_t *)sc->ambient,
++                                                 sizeof(*sc->ambient));
++                if (err < 0)
++                    return err;
++
++                sc->ambient = NULL;
++            }
+             break;
+         }
+     }
+diff -Naur ffmpeg-6.0.old/libavformat/movenc.c ffmpeg-6.0/libavformat/movenc.c
+--- ffmpeg-6.0.old/libavformat/movenc.c	2023-06-06 08:34:50.218452080 +0200
++++ ffmpeg-6.0/libavformat/movenc.c	2023-06-06 08:34:50.576458528 +0200
+@@ -28,6 +28,7 @@
+ 
+ #include "movenc.h"
+ #include "avformat.h"
++#include "avlanguage.h"
+ #include "avio_internal.h"
+ #include "dovi_isom.h"
+ #include "riff.h"
+@@ -2124,6 +2125,27 @@
+     return 32;
+ }
+ 
++static int mov_write_amve_tag(AVIOContext *pb, MOVTrack *track)
++{
++    const int illuminance_den = 10000;
++    const int ambient_den = 50000;
++    const uint8_t *side_data;
++    const AVAmbientViewingEnvironment *ambient;
++
++    side_data = av_stream_get_side_data(track->st, AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT, NULL);
++    ambient = (const AVAmbientViewingEnvironment*)side_data;
++    if (!ambient || !ambient->ambient_illuminance.num) {
++        return 0;
++    }
++
++    avio_wb32(pb, 16); // size
++    ffio_wfourcc(pb, "amve");
++    avio_wb32(pb, rescale_mdcv(ambient->ambient_illuminance, illuminance_den));
++    avio_wb16(pb, rescale_mdcv(ambient->ambient_light_x, ambient_den));
++    avio_wb16(pb, rescale_mdcv(ambient->ambient_light_y, ambient_den));
++    return 16;
++}
++
+ static void find_compressor(char * compressor_name, int len, MOVTrack *track)
+ {
+     AVDictionaryEntry *encoder;
+@@ -2331,6 +2353,7 @@
+     if (track->mode == MODE_MOV || track->mode == MODE_MP4) {
+         mov_write_clli_tag(pb, track);
+         mov_write_mdcv_tag(pb, track);
++        mov_write_amve_tag(pb, track);
+     }
+ 
+     if (track->mode == MODE_MP4 && mov->fc->strict_std_compliance <= FF_COMPLIANCE_UNOFFICIAL) {
+@@ -3567,6 +3590,41 @@
+     return len + 24;
+ }
+ 
++static uint16_t language_code(const char *str)
++{
++    return (((str[0] - 0x60) & 0x1F) << 10) +
++           (((str[1] - 0x60) & 0x1F) <<  5) +
++           (( str[2] - 0x60) & 0x1F);
++}
++static int mov_write_3gp_udta_tag(AVIOContext *pb, AVDictionary *metadata,
++                                  const char *tag, const char *str)
++{
++    int64_t pos = avio_tell(pb);
++    AVDictionaryEntry *t = av_dict_get(metadata, str, NULL, 0);
++    if (!t || !utf8len(t->value))
++        return 0;
++    avio_wb32(pb, 0);   /* size */
++    ffio_wfourcc(pb, tag); /* type */
++    avio_wb32(pb, 0);   /* version + flags */
++    if (!strcmp(tag, "yrrc"))
++        avio_wb16(pb, atoi(t->value));
++    else {
++        int lang = 0, len;
++        len = strlen(t->key);
++        if (t->key[len - 4] == '-') {
++            lang = ff_mov_iso639_to_lang(&t->key[len - 3], 1);
++        }
++        if (!lang)
++            lang = ff_mov_iso639_to_lang("und", 1);
++        avio_wb16(pb, lang); /* language */
++        avio_write(pb, t->value, strlen(t->value) + 1); /* UTF8 string value */
++        if (!strcmp(tag, "albm") &&
++            (t = av_dict_get(metadata, "track", NULL, 0)))
++            avio_w8(pb, atoi(t->value));
++    }
++    return update_size(pb, pos);
++}
++
+ static int mov_write_track_metadata(AVIOContext *pb, AVStream *st,
+                                     const char *tag, const char *str)
+ {
+@@ -3641,8 +3699,23 @@
+     if (ret < 0)
+         return ret;
+ 
+-    if (mov->mode & (MODE_MP4|MODE_MOV))
++    if (mov->mode & (MODE_MP4|MODE_MOV)) {
++        AVDictionaryEntry *t = NULL;
++        int und = 0;
++
+         mov_write_track_metadata(pb_buf, st, "name", "title");
++        while ((t = av_dict_get(st->metadata, "title-", t, AV_DICT_IGNORE_SUFFIX))) {
++            int len = strlen(t->key);
++            if (len == 10 &&
++                ff_convert_lang_to(&t->key[len - 3], AV_LANG_ISO639_2_BIBL)) {
++                mov_write_3gp_udta_tag(pb_buf, st->metadata, "titl", t->key);
++                if (!strcmp("und", &t->key[len - 3]))
++                    und = 1;
++            }
++        }
++        if (!und)
++            mov_write_3gp_udta_tag(pb_buf, st->metadata, "titl", "title");
++    }
+ 
+     if (mov->mode & MODE_MP4) {
+         if ((ret = mov_write_track_kinds(pb_buf, st)) < 0)
+@@ -4240,35 +4313,6 @@
+     return 0;
+ }
+ 
+-static uint16_t language_code(const char *str)
+-{
+-    return (((str[0] - 0x60) & 0x1F) << 10) +
+-           (((str[1] - 0x60) & 0x1F) <<  5) +
+-           (( str[2] - 0x60) & 0x1F);
+-}
+-
+-static int mov_write_3gp_udta_tag(AVIOContext *pb, AVFormatContext *s,
+-                                  const char *tag, const char *str)
+-{
+-    int64_t pos = avio_tell(pb);
+-    AVDictionaryEntry *t = av_dict_get(s->metadata, str, NULL, 0);
+-    if (!t || !utf8len(t->value))
+-        return 0;
+-    avio_wb32(pb, 0);   /* size */
+-    ffio_wfourcc(pb, tag); /* type */
+-    avio_wb32(pb, 0);   /* version + flags */
+-    if (!strcmp(tag, "yrrc"))
+-        avio_wb16(pb, atoi(t->value));
+-    else {
+-        avio_wb16(pb, language_code("eng")); /* language */
+-        avio_write(pb, t->value, strlen(t->value) + 1); /* UTF8 string value */
+-        if (!strcmp(tag, "albm") &&
+-            (t = av_dict_get(s->metadata, "track", NULL, 0)))
+-            avio_w8(pb, atoi(t->value));
+-    }
+-    return update_size(pb, pos);
+-}
+-
+ static int mov_write_chpl_tag(AVIOContext *pb, AVFormatContext *s)
+ {
+     int64_t pos = avio_tell(pb);
+@@ -4307,14 +4351,14 @@
+         return ret;
+ 
+     if (mov->mode & MODE_3GP) {
+-        mov_write_3gp_udta_tag(pb_buf, s, "perf", "artist");
+-        mov_write_3gp_udta_tag(pb_buf, s, "titl", "title");
+-        mov_write_3gp_udta_tag(pb_buf, s, "auth", "author");
+-        mov_write_3gp_udta_tag(pb_buf, s, "gnre", "genre");
+-        mov_write_3gp_udta_tag(pb_buf, s, "dscp", "comment");
+-        mov_write_3gp_udta_tag(pb_buf, s, "albm", "album");
+-        mov_write_3gp_udta_tag(pb_buf, s, "cprt", "copyright");
+-        mov_write_3gp_udta_tag(pb_buf, s, "yrrc", "date");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "perf", "artist");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "titl", "title");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "auth", "author");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "gnre", "genre");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "dscp", "comment");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "albm", "album");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "cprt", "copyright");
++        mov_write_3gp_udta_tag(pb_buf, s->metadata, "yrrc", "date");
+         mov_write_loci_tag(s, pb_buf);
+     } else if (mov->mode == MODE_MOV && !(mov->flags & FF_MOV_FLAG_USE_MDTA)) { // the title field breaks gtkpod with mp4 and my suspicion is that stuff is not valid in mp4
+         mov_write_string_metadata(s, pb_buf, "\251ART", "artist",      0);
+@@ -7714,6 +7758,7 @@
+     { AV_CODEC_ID_H264,            MKTAG('a', 'v', 'c', '3') },
+     { AV_CODEC_ID_HEVC,            MKTAG('h', 'e', 'v', '1') },
+     { AV_CODEC_ID_HEVC,            MKTAG('h', 'v', 'c', '1') },
++    { AV_CODEC_ID_HEVC,            MKTAG('d', 'v', 'h', '1') },
+     { AV_CODEC_ID_MPEG2VIDEO,      MKTAG('m', 'p', '4', 'v') },
+     { AV_CODEC_ID_MPEG1VIDEO,      MKTAG('m', 'p', '4', 'v') },
+     { AV_CODEC_ID_MJPEG,           MKTAG('m', 'p', '4', 'v') },
+diff -Naur ffmpeg-6.0.old/libswscale/swscale_unscaled.c ffmpeg-6.0/libswscale/swscale_unscaled.c
+--- ffmpeg-6.0.old/libswscale/swscale_unscaled.c	2023-06-06 08:34:50.133450549 +0200
++++ ffmpeg-6.0/libswscale/swscale_unscaled.c	2023-06-06 08:34:50.567458366 +0200
+@@ -297,7 +297,7 @@
+         const uint8_t *tsrc0 = src[0];
+         for (x = c->srcW; x > 0; x--) {
+             t = *tsrc0++;
+-            output_pixel(tdstY++, t | (t << 8));
++            output_pixel(tdstY++, (t << 8));
+         }
+         src[0] += srcStride[0];
+         dstY += dstStride[0] / 2;
+@@ -308,9 +308,9 @@
+             const uint8_t *tsrc2 = src[2];
+             for (x = c->srcW / 2; x > 0; x--) {
+                 t = *tsrc1++;
+-                output_pixel(tdstUV++, t | (t << 8));
++                output_pixel(tdstUV++, (t << 8));
+                 t = *tsrc2++;
+-                output_pixel(tdstUV++, t | (t << 8));
++                output_pixel(tdstUV++, (t << 8));
+             }
+             src[1] += srcStride[1];
+             src[2] += srcStride[2];

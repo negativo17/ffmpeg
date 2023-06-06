@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -24,6 +24,8 @@ Patch0:         %{name}-cuda11.patch
 Patch1:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch2:         %{name}-svt-hevc.patch
+# https://github.com/HandBrake/HandBrake/tree/f57897a9b4b5dbd0d7f637e97fec8e192c85fc85
+Patch3:         %{name}-HandBrake.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -651,6 +653,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Jun 06 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-4
+- Add HandBrake patches.
+
 * Fri Jun 02 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-3
 - Rebuild for updated dependencies.
 
