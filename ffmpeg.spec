@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -24,8 +24,11 @@ Patch0:         %{name}-cuda11.patch
 Patch1:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch2:         %{name}-svt-hevc.patch
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/1231003c3c6d4839a9e838d06f8e16ee7690958f
+Patch3:         %{name}-libplacebo.patch
 # https://github.com/HandBrake/HandBrake/tree/c9fc5c3636646df92749754015e5afb0678bc540
-Patch3:         %{name}-HandBrake.patch
+Patch4:         %{name}-HandBrake.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -106,7 +109,9 @@ BuildRequires:  pkgconfig(lv2)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
+%if 0%{?fedora} < 39
 BuildRequires:  pkgconfig(pocketsphinx)
+%endif
 BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
@@ -481,7 +486,9 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-opencl \
     --enable-opengl \
     --enable-openssl \
+%if 0%{?fedora} < 39
     --enable-pocketsphinx \
+%endif
     --enable-postproc \
     --enable-sdl2 \
     --enable-shared \
@@ -653,6 +660,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Oct 03 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-6
+- Momentarily disable pocketsphinx support for Fedora 39+
+- Rebase patches.
+
 * Thu Sep 07 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-5
 - Update Handbrake patches.
 

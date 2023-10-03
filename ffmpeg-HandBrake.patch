@@ -1,6 +1,6 @@
 diff -Naur ffmpeg-6.0.old/doc/APIchanges ffmpeg-6.0/doc/APIchanges
---- ffmpeg-6.0.old/doc/APIchanges	2023-09-07 14:34:23.094397441 +0200
-+++ ffmpeg-6.0/doc/APIchanges	2023-09-07 14:34:23.519405383 +0200
+--- ffmpeg-6.0.old/doc/APIchanges	2023-10-03 09:45:17.015446939 +0200
++++ ffmpeg-6.0/doc/APIchanges	2023-10-03 09:45:18.686477104 +0200
 @@ -2,6 +2,11 @@
  
  API changes, most recent first:
@@ -14,8 +14,8 @@ diff -Naur ffmpeg-6.0.old/doc/APIchanges ffmpeg-6.0/doc/APIchanges
  
  2023-02-16 - 927042b409 - lavf 60.2.100 - avformat.h
 diff -Naur ffmpeg-6.0.old/fftools/ffprobe.c ffmpeg-6.0/fftools/ffprobe.c
---- ffmpeg-6.0.old/fftools/ffprobe.c	2023-09-07 14:34:23.227399926 +0200
-+++ ffmpeg-6.0/fftools/ffprobe.c	2023-09-07 14:34:23.529405570 +0200
+--- ffmpeg-6.0.old/fftools/ffprobe.c	2023-10-03 09:45:17.151449394 +0200
++++ ffmpeg-6.0/fftools/ffprobe.c	2023-10-03 09:45:18.699477339 +0200
 @@ -2352,6 +2352,9 @@
              AVContentLightMetadata *metadata = (AVContentLightMetadata *)sd->data;
              print_int("max_content", metadata->MaxCLL);
@@ -27,8 +27,8 @@ diff -Naur ffmpeg-6.0.old/fftools/ffprobe.c ffmpeg-6.0/fftools/ffprobe.c
              AVDOVIDecoderConfigurationRecord *dovi = (AVDOVIDecoderConfigurationRecord *)sd->data;
              print_int("dv_version_major", dovi->dv_version_major);
 diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec.c ffmpeg-6.0/libavcodec/ac3dec.c
---- ffmpeg-6.0.old/libavcodec/ac3dec.c	2023-09-07 14:34:22.872393292 +0200
-+++ ffmpeg-6.0/libavcodec/ac3dec.c	2023-09-07 14:34:23.520405402 +0200
+--- ffmpeg-6.0.old/libavcodec/ac3dec.c	2023-10-03 09:45:16.812443275 +0200
++++ ffmpeg-6.0/libavcodec/ac3dec.c	2023-10-03 09:45:18.687477122 +0200
 @@ -1714,6 +1714,7 @@
      if (!err) {
          avctx->sample_rate = s->sample_rate;
@@ -38,8 +38,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec.c ffmpeg-6.0/libavcodec/ac3dec.c
  
      if (!avctx->sample_rate) {
 diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec_float.c ffmpeg-6.0/libavcodec/ac3dec_float.c
---- ffmpeg-6.0.old/libavcodec/ac3dec_float.c	2023-09-07 14:34:22.935394470 +0200
-+++ ffmpeg-6.0/libavcodec/ac3dec_float.c	2023-09-07 14:34:23.521405420 +0200
+--- ffmpeg-6.0.old/libavcodec/ac3dec_float.c	2023-10-03 09:45:16.856444069 +0200
++++ ffmpeg-6.0/libavcodec/ac3dec_float.c	2023-10-03 09:45:18.688477140 +0200
 @@ -33,6 +33,7 @@
  
  #include "ac3dec.h"
@@ -57,8 +57,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec_float.c ffmpeg-6.0/libavcodec/ac3dec
  };
  #endif
 diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec.h ffmpeg-6.0/libavcodec/ac3dec.h
---- ffmpeg-6.0.old/libavcodec/ac3dec.h	2023-09-07 14:34:22.963394993 +0200
-+++ ffmpeg-6.0/libavcodec/ac3dec.h	2023-09-07 14:34:23.521405420 +0200
+--- ffmpeg-6.0.old/libavcodec/ac3dec.h	2023-10-03 09:45:16.884444574 +0200
++++ ffmpeg-6.0/libavcodec/ac3dec.h	2023-10-03 09:45:18.687477122 +0200
 @@ -102,6 +102,7 @@
      int eac3;                               ///< indicates if current frame is E-AC-3
      int eac3_frame_dependent_found;         ///< bitstream has E-AC-3 dependent frame(s)
@@ -68,8 +68,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/ac3dec.h ffmpeg-6.0/libavcodec/ac3dec.h
      int dolby_surround_ex_mode;             ///< dolby surround ex mode                 (dsurexmod)
      int dolby_headphone_mode;               ///< dolby headphone mode                   (dheadphonmod)
 diff -Naur ffmpeg-6.0.old/libavcodec/amfenc.c ffmpeg-6.0/libavcodec/amfenc.c
---- ffmpeg-6.0.old/libavcodec/amfenc.c	2023-09-07 14:34:22.921394208 +0200
-+++ ffmpeg-6.0/libavcodec/amfenc.c	2023-09-07 14:34:23.512405252 +0200
+--- ffmpeg-6.0.old/libavcodec/amfenc.c	2023-10-03 09:45:16.841443798 +0200
++++ ffmpeg-6.0/libavcodec/amfenc.c	2023-10-03 09:45:18.680476996 +0200
 @@ -36,6 +36,57 @@
  #include "amfenc.h"
  #include "encode.h"
@@ -245,8 +245,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/amfenc.c ffmpeg-6.0/libavcodec/amfenc.c
                  if (res != AMF_INPUT_FULL) {
                      int64_t pts = ctx->delayed_surface->pVtbl->GetPts(ctx->delayed_surface);
 diff -Naur ffmpeg-6.0.old/libavcodec/amfenc.h ffmpeg-6.0/libavcodec/amfenc.h
---- ffmpeg-6.0.old/libavcodec/amfenc.h	2023-09-07 14:34:22.911394021 +0200
-+++ ffmpeg-6.0/libavcodec/amfenc.h	2023-09-07 14:34:23.509405196 +0200
+--- ffmpeg-6.0.old/libavcodec/amfenc.h	2023-10-03 09:45:16.832443636 +0200
++++ ffmpeg-6.0/libavcodec/amfenc.h	2023-10-03 09:45:18.676476924 +0200
 @@ -21,6 +21,7 @@
  
  #include <AMF/core/Factory.h>
@@ -256,8 +256,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/amfenc.h ffmpeg-6.0/libavcodec/amfenc.h
  #include <AMF/components/VideoEncoderHEVC.h>
  #include <AMF/components/VideoEncoderAV1.h>
 diff -Naur ffmpeg-6.0.old/libavcodec/amfenc_h264.c ffmpeg-6.0/libavcodec/amfenc_h264.c
---- ffmpeg-6.0.old/libavcodec/amfenc_h264.c	2023-09-07 14:34:22.968395087 +0200
-+++ ffmpeg-6.0/libavcodec/amfenc_h264.c	2023-09-07 14:34:23.509405196 +0200
+--- ffmpeg-6.0.old/libavcodec/amfenc_h264.c	2023-10-03 09:45:16.889444665 +0200
++++ ffmpeg-6.0/libavcodec/amfenc_h264.c	2023-10-03 09:45:18.677476942 +0200
 @@ -138,6 +138,9 @@
      AMFRate                          framerate;
      AMFSize                          framesize = AMFConstructSize(avctx->width, avctx->height);
@@ -322,8 +322,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/amfenc_h264.c ffmpeg-6.0/libavcodec/amfenc_
      // autodetect rate control method
      if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_RATE_CONTROL_METHOD_UNKNOWN) {
 diff -Naur ffmpeg-6.0.old/libavcodec/amfenc_hevc.c ffmpeg-6.0/libavcodec/amfenc_hevc.c
---- ffmpeg-6.0.old/libavcodec/amfenc_hevc.c	2023-09-07 14:34:22.911394021 +0200
-+++ ffmpeg-6.0/libavcodec/amfenc_hevc.c	2023-09-07 14:34:23.510405215 +0200
+--- ffmpeg-6.0.old/libavcodec/amfenc_hevc.c	2023-10-03 09:45:16.832443636 +0200
++++ ffmpeg-6.0/libavcodec/amfenc_hevc.c	2023-10-03 09:45:18.678476960 +0200
 @@ -31,8 +31,9 @@
      { "lowlatency",     "", 0, AV_OPT_TYPE_CONST, { .i64 = AMF_VIDEO_ENCODER_HEVC_USAGE_LOW_LATENCY },          0, 0, VE, "usage" },
      { "webcam",         "", 0, AV_OPT_TYPE_CONST, { .i64 = AMF_VIDEO_ENCODER_HEVC_USAGE_WEBCAM },               0, 0, VE, "usage" },
@@ -413,8 +413,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/amfenc_hevc.c ffmpeg-6.0/libavcodec/amfenc_
      AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_NUM_GOPS_PER_IDR, ctx->gops_per_idr);
      AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_GOP_SIZE, avctx->gop_size);
 diff -Naur ffmpeg-6.0.old/libavcodec/avcodec.h ffmpeg-6.0/libavcodec/avcodec.h
---- ffmpeg-6.0.old/libavcodec/avcodec.h	2023-09-07 14:34:22.923394245 +0200
-+++ ffmpeg-6.0/libavcodec/avcodec.h	2023-09-07 14:34:23.522405439 +0200
+--- ffmpeg-6.0.old/libavcodec/avcodec.h	2023-10-03 09:45:16.844443852 +0200
++++ ffmpeg-6.0/libavcodec/avcodec.h	2023-10-03 09:45:18.689477158 +0200
 @@ -1584,12 +1584,19 @@
  #define FF_PROFILE_DNXHR_HQX     4
  #define FF_PROFILE_DNXHR_444     5
@@ -442,8 +442,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/avcodec.h ffmpeg-6.0/libavcodec/avcodec.h
  #define FF_PROFILE_MPEG2_422    0
  #define FF_PROFILE_MPEG2_HIGH   1
 diff -Naur ffmpeg-6.0.old/libavcodec/avpacket.c ffmpeg-6.0/libavcodec/avpacket.c
---- ffmpeg-6.0.old/libavcodec/avpacket.c	2023-09-07 14:34:22.915394096 +0200
-+++ ffmpeg-6.0/libavcodec/avpacket.c	2023-09-07 14:34:23.529405570 +0200
+--- ffmpeg-6.0.old/libavcodec/avpacket.c	2023-10-03 09:45:16.836443708 +0200
++++ ffmpeg-6.0/libavcodec/avpacket.c	2023-10-03 09:45:18.699477339 +0200
 @@ -300,6 +300,7 @@
      case AV_PKT_DATA_DOVI_CONF:                  return "DOVI configuration record";
      case AV_PKT_DATA_S12M_TIMECODE:              return "SMPTE ST 12-1:2014 timecode";
@@ -453,8 +453,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/avpacket.c ffmpeg-6.0/libavcodec/avpacket.c
      return NULL;
  }
 diff -Naur ffmpeg-6.0.old/libavcodec/ccaption_dec.c ffmpeg-6.0/libavcodec/ccaption_dec.c
---- ffmpeg-6.0.old/libavcodec/ccaption_dec.c	2023-09-07 14:34:22.965395031 +0200
-+++ ffmpeg-6.0/libavcodec/ccaption_dec.c	2023-09-07 14:34:23.499405009 +0200
+--- ffmpeg-6.0.old/libavcodec/ccaption_dec.c	2023-10-03 09:45:16.886444611 +0200
++++ ffmpeg-6.0/libavcodec/ccaption_dec.c	2023-10-03 09:45:18.666476744 +0200
 @@ -879,12 +879,13 @@
  
          if (ctx->buffer[bidx].str[0] || ctx->real_time) {
@@ -483,8 +483,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/ccaption_dec.c ffmpeg-6.0/libavcodec/ccapti
  
  #define OFFSET(x) offsetof(CCaptionSubContext, x)
 diff -Naur ffmpeg-6.0.old/libavcodec/codec_desc.c ffmpeg-6.0/libavcodec/codec_desc.c
---- ffmpeg-6.0.old/libavcodec/codec_desc.c	2023-09-07 14:34:22.958394899 +0200
-+++ ffmpeg-6.0/libavcodec/codec_desc.c	2023-09-07 14:34:23.523405458 +0200
+--- ffmpeg-6.0.old/libavcodec/codec_desc.c	2023-10-03 09:45:16.879444484 +0200
++++ ffmpeg-6.0/libavcodec/codec_desc.c	2023-10-03 09:45:18.691477194 +0200
 @@ -2931,6 +2931,7 @@
          .name      = "eac3",
          .long_name = NULL_IF_CONFIG_SMALL("ATSC A/52B (AC-3, E-AC-3)"),
@@ -502,8 +502,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/codec_desc.c ffmpeg-6.0/libavcodec/codec_de
      {
          .id        = AV_CODEC_ID_MP4ALS,
 diff -Naur ffmpeg-6.0.old/libavcodec/dca_syncwords.h ffmpeg-6.0/libavcodec/dca_syncwords.h
---- ffmpeg-6.0.old/libavcodec/dca_syncwords.h	2023-09-07 14:34:22.954394825 +0200
-+++ ffmpeg-6.0/libavcodec/dca_syncwords.h	2023-09-07 14:34:23.524405477 +0200
+--- ffmpeg-6.0.old/libavcodec/dca_syncwords.h	2023-10-03 09:45:16.875444412 +0200
++++ ffmpeg-6.0/libavcodec/dca_syncwords.h	2023-10-03 09:45:18.691477194 +0200
 @@ -33,4 +33,7 @@
  #define    DCA_SYNCWORD_SUBSTREAM_CORE       0x02B09261U
  #define    DCA_SYNCWORD_REV1AUX              0x9A1105A0U
@@ -513,8 +513,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/dca_syncwords.h ffmpeg-6.0/libavcodec/dca_s
 +
  #endif /* AVCODEC_DCA_SYNCWORDS_H */
 diff -Naur ffmpeg-6.0.old/libavcodec/dca_xll.c ffmpeg-6.0/libavcodec/dca_xll.c
---- ffmpeg-6.0.old/libavcodec/dca_xll.c	2023-09-07 14:34:22.933394433 +0200
-+++ ffmpeg-6.0/libavcodec/dca_xll.c	2023-09-07 14:34:23.524405477 +0200
+--- ffmpeg-6.0.old/libavcodec/dca_xll.c	2023-10-03 09:45:16.854444033 +0200
++++ ffmpeg-6.0/libavcodec/dca_xll.c	2023-10-03 09:45:18.692477212 +0200
 @@ -18,6 +18,7 @@
   * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
   */
@@ -564,8 +564,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/dca_xll.c ffmpeg-6.0/libavcodec/dca_xll.c
  
      frame->nb_samples = nsamples = s->nframesamples << (s->nfreqbands - 1);
 diff -Naur ffmpeg-6.0.old/libavcodec/dca_xll.h ffmpeg-6.0/libavcodec/dca_xll.h
---- ffmpeg-6.0.old/libavcodec/dca_xll.h	2023-09-07 14:34:22.938394526 +0200
-+++ ffmpeg-6.0/libavcodec/dca_xll.h	2023-09-07 14:34:23.525405495 +0200
+--- ffmpeg-6.0.old/libavcodec/dca_xll.h	2023-10-03 09:45:16.859444123 +0200
++++ ffmpeg-6.0/libavcodec/dca_xll.h	2023-10-03 09:45:18.693477230 +0200
 @@ -135,6 +135,9 @@
  
      DCADSPContext   *dcadsp;
@@ -577,8 +577,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/dca_xll.h ffmpeg-6.0/libavcodec/dca_xll.h
      int32_t *output_samples[DCA_SPEAKER_COUNT];
  } DCAXllDecoder;
 diff -Naur ffmpeg-6.0.old/libavcodec/decode.c ffmpeg-6.0/libavcodec/decode.c
---- ffmpeg-6.0.old/libavcodec/decode.c	2023-09-07 14:34:22.931394395 +0200
-+++ ffmpeg-6.0/libavcodec/decode.c	2023-09-07 14:34:23.530405589 +0200
+--- ffmpeg-6.0.old/libavcodec/decode.c	2023-10-03 09:45:16.852443997 +0200
++++ ffmpeg-6.0/libavcodec/decode.c	2023-10-03 09:45:18.700477357 +0200
 @@ -1309,6 +1309,7 @@
          { AV_PKT_DATA_ICC_PROFILE,                AV_FRAME_DATA_ICC_PROFILE },
          { AV_PKT_DATA_S12M_TIMECODE,              AV_FRAME_DATA_S12M_TIMECODE },
@@ -588,8 +588,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/decode.c ffmpeg-6.0/libavcodec/decode.c
  
      frame->pts          = pkt->pts;
 diff -Naur ffmpeg-6.0.old/libavcodec/dvdsubdec.c ffmpeg-6.0/libavcodec/dvdsubdec.c
---- ffmpeg-6.0.old/libavcodec/dvdsubdec.c	2023-09-07 14:34:22.904393891 +0200
-+++ ffmpeg-6.0/libavcodec/dvdsubdec.c	2023-09-07 14:34:23.478404617 +0200
+--- ffmpeg-6.0.old/libavcodec/dvdsubdec.c	2023-10-03 09:45:16.826443528 +0200
++++ ffmpeg-6.0/libavcodec/dvdsubdec.c	2023-10-03 09:45:18.604475623 +0200
 @@ -44,6 +44,7 @@
    int      buf_size;
    int      forced_subs_only;
@@ -679,8 +679,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/dvdsubdec.c ffmpeg-6.0/libavcodec/dvdsubdec
      return 1;
  }
 diff -Naur ffmpeg-6.0.old/libavcodec/eac3dec.c ffmpeg-6.0/libavcodec/eac3dec.c
---- ffmpeg-6.0.old/libavcodec/eac3dec.c	2023-09-07 14:34:22.941394582 +0200
-+++ ffmpeg-6.0/libavcodec/eac3dec.c	2023-09-07 14:34:23.525405495 +0200
+--- ffmpeg-6.0.old/libavcodec/eac3dec.c	2023-10-03 09:45:16.862444177 +0200
++++ ffmpeg-6.0/libavcodec/eac3dec.c	2023-10-03 09:45:18.693477230 +0200
 @@ -464,7 +464,16 @@
      if (get_bits1(gbc)) {
          int addbsil = get_bits(gbc, 6);
@@ -700,8 +700,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/eac3dec.c ffmpeg-6.0/libavcodec/eac3dec.c
      }
  
 diff -Naur ffmpeg-6.0.old/libavcodec/h2645_sei.c ffmpeg-6.0/libavcodec/h2645_sei.c
---- ffmpeg-6.0.old/libavcodec/h2645_sei.c	2023-09-07 14:34:22.917394134 +0200
-+++ ffmpeg-6.0/libavcodec/h2645_sei.c	2023-09-07 14:34:23.527405532 +0200
+--- ffmpeg-6.0.old/libavcodec/h2645_sei.c	2023-10-03 09:45:16.838443744 +0200
++++ ffmpeg-6.0/libavcodec/h2645_sei.c	2023-10-03 09:45:18.696477284 +0200
 @@ -650,6 +650,8 @@
          dst_env->ambient_illuminance = av_make_q(env->ambient_illuminance, 10000);
          dst_env->ambient_light_x     = av_make_q(env->ambient_light_x,     50000);
@@ -719,8 +719,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/h2645_sei.c ffmpeg-6.0/libavcodec/h2645_sei
 -    s->ambient_viewing_environment.present = 0;
  }
 diff -Naur ffmpeg-6.0.old/libavcodec/hevc_mp4toannexb_bsf.c ffmpeg-6.0/libavcodec/hevc_mp4toannexb_bsf.c
---- ffmpeg-6.0.old/libavcodec/hevc_mp4toannexb_bsf.c	2023-09-07 14:34:22.887393573 +0200
-+++ ffmpeg-6.0/libavcodec/hevc_mp4toannexb_bsf.c	2023-09-07 14:34:23.231400001 +0200
+--- ffmpeg-6.0.old/libavcodec/hevc_mp4toannexb_bsf.c	2023-10-03 09:45:16.816443347 +0200
++++ ffmpeg-6.0/libavcodec/hevc_mp4toannexb_bsf.c	2023-10-03 09:45:18.342470894 +0200
 @@ -121,7 +121,7 @@
      HEVCBSFContext *s = ctx->priv_data;
      AVPacket *in;
@@ -746,8 +746,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/hevc_mp4toannexb_bsf.c ffmpeg-6.0/libavcode
          got_irap     |= is_irap;
  
 diff -Naur ffmpeg-6.0.old/libavcodec/libdav1d.c ffmpeg-6.0/libavcodec/libdav1d.c
---- ffmpeg-6.0.old/libavcodec/libdav1d.c	2023-09-07 14:34:22.937394507 +0200
-+++ ffmpeg-6.0/libavcodec/libdav1d.c	2023-09-07 14:34:23.517405346 +0200
+--- ffmpeg-6.0.old/libavcodec/libdav1d.c	2023-10-03 09:45:16.858444105 +0200
++++ ffmpeg-6.0/libavcodec/libdav1d.c	2023-10-03 09:45:18.684477068 +0200
 @@ -33,6 +33,7 @@
  #include "bytestream.h"
  #include "codec_internal.h"
@@ -807,8 +807,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/libdav1d.c ffmpeg-6.0/libavcodec/libdav1d.c
      if (p->frame_hdr->film_grain.present && (!dav1d->apply_grain ||
          (c->export_side_data & AV_CODEC_EXPORT_DATA_FILM_GRAIN))) {
 diff -Naur ffmpeg-6.0.old/libavcodec/mlpdec.c ffmpeg-6.0/libavcodec/mlpdec.c
---- ffmpeg-6.0.old/libavcodec/mlpdec.c	2023-09-07 14:34:22.938394526 +0200
-+++ ffmpeg-6.0/libavcodec/mlpdec.c	2023-09-07 14:34:23.526405514 +0200
+--- ffmpeg-6.0.old/libavcodec/mlpdec.c	2023-10-03 09:45:16.859444123 +0200
++++ ffmpeg-6.0/libavcodec/mlpdec.c	2023-10-03 09:45:18.694477248 +0200
 @@ -42,6 +42,7 @@
  #include "mlpdsp.h"
  #include "mlp.h"
@@ -840,8 +840,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/mlpdec.c ffmpeg-6.0/libavcodec/mlpdec.c
  };
  #endif /* CONFIG_TRUEHD_DECODER */
 diff -Naur ffmpeg-6.0.old/libavcodec/nvenc.c ffmpeg-6.0/libavcodec/nvenc.c
---- ffmpeg-6.0.old/libavcodec/nvenc.c	2023-09-07 14:34:22.869393237 +0200
-+++ ffmpeg-6.0/libavcodec/nvenc.c	2023-09-07 14:34:23.527405532 +0200
+--- ffmpeg-6.0.old/libavcodec/nvenc.c	2023-10-03 09:45:16.811443257 +0200
++++ ffmpeg-6.0/libavcodec/nvenc.c	2023-10-03 09:45:18.697477302 +0200
 @@ -457,7 +457,7 @@
  static int nvenc_check_capabilities(AVCodecContext *avctx)
  {
@@ -874,8 +874,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/nvenc.c ffmpeg-6.0/libavcodec/nvenc.c
          return AVERROR(ENOSYS);
      }
 diff -Naur ffmpeg-6.0.old/libavcodec/packet.h ffmpeg-6.0/libavcodec/packet.h
---- ffmpeg-6.0.old/libavcodec/packet.h	2023-09-07 14:34:22.937394507 +0200
-+++ ffmpeg-6.0/libavcodec/packet.h	2023-09-07 14:34:23.530405589 +0200
+--- ffmpeg-6.0.old/libavcodec/packet.h	2023-10-03 09:45:16.858444105 +0200
++++ ffmpeg-6.0/libavcodec/packet.h	2023-10-03 09:45:18.700477357 +0200
 @@ -300,6 +300,13 @@
      AV_PKT_DATA_DYNAMIC_HDR10_PLUS,
  
@@ -891,8 +891,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/packet.h ffmpeg-6.0/libavcodec/packet.h
       * This is not part of the public API/ABI in the sense that it may
       * change when new side data types are added.
 diff -Naur ffmpeg-6.0.old/libavcodec/profiles.c ffmpeg-6.0/libavcodec/profiles.c
---- ffmpeg-6.0.old/libavcodec/profiles.c	2023-09-07 14:34:22.930394377 +0200
-+++ ffmpeg-6.0/libavcodec/profiles.c	2023-09-07 14:34:23.526405514 +0200
+--- ffmpeg-6.0.old/libavcodec/profiles.c	2023-10-03 09:45:16.851443979 +0200
++++ ffmpeg-6.0/libavcodec/profiles.c	2023-10-03 09:45:18.695477266 +0200
 @@ -36,15 +36,27 @@
  };
  
@@ -928,8 +928,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/profiles.c ffmpeg-6.0/libavcodec/profiles.c
    { FF_PROFILE_DNXHD,      "DNXHD"},
    { FF_PROFILE_DNXHR_LB,   "DNXHR LB"},
 diff -Naur ffmpeg-6.0.old/libavcodec/profiles.h ffmpeg-6.0/libavcodec/profiles.h
---- ffmpeg-6.0.old/libavcodec/profiles.h	2023-09-07 14:34:22.885393535 +0200
-+++ ffmpeg-6.0/libavcodec/profiles.h	2023-09-07 14:34:23.526405514 +0200
+--- ffmpeg-6.0.old/libavcodec/profiles.h	2023-10-03 09:45:16.815443329 +0200
++++ ffmpeg-6.0/libavcodec/profiles.h	2023-10-03 09:45:18.695477266 +0200
 @@ -58,6 +58,8 @@
  
  extern const AVProfile ff_aac_profiles[];
@@ -940,8 +940,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/profiles.h ffmpeg-6.0/libavcodec/profiles.h
  extern const AVProfile ff_h264_profiles[];
  extern const AVProfile ff_hevc_profiles[];
 diff -Naur ffmpeg-6.0.old/libavcodec/videotoolbox.c ffmpeg-6.0/libavcodec/videotoolbox.c
---- ffmpeg-6.0.old/libavcodec/videotoolbox.c	2023-09-07 14:34:22.919394171 +0200
-+++ ffmpeg-6.0/libavcodec/videotoolbox.c	2023-09-07 14:34:23.501405047 +0200
+--- ffmpeg-6.0.old/libavcodec/videotoolbox.c	2023-10-03 09:45:16.840443780 +0200
++++ ffmpeg-6.0/libavcodec/videotoolbox.c	2023-10-03 09:45:18.669476798 +0200
 @@ -911,6 +911,15 @@
          break;
      }
@@ -959,8 +959,8 @@ diff -Naur ffmpeg-6.0.old/libavcodec/videotoolbox.c ffmpeg-6.0/libavcodec/videot
      if (avctx->codec_id == AV_CODEC_ID_PRORES) {
          if (__builtin_available(macOS 10.9, *)) {
 diff -Naur ffmpeg-6.0.old/libavfilter/avfilter.c ffmpeg-6.0/libavfilter/avfilter.c
---- ffmpeg-6.0.old/libavfilter/avfilter.c	2023-09-07 14:34:23.015395965 +0200
-+++ ffmpeg-6.0/libavfilter/avfilter.c	2023-09-07 14:34:23.231400001 +0200
+--- ffmpeg-6.0.old/libavfilter/avfilter.c	2023-10-03 09:45:16.937445531 +0200
++++ ffmpeg-6.0/libavfilter/avfilter.c	2023-10-03 09:45:18.345470948 +0200
 @@ -57,8 +57,8 @@
          ff_tlog(ctx, " a:%d/%d s:%dx%d i:%c iskey:%d type:%c",
                  ref->sample_aspect_ratio.num, ref->sample_aspect_ratio.den,
@@ -973,8 +973,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/avfilter.c ffmpeg-6.0/libavfilter/avfilter
                  av_get_picture_type_char(ref->pict_type));
      }
 diff -Naur ffmpeg-6.0.old/libavfilter/buffersrc.c ffmpeg-6.0/libavfilter/buffersrc.c
---- ffmpeg-6.0.old/libavfilter/buffersrc.c	2023-09-07 14:34:23.020396058 +0200
-+++ ffmpeg-6.0/libavfilter/buffersrc.c	2023-09-07 14:34:23.232400020 +0200
+--- ffmpeg-6.0.old/libavfilter/buffersrc.c	2023-10-03 09:45:16.942445621 +0200
++++ ffmpeg-6.0/libavfilter/buffersrc.c	2023-10-03 09:45:18.345470948 +0200
 @@ -247,6 +247,11 @@
  FF_ENABLE_DEPRECATION_WARNINGS
  #endif
@@ -988,8 +988,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/buffersrc.c ffmpeg-6.0/libavfilter/buffers
      if (ret < 0)
          return ret;
 diff -Naur ffmpeg-6.0.old/libavfilter/f_select.c ffmpeg-6.0/libavfilter/f_select.c
---- ffmpeg-6.0.old/libavfilter/f_select.c	2023-09-07 14:34:23.022396095 +0200
-+++ ffmpeg-6.0/libavfilter/f_select.c	2023-09-07 14:34:23.232400020 +0200
+--- ffmpeg-6.0.old/libavfilter/f_select.c	2023-10-03 09:45:16.944445658 +0200
++++ ffmpeg-6.0/libavfilter/f_select.c	2023-10-03 09:45:18.346470967 +0200
 @@ -350,8 +350,8 @@
  
      case AVMEDIA_TYPE_VIDEO:
@@ -1013,8 +1013,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/f_select.c ffmpeg-6.0/libavfilter/f_select
                 select->var_values[VAR_SCENE]);
          break;
 diff -Naur ffmpeg-6.0.old/libavfilter/phase_template.c ffmpeg-6.0/libavfilter/phase_template.c
---- ffmpeg-6.0.old/libavfilter/phase_template.c	2023-09-07 14:34:23.026396170 +0200
-+++ ffmpeg-6.0/libavfilter/phase_template.c	2023-09-07 14:34:23.232400020 +0200
+--- ffmpeg-6.0.old/libavfilter/phase_template.c	2023-10-03 09:45:16.948445730 +0200
++++ ffmpeg-6.0/libavfilter/phase_template.c	2023-10-03 09:45:18.346470967 +0200
 @@ -57,10 +57,10 @@
      double bdiff, tdiff, pdiff;
  
@@ -1029,8 +1029,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/phase_template.c ffmpeg-6.0/libavfilter/ph
      }
  
 diff -Naur ffmpeg-6.0.old/libavfilter/qsvvpp.c ffmpeg-6.0/libavfilter/qsvvpp.c
---- ffmpeg-6.0.old/libavfilter/qsvvpp.c	2023-09-07 14:34:23.008395834 +0200
-+++ ffmpeg-6.0/libavfilter/qsvvpp.c	2023-09-07 14:34:23.334401926 +0200
+--- ffmpeg-6.0.old/libavfilter/qsvvpp.c	2023-10-03 09:45:16.929445387 +0200
++++ ffmpeg-6.0/libavfilter/qsvvpp.c	2023-10-03 09:45:18.528474252 +0200
 @@ -460,8 +460,8 @@
                                                        inlink->time_base, default_tb);
  
@@ -1305,8 +1305,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/qsvvpp.c ffmpeg-6.0/libavfilter/qsvvpp.c
              ret = MFXVideoVPP_RunFrameVPPAsync(s->session, &in_frame->surface,
                                                 &out_frame->surface, NULL, &sync);
 diff -Naur ffmpeg-6.0.old/libavfilter/qsvvpp.h ffmpeg-6.0/libavfilter/qsvvpp.h
---- ffmpeg-6.0.old/libavfilter/qsvvpp.h	2023-09-07 14:34:23.026396170 +0200
-+++ ffmpeg-6.0/libavfilter/qsvvpp.h	2023-09-07 14:34:23.380402785 +0200
+--- ffmpeg-6.0.old/libavfilter/qsvvpp.h	2023-10-03 09:45:16.948445730 +0200
++++ ffmpeg-6.0/libavfilter/qsvvpp.h	2023-10-03 09:45:18.529474270 +0200
 @@ -52,11 +52,20 @@
      int queued;
  } QSVFrame;
@@ -1362,8 +1362,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/qsvvpp.h ffmpeg-6.0/libavfilter/qsvvpp.h
      /* To fill with MFX enhanced filter configurations */
      int num_ext_buf;
 diff -Naur ffmpeg-6.0.old/libavfilter/setpts.c ffmpeg-6.0/libavfilter/setpts.c
---- ffmpeg-6.0.old/libavfilter/setpts.c	2023-09-07 14:34:23.011395890 +0200
-+++ ffmpeg-6.0/libavfilter/setpts.c	2023-09-07 14:34:23.232400020 +0200
+--- ffmpeg-6.0.old/libavfilter/setpts.c	2023-10-03 09:45:16.933445459 +0200
++++ ffmpeg-6.0/libavfilter/setpts.c	2023-10-03 09:45:18.348471002 +0200
 @@ -166,7 +166,7 @@
  
      if (frame) {
@@ -1374,8 +1374,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/setpts.c ffmpeg-6.0/libavfilter/setpts.c
              setpts->var_values[VAR_S] = frame->nb_samples;
              setpts->var_values[VAR_NB_SAMPLES] = frame->nb_samples;
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_coreimage.m ffmpeg-6.0/libavfilter/vf_coreimage.m
---- ffmpeg-6.0.old/libavfilter/vf_coreimage.m	2023-09-07 14:34:23.009395853 +0200
-+++ ffmpeg-6.0/libavfilter/vf_coreimage.m	2023-09-07 14:34:23.232400020 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_coreimage.m	2023-10-03 09:45:16.931445423 +0200
++++ ffmpeg-6.0/libavfilter/vf_coreimage.m	2023-10-03 09:45:18.348471002 +0200
 @@ -303,6 +303,7 @@
      frame->duration            = 1;
      frame->key_frame           = 1;
@@ -1385,8 +1385,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_coreimage.m ffmpeg-6.0/libavfilter/vf_c
      frame->sample_aspect_ratio = ctx->sar;
  
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_deinterlace_vaapi.c ffmpeg-6.0/libavfilter/vf_deinterlace_vaapi.c
---- ffmpeg-6.0.old/libavfilter/vf_deinterlace_vaapi.c	2023-09-07 14:34:23.004395759 +0200
-+++ ffmpeg-6.0/libavfilter/vf_deinterlace_vaapi.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_deinterlace_vaapi.c	2023-10-03 09:45:16.926445333 +0200
++++ ffmpeg-6.0/libavfilter/vf_deinterlace_vaapi.c	2023-10-03 09:45:18.348471002 +0200
 @@ -252,7 +252,7 @@
          if (err < 0)
              goto fail;
@@ -1414,8 +1414,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_deinterlace_vaapi.c ffmpeg-6.0/libavfil
          av_log(avctx, AV_LOG_DEBUG, "Filter output: %s, %ux%u (%"PRId64").\n",
                 av_get_pix_fmt_name(output_frame->format),
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_estdif.c ffmpeg-6.0/libavfilter/vf_estdif.c
---- ffmpeg-6.0.old/libavfilter/vf_estdif.c	2023-09-07 14:34:23.007395815 +0200
-+++ ffmpeg-6.0/libavfilter/vf_estdif.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_estdif.c	2023-10-03 09:45:16.929445387 +0200
++++ ffmpeg-6.0/libavfilter/vf_estdif.c	2023-10-03 09:45:18.348471002 +0200
 @@ -345,8 +345,8 @@
      const int rslope = s->rslope;
      const int redge = s->redge;
@@ -1445,8 +1445,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_estdif.c ffmpeg-6.0/libavfilter/vf_estd
          s->prev->duration *= 2;
          ret = ff_filter_frame(ctx->outputs[0], s->prev);
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_field.c ffmpeg-6.0/libavfilter/vf_field.c
---- ffmpeg-6.0.old/libavfilter/vf_field.c	2023-09-07 14:34:23.004395759 +0200
-+++ ffmpeg-6.0/libavfilter/vf_field.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_field.c	2023-10-03 09:45:16.925445315 +0200
++++ ffmpeg-6.0/libavfilter/vf_field.c	2023-10-03 09:45:18.348471002 +0200
 @@ -74,6 +74,7 @@
  
      inpicref->height = outlink->h;
@@ -1456,8 +1456,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_field.c ffmpeg-6.0/libavfilter/vf_field
      for (i = 0; i < field->nb_planes; i++) {
          if (field->type == FIELD_TYPE_BOTTOM)
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_fieldhint.c ffmpeg-6.0/libavfilter/vf_fieldhint.c
---- ffmpeg-6.0.old/libavfilter/vf_fieldhint.c	2023-09-07 14:34:23.010395871 +0200
-+++ ffmpeg-6.0/libavfilter/vf_fieldhint.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_fieldhint.c	2023-10-03 09:45:16.932445441 +0200
++++ ffmpeg-6.0/libavfilter/vf_fieldhint.c	2023-10-03 09:45:18.348471002 +0200
 @@ -218,9 +218,11 @@
      switch (hint) {
      case '+':
@@ -1471,8 +1471,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_fieldhint.c ffmpeg-6.0/libavfilter/vf_f
      case '=':
          break;
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_fieldmatch.c ffmpeg-6.0/libavfilter/vf_fieldmatch.c
---- ffmpeg-6.0.old/libavfilter/vf_fieldmatch.c	2023-09-07 14:34:23.009395853 +0200
-+++ ffmpeg-6.0/libavfilter/vf_fieldmatch.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_fieldmatch.c	2023-10-03 09:45:16.931445423 +0200
++++ ffmpeg-6.0/libavfilter/vf_fieldmatch.c	2023-10-03 09:45:18.348471002 +0200
 @@ -714,7 +714,8 @@
      in = fm->src;
  
@@ -1509,8 +1509,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_fieldmatch.c ffmpeg-6.0/libavfilter/vf_
  fail:
      for (i = 0; i < FF_ARRAY_ELEMS(gen_frames); i++)
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_fieldorder.c ffmpeg-6.0/libavfilter/vf_fieldorder.c
---- ffmpeg-6.0.old/libavfilter/vf_fieldorder.c	2023-09-07 14:34:23.029396227 +0200
-+++ ffmpeg-6.0/libavfilter/vf_fieldorder.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_fieldorder.c	2023-10-03 09:45:16.951445784 +0200
++++ ffmpeg-6.0/libavfilter/vf_fieldorder.c	2023-10-03 09:45:18.349471021 +0200
 @@ -76,11 +76,11 @@
      uint8_t *dst, *src;
      AVFrame *out;
@@ -1538,8 +1538,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_fieldorder.c ffmpeg-6.0/libavfilter/vf_
      if (frame != out)
          av_frame_free(&frame);
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_framerate.c ffmpeg-6.0/libavfilter/vf_framerate.c
---- ffmpeg-6.0.old/libavfilter/vf_framerate.c	2023-09-07 14:34:23.020396058 +0200
-+++ ffmpeg-6.0/libavfilter/vf_framerate.c	2023-09-07 14:34:23.233400038 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_framerate.c	2023-10-03 09:45:16.942445621 +0200
++++ ffmpeg-6.0/libavfilter/vf_framerate.c	2023-10-03 09:45:18.349471021 +0200
 @@ -318,7 +318,7 @@
          return ret;
  
@@ -1550,8 +1550,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_framerate.c ffmpeg-6.0/libavfilter/vf_f
  
          if (inpicref->pts == AV_NOPTS_VALUE) {
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_idet.c ffmpeg-6.0/libavfilter/vf_idet.c
---- ffmpeg-6.0.old/libavfilter/vf_idet.c	2023-09-07 14:34:23.017396002 +0200
-+++ ffmpeg-6.0/libavfilter/vf_idet.c	2023-09-07 14:34:23.234400057 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_idet.c	2023-10-03 09:45:16.939445567 +0200
++++ ffmpeg-6.0/libavfilter/vf_idet.c	2023-10-03 09:45:18.349471021 +0200
 @@ -185,11 +185,15 @@
      if      (idet->last_type == TFF){
          idet->cur->top_field_first = 1;
@@ -1610,8 +1610,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_idet.c ffmpeg-6.0/libavfilter/vf_idet.c
                  av_log(ctx, AV_LOG_INFO, "Final flag accuracy %d\n", idet->interlaced_flag_accuracy);
                  return ff_filter_frame(ctx->outputs[0], av_frame_clone(idet->next));
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_kerndeint.c ffmpeg-6.0/libavfilter/vf_kerndeint.c
---- ffmpeg-6.0.old/libavfilter/vf_kerndeint.c	2023-09-07 14:34:23.013395927 +0200
-+++ ffmpeg-6.0/libavfilter/vf_kerndeint.c	2023-09-07 14:34:23.234400057 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_kerndeint.c	2023-10-03 09:45:16.934445477 +0200
++++ ffmpeg-6.0/libavfilter/vf_kerndeint.c	2023-10-03 09:45:18.349471021 +0200
 @@ -142,6 +142,7 @@
      }
      av_frame_copy_props(outpic, inpic);
@@ -1621,8 +1621,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_kerndeint.c ffmpeg-6.0/libavfilter/vf_k
      for (plane = 0; plane < 4 && inpic->data[plane] && inpic->linesize[plane]; plane++) {
          h = plane == 0 ? inlink->h : AV_CEIL_RSHIFT(inlink->h, kerndeint->vsub);
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_nnedi.c ffmpeg-6.0/libavfilter/vf_nnedi.c
---- ffmpeg-6.0.old/libavfilter/vf_nnedi.c	2023-09-07 14:34:23.015395965 +0200
-+++ ffmpeg-6.0/libavfilter/vf_nnedi.c	2023-09-07 14:34:23.234400057 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_nnedi.c	2023-10-03 09:45:16.937445531 +0200
++++ ffmpeg-6.0/libavfilter/vf_nnedi.c	2023-10-03 09:45:18.349471021 +0200
 @@ -540,8 +540,8 @@
      const float in_scale = s->in_scale;
      const float out_scale = s->out_scale;
@@ -1652,8 +1652,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_nnedi.c ffmpeg-6.0/libavfilter/vf_nnedi
          ret = ff_filter_frame(ctx->outputs[0], s->prev);
          s->prev = in;
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_pullup.c ffmpeg-6.0/libavfilter/vf_pullup.c
---- ffmpeg-6.0.old/libavfilter/vf_pullup.c	2023-09-07 14:34:23.008395834 +0200
-+++ ffmpeg-6.0/libavfilter/vf_pullup.c	2023-09-07 14:34:23.234400057 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_pullup.c	2023-10-03 09:45:16.930445405 +0200
++++ ffmpeg-6.0/libavfilter/vf_pullup.c	2023-10-03 09:45:18.349471021 +0200
 @@ -670,7 +670,8 @@
                    (const uint8_t**)in->data, in->linesize,
                    inlink->format, inlink->w, inlink->h);
@@ -1665,8 +1665,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_pullup.c ffmpeg-6.0/libavfilter/vf_pull
      pullup_submit_field(s, b, p^1);
  
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_repeatfields.c ffmpeg-6.0/libavfilter/vf_repeatfields.c
---- ffmpeg-6.0.old/libavfilter/vf_repeatfields.c	2023-09-07 14:34:23.015395965 +0200
-+++ ffmpeg-6.0/libavfilter/vf_repeatfields.c	2023-09-07 14:34:23.234400057 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_repeatfields.c	2023-10-03 09:45:16.937445531 +0200
++++ ffmpeg-6.0/libavfilter/vf_repeatfields.c	2023-10-03 09:45:18.350471039 +0200
 @@ -93,11 +93,12 @@
          s->frame->pts = AV_NOPTS_VALUE;
      }
@@ -1684,8 +1684,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_repeatfields.c ffmpeg-6.0/libavfilter/v
      }
  
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_scale.c ffmpeg-6.0/libavfilter/vf_scale.c
---- ffmpeg-6.0.old/libavfilter/vf_scale.c	2023-09-07 14:34:23.030396245 +0200
-+++ ffmpeg-6.0/libavfilter/vf_scale.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_scale.c	2023-10-03 09:45:16.952445802 +0200
++++ ffmpeg-6.0/libavfilter/vf_scale.c	2023-10-03 09:45:18.350471039 +0200
 @@ -862,7 +862,8 @@
                (int64_t)in->sample_aspect_ratio.den * outlink->w * link->h,
                INT_MAX);
@@ -1697,8 +1697,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_scale.c ffmpeg-6.0/libavfilter/vf_scale
          if (ret >= 0)
              ret = scale_field(scale, out, in, 1);
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_separatefields.c ffmpeg-6.0/libavfilter/vf_separatefields.c
---- ffmpeg-6.0.old/libavfilter/vf_separatefields.c	2023-09-07 14:34:23.004395759 +0200
-+++ ffmpeg-6.0/libavfilter/vf_separatefields.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_separatefields.c	2023-10-03 09:45:16.926445333 +0200
++++ ffmpeg-6.0/libavfilter/vf_separatefields.c	2023-10-03 09:45:18.350471039 +0200
 @@ -71,13 +71,14 @@
  
      inpicref->height = outlink->h;
@@ -1734,8 +1734,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_separatefields.c ffmpeg-6.0/libavfilter
          s->second = NULL;
      }
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_setparams.c ffmpeg-6.0/libavfilter/vf_setparams.c
---- ffmpeg-6.0.old/libavfilter/vf_setparams.c	2023-09-07 14:34:23.030396245 +0200
-+++ ffmpeg-6.0/libavfilter/vf_setparams.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_setparams.c	2023-10-03 09:45:16.952445802 +0200
++++ ffmpeg-6.0/libavfilter/vf_setparams.c	2023-10-03 09:45:18.350471039 +0200
 @@ -128,9 +128,15 @@
      /* set field */
      if (s->field_mode == MODE_PROG) {
@@ -1753,8 +1753,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_setparams.c ffmpeg-6.0/libavfilter/vf_s
  
      /* set range */
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_showinfo.c ffmpeg-6.0/libavfilter/vf_showinfo.c
---- ffmpeg-6.0.old/libavfilter/vf_showinfo.c	2023-09-07 14:34:23.022396095 +0200
-+++ ffmpeg-6.0/libavfilter/vf_showinfo.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_showinfo.c	2023-10-03 09:45:16.944445658 +0200
++++ ffmpeg-6.0/libavfilter/vf_showinfo.c	2023-10-03 09:45:18.350471039 +0200
 @@ -722,8 +722,8 @@
             desc->name,
             frame->sample_aspect_ratio.num, frame->sample_aspect_ratio.den,
@@ -1767,8 +1767,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_showinfo.c ffmpeg-6.0/libavfilter/vf_sh
             av_get_picture_type_char(frame->pict_type));
  
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_telecine.c ffmpeg-6.0/libavfilter/vf_telecine.c
---- ffmpeg-6.0.old/libavfilter/vf_telecine.c	2023-09-07 14:34:23.014395946 +0200
-+++ ffmpeg-6.0/libavfilter/vf_telecine.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_telecine.c	2023-10-03 09:45:16.936445513 +0200
++++ ffmpeg-6.0/libavfilter/vf_telecine.c	2023-10-03 09:45:18.350471039 +0200
 @@ -206,6 +206,11 @@
          }
          s->frame[nout]->interlaced_frame = 1;
@@ -1816,8 +1816,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_telecine.c ffmpeg-6.0/libavfilter/vf_te
                       av_rescale(outlink->frame_count_in, s->ts_unit.num,
                                  s->ts_unit.den);
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_tinterlace.c ffmpeg-6.0/libavfilter/vf_tinterlace.c
---- ffmpeg-6.0.old/libavfilter/vf_tinterlace.c	2023-09-07 14:34:23.024396133 +0200
-+++ ffmpeg-6.0/libavfilter/vf_tinterlace.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_tinterlace.c	2023-10-03 09:45:16.946445694 +0200
++++ ffmpeg-6.0/libavfilter/vf_tinterlace.c	2023-10-03 09:45:18.350471039 +0200
 @@ -393,6 +393,7 @@
          out->height = outlink->h;
          out->interlaced_frame = 1;
@@ -1876,8 +1876,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_tinterlace.c ffmpeg-6.0/libavfilter/vf_
          if (next->pts != AV_NOPTS_VALUE && cur->pts != AV_NOPTS_VALUE)
              out->pts = cur->pts + next->pts;
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_vpp_qsv.c ffmpeg-6.0/libavfilter/vf_vpp_qsv.c
---- ffmpeg-6.0.old/libavfilter/vf_vpp_qsv.c	2023-09-07 14:34:23.028396208 +0200
-+++ ffmpeg-6.0/libavfilter/vf_vpp_qsv.c	2023-09-07 14:34:23.383402842 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_vpp_qsv.c	2023-10-03 09:45:16.949445748 +0200
++++ ffmpeg-6.0/libavfilter/vf_vpp_qsv.c	2023-10-03 09:45:18.531474306 +0200
 @@ -31,6 +31,7 @@
  #include "libavutil/hwcontext_qsv.h"
  #include "libavutil/pixdesc.h"
@@ -2207,8 +2207,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_vpp_qsv.c ffmpeg-6.0/libavfilter/vf_vpp
                            &ctx->outputs[0]->incfg.formats);
  }
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_w3fdif.c ffmpeg-6.0/libavfilter/vf_w3fdif.c
---- ffmpeg-6.0.old/libavfilter/vf_w3fdif.c	2023-09-07 14:34:23.020396058 +0200
-+++ ffmpeg-6.0/libavfilter/vf_w3fdif.c	2023-09-07 14:34:23.235400076 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_w3fdif.c	2023-10-03 09:45:16.942445621 +0200
++++ ffmpeg-6.0/libavfilter/vf_w3fdif.c	2023-10-03 09:45:18.351471057 +0200
 @@ -379,8 +379,8 @@
      const int start = (height * jobnr) / nb_jobs;
      const int end = (height * (jobnr+1)) / nb_jobs;
@@ -2238,8 +2238,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_w3fdif.c ffmpeg-6.0/libavfilter/vf_w3fd
          if (!out)
              return AVERROR(ENOMEM);
 diff -Naur ffmpeg-6.0.old/libavfilter/vf_weave.c ffmpeg-6.0/libavfilter/vf_weave.c
---- ffmpeg-6.0.old/libavfilter/vf_weave.c	2023-09-07 14:34:23.022396095 +0200
-+++ ffmpeg-6.0/libavfilter/vf_weave.c	2023-09-07 14:34:23.236400095 +0200
+--- ffmpeg-6.0.old/libavfilter/vf_weave.c	2023-10-03 09:45:16.944445658 +0200
++++ ffmpeg-6.0/libavfilter/vf_weave.c	2023-10-03 09:45:18.351471057 +0200
 @@ -150,6 +150,11 @@
      out->pts = s->double_weave ? s->prev->pts : in->pts / 2;
      out->interlaced_frame = 1;
@@ -2253,8 +2253,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vf_weave.c ffmpeg-6.0/libavfilter/vf_weave
      if (!s->double_weave)
          av_frame_free(&in);
 diff -Naur ffmpeg-6.0.old/libavfilter/vsrc_gradients.c ffmpeg-6.0/libavfilter/vsrc_gradients.c
---- ffmpeg-6.0.old/libavfilter/vsrc_gradients.c	2023-09-07 14:34:23.004395759 +0200
-+++ ffmpeg-6.0/libavfilter/vsrc_gradients.c	2023-09-07 14:34:23.236400095 +0200
+--- ffmpeg-6.0.old/libavfilter/vsrc_gradients.c	2023-10-03 09:45:16.926445333 +0200
++++ ffmpeg-6.0/libavfilter/vsrc_gradients.c	2023-10-03 09:45:18.351471057 +0200
 @@ -399,6 +399,7 @@
  
          frame->key_frame           = 1;
@@ -2264,8 +2264,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vsrc_gradients.c ffmpeg-6.0/libavfilter/vs
          frame->sample_aspect_ratio = (AVRational) {1, 1};
          frame->pts = s->pts++;
 diff -Naur ffmpeg-6.0.old/libavfilter/vsrc_testsrc.c ffmpeg-6.0/libavfilter/vsrc_testsrc.c
---- ffmpeg-6.0.old/libavfilter/vsrc_testsrc.c	2023-09-07 14:34:23.004395759 +0200
-+++ ffmpeg-6.0/libavfilter/vsrc_testsrc.c	2023-09-07 14:34:23.236400095 +0200
+--- ffmpeg-6.0.old/libavfilter/vsrc_testsrc.c	2023-10-03 09:45:16.926445333 +0200
++++ ffmpeg-6.0/libavfilter/vsrc_testsrc.c	2023-10-03 09:45:18.351471057 +0200
 @@ -186,6 +186,7 @@
      frame->duration            = 1;
      frame->key_frame           = 1;
@@ -2275,8 +2275,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/vsrc_testsrc.c ffmpeg-6.0/libavfilter/vsrc
      frame->sample_aspect_ratio = test->sar;
      if (!test->draw_once)
 diff -Naur ffmpeg-6.0.old/libavfilter/yadif_common.c ffmpeg-6.0/libavfilter/yadif_common.c
---- ffmpeg-6.0.old/libavfilter/yadif_common.c	2023-09-07 14:34:23.020396058 +0200
-+++ ffmpeg-6.0/libavfilter/yadif_common.c	2023-09-07 14:34:23.236400095 +0200
+--- ffmpeg-6.0.old/libavfilter/yadif_common.c	2023-10-03 09:45:16.942445621 +0200
++++ ffmpeg-6.0/libavfilter/yadif_common.c	2023-10-03 09:45:18.351471057 +0200
 @@ -31,8 +31,8 @@
      int tff, ret;
  
@@ -2319,8 +2319,8 @@ diff -Naur ffmpeg-6.0.old/libavfilter/yadif_common.c ffmpeg-6.0/libavfilter/yadi
      if (yadif->out->pts != AV_NOPTS_VALUE)
          yadif->out->pts *= 2;
 diff -Naur ffmpeg-6.0.old/libavformat/dump.c ffmpeg-6.0/libavformat/dump.c
---- ffmpeg-6.0.old/libavformat/dump.c	2023-09-07 14:34:23.078397142 +0200
-+++ ffmpeg-6.0/libavformat/dump.c	2023-09-07 14:34:23.531405607 +0200
+--- ffmpeg-6.0.old/libavformat/dump.c	2023-10-03 09:45:17.000446669 +0200
++++ ffmpeg-6.0/libavformat/dump.c	2023-10-03 09:45:18.701477374 +0200
 @@ -27,6 +27,7 @@
  #include "libavutil/intreadwrite.h"
  #include "libavutil/log.h"
@@ -2358,8 +2358,8 @@ diff -Naur ffmpeg-6.0.old/libavformat/dump.c ffmpeg-6.0/libavformat/dump.c
              av_log(ctx, AV_LOG_INFO, "unknown side data type %d "
                     "(%"SIZE_SPECIFIER" bytes)", sd->type, sd->size);
 diff -Naur ffmpeg-6.0.old/libavformat/isom.h ffmpeg-6.0/libavformat/isom.h
---- ffmpeg-6.0.old/libavformat/isom.h	2023-09-07 14:34:23.075397086 +0200
-+++ ffmpeg-6.0/libavformat/isom.h	2023-09-07 14:34:23.531405607 +0200
+--- ffmpeg-6.0.old/libavformat/isom.h	2023-10-03 09:45:16.997446614 +0200
++++ ffmpeg-6.0/libavformat/isom.h	2023-10-03 09:45:18.701477374 +0200
 @@ -29,6 +29,7 @@
  
  #include "libavutil/encryption_info.h"
@@ -2377,8 +2377,8 @@ diff -Naur ffmpeg-6.0.old/libavformat/isom.h ffmpeg-6.0/libavformat/isom.h
      uint32_t format;
  
 diff -Naur ffmpeg-6.0.old/libavformat/matroskaenc.c ffmpeg-6.0/libavformat/matroskaenc.c
---- ffmpeg-6.0.old/libavformat/matroskaenc.c	2023-09-07 14:34:23.089397348 +0200
-+++ ffmpeg-6.0/libavformat/matroskaenc.c	2023-09-07 14:34:23.500405028 +0200
+--- ffmpeg-6.0.old/libavformat/matroskaenc.c	2023-10-03 09:45:17.010446849 +0200
++++ ffmpeg-6.0/libavformat/matroskaenc.c	2023-10-03 09:45:18.668476780 +0200
 @@ -2698,6 +2698,16 @@
      case AV_CODEC_ID_AAC:
          if (side_data_size && mkv->track.bc) {
@@ -2397,8 +2397,8 @@ diff -Naur ffmpeg-6.0.old/libavformat/matroskaenc.c ffmpeg-6.0/libavformat/matro
                                         &track->sample_rate, &output_sample_rate);
              if (ret < 0)
 diff -Naur ffmpeg-6.0.old/libavformat/mov.c ffmpeg-6.0/libavformat/mov.c
---- ffmpeg-6.0.old/libavformat/mov.c	2023-09-07 14:34:23.070396992 +0200
-+++ ffmpeg-6.0/libavformat/mov.c	2023-09-07 14:34:23.536405701 +0200
+--- ffmpeg-6.0.old/libavformat/mov.c	2023-10-03 09:45:16.992446524 +0200
++++ ffmpeg-6.0/libavformat/mov.c	2023-10-03 09:45:18.708477501 +0200
 @@ -55,6 +55,7 @@
  #include "libavcodec/mpegaudiodecheader.h"
  #include "libavcodec/mlp_parse.h"
@@ -2655,8 +2655,8 @@ diff -Naur ffmpeg-6.0.old/libavformat/mov.c ffmpeg-6.0/libavformat/mov.c
          }
      }
 diff -Naur ffmpeg-6.0.old/libavformat/movenc.c ffmpeg-6.0/libavformat/movenc.c
---- ffmpeg-6.0.old/libavformat/movenc.c	2023-09-07 14:34:23.082397217 +0200
-+++ ffmpeg-6.0/libavformat/movenc.c	2023-09-07 14:34:23.537405720 +0200
+--- ffmpeg-6.0.old/libavformat/movenc.c	2023-10-03 09:45:17.004446741 +0200
++++ ffmpeg-6.0/libavformat/movenc.c	2023-10-03 09:45:18.710477537 +0200
 @@ -28,6 +28,7 @@
  
  #include "movenc.h"
@@ -2836,8 +2836,8 @@ diff -Naur ffmpeg-6.0.old/libavformat/movenc.c ffmpeg-6.0/libavformat/movenc.c
      { AV_CODEC_ID_MPEG1VIDEO,      MKTAG('m', 'p', '4', 'v') },
      { AV_CODEC_ID_MJPEG,           MKTAG('m', 'p', '4', 'v') },
 diff -Naur ffmpeg-6.0.old/libavutil/frame.h ffmpeg-6.0/libavutil/frame.h
---- ffmpeg-6.0.old/libavutil/frame.h	2023-09-07 14:34:23.038396395 +0200
-+++ ffmpeg-6.0/libavutil/frame.h	2023-09-07 14:34:23.236400095 +0200
+--- ffmpeg-6.0.old/libavutil/frame.h	2023-10-03 09:45:16.960445946 +0200
++++ ffmpeg-6.0/libavutil/frame.h	2023-10-03 09:45:18.351471057 +0200
 @@ -576,6 +576,15 @@
   */
  #define AV_FRAME_FLAG_DISCARD   (1 << 2)
@@ -2855,8 +2855,8 @@ diff -Naur ffmpeg-6.0.old/libavutil/frame.h ffmpeg-6.0/libavutil/frame.h
   */
  
 diff -Naur ffmpeg-6.0.old/libswscale/swscale_unscaled.c ffmpeg-6.0/libswscale/swscale_unscaled.c
---- ffmpeg-6.0.old/libswscale/swscale_unscaled.c	2023-09-07 14:34:23.000395684 +0200
-+++ ffmpeg-6.0/libswscale/swscale_unscaled.c	2023-09-07 14:34:23.528405551 +0200
+--- ffmpeg-6.0.old/libswscale/swscale_unscaled.c	2023-10-03 09:45:16.922445261 +0200
++++ ffmpeg-6.0/libswscale/swscale_unscaled.c	2023-10-03 09:45:18.697477302 +0200
 @@ -297,7 +297,7 @@
          const uint8_t *tsrc0 = src[0];
          for (x = c->srcW; x > 0; x--) {
