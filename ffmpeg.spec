@@ -11,8 +11,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        5.1.3
-Release:        3%{?dist}
+Version:        5.1.4
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -26,6 +26,9 @@ Patch1:         %{name}-svt-vp9.patch
 Patch2:         %{name}-svt-hevc.patch
 # https://framagit.org/tytan652/ffmpeg-ndi-patch
 Patch3:         %{name}-ndi.patch
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/9212b53ed5b2f7346036936d500e7954190fb08b
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/1ebb0e43f9a15a12cd94db44e4bc5424f8a5b0c9
+Patch4:         %{name}-nvenc.patch
 
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
@@ -674,6 +677,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Nov 21 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-1
+- Update to 5.1.4.
+
 * Fri Jun 02 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.3-3
 - Rebuild for updated dependencies.
 
