@@ -11,8 +11,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        6.0
-Release:        6%{?dist}
+Version:        6.0.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -660,6 +660,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Nov 21 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-1
+- Update to version 6.0.1.
+
 * Tue Oct 03 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0-6
 - Momentarily disable pocketsphinx support for Fedora 39+
 - Rebase patches.
