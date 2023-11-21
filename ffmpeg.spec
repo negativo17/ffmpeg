@@ -27,7 +27,7 @@ Patch2:         %{name}-svt-hevc.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/1231003c3c6d4839a9e838d06f8e16ee7690958f
 Patch3:         %{name}-libplacebo.patch
-# https://github.com/HandBrake/HandBrake/tree/c9fc5c3636646df92749754015e5afb0678bc540
+# https://github.com/HandBrake/HandBrake/tree/d95ba3f9fb738c7263b60fb8d9dc4f83d83d6c9b
 Patch4:         %{name}-HandBrake.patch
 
 BuildRequires:  AMF-devel >= 1.4.28

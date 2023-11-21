@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-6.0.old/configure ffmpeg-6.0/configure
---- ffmpeg-6.0.old/configure	2023-10-03 09:45:17.466455081 +0200
-+++ ffmpeg-6.0/configure	2023-10-03 09:45:17.469455135 +0200
+diff -Naur ffmpeg-6.0.1.old/configure ffmpeg-6.0.1/configure
+--- ffmpeg-6.0.1.old/configure	2023-11-21 13:26:45.464764302 +0100
++++ ffmpeg-6.0.1/configure	2023-11-21 13:26:45.467764353 +0100
 @@ -288,6 +288,7 @@
    --enable-libvorbis       enable Vorbis en/decoding via libvorbis,
                             native implementation exists [no]
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-6.0.old/configure ffmpeg-6.0/configure
  enabled libwebp           && {
      enabled libwebp_encoder      && require_pkg_config libwebp "libwebp >= 0.2.0" webp/encode.h WebPGetEncoderVersion
      enabled libwebp_anim_encoder && check_pkg_config libwebp_anim_encoder "libwebpmux >= 0.4.0" webp/mux.h WebPAnimEncoderOptionsInit; }
-diff -Naur ffmpeg-6.0.old/libavcodec/allcodecs.c ffmpeg-6.0/libavcodec/allcodecs.c
---- ffmpeg-6.0.old/libavcodec/allcodecs.c	2023-10-03 09:45:16.870444322 +0200
-+++ ffmpeg-6.0/libavcodec/allcodecs.c	2023-10-03 09:45:17.470455153 +0200
+diff -Naur ffmpeg-6.0.1.old/libavcodec/allcodecs.c ffmpeg-6.0.1/libavcodec/allcodecs.c
+--- ffmpeg-6.0.1.old/libavcodec/allcodecs.c	2023-11-21 13:26:44.706751380 +0100
++++ ffmpeg-6.0.1/libavcodec/allcodecs.c	2023-11-21 13:26:45.467764353 +0100
 @@ -799,6 +799,7 @@
  extern const FFCodec ff_libvpx_vp8_decoder;
  extern FFCodec ff_libvpx_vp9_encoder;
@@ -44,9 +44,9 @@ diff -Naur ffmpeg-6.0.old/libavcodec/allcodecs.c ffmpeg-6.0/libavcodec/allcodecs
  /* preferred over libwebp */
  extern const FFCodec ff_libwebp_anim_encoder;
  extern const FFCodec ff_libwebp_encoder;
-diff -Naur ffmpeg-6.0.old/libavcodec/libsvt_vp9.c ffmpeg-6.0/libavcodec/libsvt_vp9.c
---- ffmpeg-6.0.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-6.0/libavcodec/libsvt_vp9.c	2023-10-03 09:45:17.470455153 +0200
+diff -Naur ffmpeg-6.0.1.old/libavcodec/libsvt_vp9.c ffmpeg-6.0.1/libavcodec/libsvt_vp9.c
+--- ffmpeg-6.0.1.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-6.0.1/libavcodec/libsvt_vp9.c	2023-11-21 13:26:45.468764370 +0100
 @@ -0,0 +1,700 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
@@ -748,9 +748,9 @@ diff -Naur ffmpeg-6.0.old/libavcodec/libsvt_vp9.c ffmpeg-6.0/libavcodec/libsvt_v
 +    .defaults         = eb_enc_defaults,
 +    .p.wrapper_name   = "libsvt_vp9",
 +};
-diff -Naur ffmpeg-6.0.old/libavcodec/Makefile ffmpeg-6.0/libavcodec/Makefile
---- ffmpeg-6.0.old/libavcodec/Makefile	2023-10-03 09:45:16.814443311 +0200
-+++ ffmpeg-6.0/libavcodec/Makefile	2023-10-03 09:45:17.470455153 +0200
+diff -Naur ffmpeg-6.0.1.old/libavcodec/Makefile ffmpeg-6.0.1/libavcodec/Makefile
+--- ffmpeg-6.0.1.old/libavcodec/Makefile	2023-11-21 13:26:44.621749931 +0100
++++ ffmpeg-6.0.1/libavcodec/Makefile	2023-11-21 13:26:45.468764370 +0100
 @@ -1123,6 +1123,7 @@
  OBJS-$(CONFIG_LIBVPX_VP8_ENCODER)         += libvpxenc.o
  OBJS-$(CONFIG_LIBVPX_VP9_DECODER)         += libvpxdec.o libvpx.o

@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-6.0.old/configure ffmpeg-6.0/configure
---- ffmpeg-6.0.old/configure	2023-10-03 09:45:17.747460153 +0200
-+++ ffmpeg-6.0/configure	2023-10-03 09:45:17.751460226 +0200
+diff -Naur ffmpeg-6.0.1.old/configure ffmpeg-6.0.1/configure
+--- ffmpeg-6.0.1.old/configure	2023-11-21 13:26:45.847770831 +0100
++++ ffmpeg-6.0.1/configure	2023-11-21 13:26:45.852770916 +0100
 @@ -292,6 +292,7 @@
    --enable-libwebp         enable WebP encoding via libwebp [no]
    --enable-libx264         enable H.264 encoding via x264 [no]
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-6.0.old/configure ffmpeg-6.0/configure
  enabled libtensorflow     && require libtensorflow tensorflow/c/c_api.h TF_Version -ltensorflow
  enabled libtesseract      && require_pkg_config libtesseract tesseract tesseract/capi.h TessBaseAPICreate
  enabled libtheora         && require libtheora theora/theoraenc.h th_info_init -ltheoraenc -ltheoradec -logg
-diff -Naur ffmpeg-6.0.old/libavcodec/allcodecs.c ffmpeg-6.0/libavcodec/allcodecs.c
---- ffmpeg-6.0.old/libavcodec/allcodecs.c	2023-10-03 09:45:17.748460171 +0200
-+++ ffmpeg-6.0/libavcodec/allcodecs.c	2023-10-03 09:45:17.752460244 +0200
+diff -Naur ffmpeg-6.0.1.old/libavcodec/allcodecs.c ffmpeg-6.0.1/libavcodec/allcodecs.c
+--- ffmpeg-6.0.1.old/libavcodec/allcodecs.c	2023-11-21 13:26:45.848770848 +0100
++++ ffmpeg-6.0.1/libavcodec/allcodecs.c	2023-11-21 13:26:45.853770933 +0100
 @@ -815,6 +815,7 @@
  #endif
  extern const FFCodec ff_libx264rgb_encoder;
@@ -44,9 +44,9 @@ diff -Naur ffmpeg-6.0.old/libavcodec/allcodecs.c ffmpeg-6.0/libavcodec/allcodecs
  extern const FFCodec ff_libxavs_encoder;
  extern const FFCodec ff_libxavs2_encoder;
  extern const FFCodec ff_libxvid_encoder;
-diff -Naur ffmpeg-6.0.old/libavcodec/libsvt_hevc.c ffmpeg-6.0/libavcodec/libsvt_hevc.c
---- ffmpeg-6.0.old/libavcodec/libsvt_hevc.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-6.0/libavcodec/libsvt_hevc.c	2023-10-03 09:45:17.752460244 +0200
+diff -Naur ffmpeg-6.0.1.old/libavcodec/libsvt_hevc.c ffmpeg-6.0.1/libavcodec/libsvt_hevc.c
+--- ffmpeg-6.0.1.old/libavcodec/libsvt_hevc.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-6.0.1/libavcodec/libsvt_hevc.c	2023-11-21 13:26:45.854770950 +0100
 @@ -0,0 +1,585 @@
 +/*
 +* Scalable Video Technology for HEVC encoder library plugin
@@ -633,9 +633,9 @@ diff -Naur ffmpeg-6.0.old/libavcodec/libsvt_hevc.c ffmpeg-6.0/libavcodec/libsvt_
 +    .caps_internal  = FF_CODEC_CAP_INIT_CLEANUP,
 +    .p.wrapper_name = "libsvt_hevc",
 +};
-diff -Naur ffmpeg-6.0.old/libavcodec/Makefile ffmpeg-6.0/libavcodec/Makefile
---- ffmpeg-6.0.old/libavcodec/Makefile	2023-10-03 09:45:17.749460189 +0200
-+++ ffmpeg-6.0/libavcodec/Makefile	2023-10-03 09:45:17.753460261 +0200
+diff -Naur ffmpeg-6.0.1.old/libavcodec/Makefile ffmpeg-6.0.1/libavcodec/Makefile
+--- ffmpeg-6.0.1.old/libavcodec/Makefile	2023-11-21 13:26:45.849770865 +0100
++++ ffmpeg-6.0.1/libavcodec/Makefile	2023-11-21 13:26:45.854770950 +0100
 @@ -1129,6 +1129,7 @@
  OBJS-$(CONFIG_LIBX262_ENCODER)            += libx264.o
  OBJS-$(CONFIG_LIBX264_ENCODER)            += libx264.o

@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-6.0.old/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc ffmpeg-6.0/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc
---- ffmpeg-6.0.old/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-6.0/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc	2023-10-03 09:45:18.031465280 +0200
+diff -Naur ffmpeg-6.0.1.old/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc ffmpeg-6.0.1/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc
+--- ffmpeg-6.0.1.old/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-6.0.1/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc	2023-11-21 13:26:46.259777855 +0100
 @@ -0,0 +1,76 @@
 +From 11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc Mon Sep 17 00:00:00 2001
 +From: Niklas Haas <git@haasn.dev>
@@ -78,9 +78,9 @@ diff -Naur ffmpeg-6.0.old/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc ffmpeg-6.0/11
 +-- 
 +2.25.1
 +
-diff -Naur ffmpeg-6.0.old/doc/filters.texi ffmpeg-6.0/doc/filters.texi
---- ffmpeg-6.0.old/doc/filters.texi	2023-10-03 09:45:17.016446957 +0200
-+++ ffmpeg-6.0/doc/filters.texi	2023-10-03 09:45:18.033465316 +0200
+diff -Naur ffmpeg-6.0.1.old/doc/filters.texi ffmpeg-6.0.1/doc/filters.texi
+--- ffmpeg-6.0.1.old/doc/filters.texi	2023-11-21 13:26:44.956755642 +0100
++++ ffmpeg-6.0.1/doc/filters.texi	2023-11-21 13:26:46.262777906 +0100
 @@ -16242,9 +16242,6 @@
  @item disable_builtin
  Disable built-in GPU sampling (forces LUT).
@@ -91,9 +91,9 @@ diff -Naur ffmpeg-6.0.old/doc/filters.texi ffmpeg-6.0/doc/filters.texi
  @item disable_fbos
  Forcibly disable FBOs, resulting in loss of almost all functionality, but
  offering the maximum possible speed.
-diff -Naur ffmpeg-6.0.old/libavfilter/version_major.h ffmpeg-6.0/libavfilter/version_major.h
---- ffmpeg-6.0.old/libavfilter/version_major.h	2023-10-03 09:45:16.943445640 +0200
-+++ ffmpeg-6.0/libavfilter/version_major.h	2023-10-03 09:45:18.035465352 +0200
+diff -Naur ffmpeg-6.0.1.old/libavfilter/version_major.h ffmpeg-6.0.1/libavfilter/version_major.h
+--- ffmpeg-6.0.1.old/libavfilter/version_major.h	2023-11-21 13:26:44.876754278 +0100
++++ ffmpeg-6.0.1/libavfilter/version_major.h	2023-11-21 13:26:46.263777923 +0100
 @@ -35,4 +35,6 @@
   * the public API and may change, break or disappear at any time.
   */
@@ -101,9 +101,9 @@ diff -Naur ffmpeg-6.0.old/libavfilter/version_major.h ffmpeg-6.0/libavfilter/ver
 +#define FF_API_LIBPLACEBO_OPTS (LIBAVFILTER_VERSION_MAJOR < 10)
 +
  #endif /* AVFILTER_VERSION_MAJOR_H */
-diff -Naur ffmpeg-6.0.old/libavfilter/vf_libplacebo.c ffmpeg-6.0/libavfilter/vf_libplacebo.c
---- ffmpeg-6.0.old/libavfilter/vf_libplacebo.c	2023-10-03 09:45:16.933445459 +0200
-+++ ffmpeg-6.0/libavfilter/vf_libplacebo.c	2023-10-03 09:45:18.035465352 +0200
+diff -Naur ffmpeg-6.0.1.old/libavfilter/vf_libplacebo.c ffmpeg-6.0.1/libavfilter/vf_libplacebo.c
+--- ffmpeg-6.0.1.old/libavfilter/vf_libplacebo.c	2023-11-21 13:26:44.861754022 +0100
++++ ffmpeg-6.0.1/libavfilter/vf_libplacebo.c	2023-11-21 13:26:46.263777923 +0100
 @@ -97,7 +97,6 @@
      float polar_cutoff;
      int disable_linear;
