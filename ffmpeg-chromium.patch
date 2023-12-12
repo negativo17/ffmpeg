@@ -1,0 +1,31 @@
+diff -Naur ffmpeg-5.1.4.old/libavformat/avformat.h ffmpeg-5.1.4/libavformat/avformat.h
+--- ffmpeg-5.1.4.old/libavformat/avformat.h	2023-12-12 10:01:15.225110400 +0100
++++ ffmpeg-5.1.4/libavformat/avformat.h	2023-12-12 10:01:23.219247218 +0100
+@@ -1128,6 +1128,10 @@
+  */
+ int64_t    av_stream_get_end_pts(const AVStream *st);
+ 
++// Chromium: We use the internal field first_dts vvv
++int64_t    av_stream_get_first_dts(const AVStream *st);
++// Chromium: We use the internal field first_dts ^^^
++
+ #define AV_PROGRAM_RUNNING 1
+ 
+ /**
+diff -Naur ffmpeg-5.1.4.old/libavformat/utils.c ffmpeg-5.1.4/libavformat/utils.c
+--- ffmpeg-5.1.4.old/libavformat/utils.c	2023-12-12 10:01:15.226110417 +0100
++++ ffmpeg-5.1.4/libavformat/utils.c	2023-12-12 10:01:23.219247218 +0100
+@@ -55,6 +55,13 @@
+     return ff_mutex_unlock(&avformat_mutex) ? -1 : 0;
+ }
+ 
++// Chromium: We use the internal field first_dts vvv
++int64_t av_stream_get_first_dts(const AVStream *st)
++{
++  return cffstream(st)->first_dts;
++}
++// Chromium: We use the internal field first_dts ^^^
++
+ /* an arbitrarily chosen "sane" max packet size -- 50M */
+ #define SANE_CHUNK_SIZE (50000000)
+ 
