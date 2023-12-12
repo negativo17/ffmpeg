@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -29,6 +29,9 @@ Patch2:         %{name}-svt-hevc.patch
 Patch3:         %{name}-libplacebo.patch
 # https://github.com/HandBrake/HandBrake/tree/d95ba3f9fb738c7263b60fb8d9dc4f83d83d6c9b
 Patch4:         %{name}-HandBrake.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2240127
+# Reference: https://crbug.com/1306560
+Patch5:         %{name}-chromium.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -660,6 +663,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Dec 12 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-2
+- Add Chromium patch from Fedora.
+
 * Tue Nov 21 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-1
 - Update to version 6.0.1.
 
