@@ -29,6 +29,9 @@ Patch3:         %{name}-ndi.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/9212b53ed5b2f7346036936d500e7954190fb08b
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/1ebb0e43f9a15a12cd94db44e4bc5424f8a5b0c9
 Patch4:         %{name}-nvenc.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2240127
+# Reference: https://crbug.com/1306560
+Patch5:         %{name}-chromium.patch
 
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
@@ -679,8 +682,8 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
-* Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-2
-- Add additional build options.
+* Tue Dec 12 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-2
+- Add Chromium patch from Fedora.
 
 * Tue Nov 21 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-1
 - Update to 5.1.4.
