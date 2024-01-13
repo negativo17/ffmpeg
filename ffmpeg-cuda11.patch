@@ -1,7 +1,7 @@
-diff -Naur ffmpeg-6.0.1.old/configure ffmpeg-6.0.1/configure
---- ffmpeg-6.0.1.old/configure	2023-11-21 13:26:44.841753682 +0100
-+++ ffmpeg-6.0.1/configure	2023-11-21 13:26:45.114758335 +0100
-@@ -4453,10 +4453,10 @@
+diff -Naur ffmpeg-6.1.1.old/configure ffmpeg-6.1.1/configure
+--- ffmpeg-6.1.1.old/configure	2024-01-13 16:38:25.877789301 +0100
++++ ffmpeg-6.1.1/configure	2024-01-13 16:38:26.128793817 +0100
+@@ -4521,10 +4521,10 @@
  
  if enabled cuda_nvcc; then
      nvcc_default="nvcc"
