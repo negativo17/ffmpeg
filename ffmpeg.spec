@@ -408,7 +408,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --arch=%{_target_cpu} \
     --bindir=%{_bindir} \
     --datadir=%{_datadir}/%{name} \
-    --disable-debug \
     --disable-static \
     --disable-stripping \
     --enable-amf \
@@ -530,7 +529,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-frei0r \
 %endif
 %ifarch x86_64
-    --enable-cuda \
     --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
@@ -543,7 +541,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-nvdec \
     --enable-nvenc \
     --extra-cflags="-I%{_includedir}/cuda" \
-    --cpu=%{_target_cpu} \
 %endif
 %ifarch ppc
     --cpu=g3 \
