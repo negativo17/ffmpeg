@@ -11,8 +11,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        6.0.1
-Release:        2%{?dist}
+Version:        6.1.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -24,14 +24,11 @@ Patch0:         %{name}-cuda11.patch
 Patch1:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch2:         %{name}-svt-hevc.patch
-# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc
-# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/1231003c3c6d4839a9e838d06f8e16ee7690958f
-Patch3:         %{name}-libplacebo.patch
-# https://github.com/HandBrake/HandBrake/tree/d95ba3f9fb738c7263b60fb8d9dc4f83d83d6c9b
-Patch4:         %{name}-HandBrake.patch
+# https://github.com/HandBrake/HandBrake/tree/6247edabd251c26f219f08eaab6bd52168b0e99c
+Patch3:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
-Patch5:         %{name}-chromium.patch
+Patch4:         %{name}-chromium.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -660,6 +657,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Jan 13 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-1
+- Update to 6.1.1.
+
 * Tue Dec 12 2023 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-2
 - Add Chromium patch from Fedora.
 
