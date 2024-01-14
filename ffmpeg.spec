@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -46,6 +46,7 @@ BuildRequires:  libavc1394-devel
 BuildRequires:  libchromaprint-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
+BuildRequires:  libklvanc-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  mesa-libGL-devel
@@ -76,7 +77,6 @@ BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 BuildRequires:  pkgconfig(lcms2) >= 2.13
-#BuildRequires:  pkgconfig(lensfun) >= 0.3.95
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
@@ -84,6 +84,8 @@ BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdc1394-2)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libgme)
+BuildRequires:  pkgconfig(libjxl) >= 0.7.0
+#BuildRequires:  pkgconfig(lensfun)
 BuildRequires:  pkgconfig(libmodplug)
 #BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
@@ -91,7 +93,7 @@ BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
-#BuildRequires:  pkgconfig(librist) >= 0.2.7
+BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
@@ -435,6 +437,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libiec61883 \
     --enable-libilbc \
     --enable-libjack \
+    --enable-libjxl \
+    --enable-libklvanc \
     --enable-libkvazaar \
     --enable-libmodplug \
     --enable-libmp3lame \
@@ -448,6 +452,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libpulse \
     --enable-librabbitmq \
     --enable-librav1e \
+    --enable-librist \
     --enable-librsvg \
     --enable-librubberband \
     --enable-libsmbclient \
@@ -657,6 +662,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-2
+- Add additional build options.
+
 * Sat Jan 13 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-1
 - Update to 6.1.1.
 
