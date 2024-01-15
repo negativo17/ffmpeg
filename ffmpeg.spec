@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -37,7 +37,9 @@ BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.11
+BuildRequires:  devtoolset-9-gcc-c++
 BuildRequires:  doxygen
+BuildRequires:  frei0r-devel
 BuildRequires:  gmp-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
@@ -92,7 +94,6 @@ BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
-#BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
@@ -103,6 +104,7 @@ BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(lv2)
 #BuildRequires:  pkgconfig(OpenCL)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
@@ -131,31 +133,6 @@ BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
-
-%if 0%{?fedora} >= 36
-BuildRequires:  pkgconfig(lcms2) >= 2.13
-BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
-%endif
-
-%if 0%{?fedora}
-BuildRequires:  glslang-devel
-BuildRequires:  pkgconfig(lilv-0)
-BuildRequires:  pkgconfig(pocketsphinx)
-BuildRequires:  pkgconfig(shaderc) >= 2019.1
-BuildRequires:  pkgconfig(rav1e) >= 0.4.0
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} >= 8
-BuildRequires:  pkgconfig(libzmq) >= 4.2.1
-BuildRequires:  pkgconfig(lv2)
-BuildRequires:  pkgconfig(srt) >= 1.3.0
-BuildRequires:  pkgconfig(vapoursynth-script) >= 42
-BuildRequires:  pkgconfig(vulkan) >= 1.2.189
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
-BuildRequires:  frei0r-devel
-%endif
 
 %ifarch x86_64
 # Nvidia CUVID support and Performance Primitives based code
@@ -403,6 +380,8 @@ This subpackage contains the headers for FFmpeg libswscale.
 #sed -i -e 's|#!/bin/sh|#!/bin/sh -x|g' configure
 
 %build
+. /opt/rh/devtoolset-9/enable
+
 %set_build_flags
 
 ./configure \
@@ -420,6 +399,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-bzlib \
     --enable-chromaprint \
     --enable-decklink \
+    --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
     --enable-gpl \
@@ -510,26 +490,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --optflags="%{build_cflags}" \
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
-%if 0%{?fedora} >= 36
-    --enable-lcms2 \
-    --enable-libplacebo \
-%endif
-%if 0%{?fedora}
-    --enable-libglslang \
-    --enable-librav1e \
-    --enable-lv2 \
-    --enable-pocketsphinx \
-%endif
-%if 0%{?fedora} || 0%{?rhel} >= 8
-    --enable-libsrt \
-    --enable-libzmq \
-    --enable-v4l2-m2m \
-    --enable-vapoursynth \
-    --enable-vulkan \
-%endif
-%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} == 8
-    --enable-frei0r \
-%endif
 %ifarch x86_64
     --enable-cuda-nvcc \
     --enable-cuvid \
@@ -679,6 +639,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-3
+- Add additional build options.
+
 * Tue Dec 12 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-2
 - Add Chromium patch from Fedora.
 
