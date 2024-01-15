@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -44,6 +44,7 @@ BuildRequires:  libavc1394-devel
 BuildRequires:  libchromaprint-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
+BuildRequires:  libklvanc-devel
 BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
@@ -443,6 +444,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libiec61883 \
     --enable-libilbc \
     --enable-libjack \
+    --enable-libklvanc \
     --enable-libkvazaar \
     --enable-libmodplug \
     --enable-libmp3lame \
@@ -677,6 +679,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-2
+- Add additional build options.
+
 * Tue Nov 21 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-1
 - Update to 5.1.4.
 
