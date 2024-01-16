@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.4
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -32,6 +32,8 @@ Patch4:         %{name}-nvenc.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch5:         %{name}-chromium.patch
+# https://github.com/HandBrake/HandBrake/tree/b94291a97d0587ba1ce23a87f6987ec78248ec8c
+Patch6:         %{name}-HandBrake.patch
 
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
@@ -153,6 +155,7 @@ BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
+BuildRequires:  pkgconfig(vpl) >= 2.6
 %endif
 
 Obsoletes:      %{name}-free < %{epoch}:%{version}-%{release}
@@ -510,12 +513,12 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
-    --enable-libmfx \
     --enable-libnpp \
     --enable-libsvtav1 \
     --enable-libsvthevc \
     --enable-libsvtvp9 \
     --enable-libvmaf \
+    --enable-libvpl \
     --enable-nvdec \
     --enable-nvenc \
     --extra-cflags="-I%{_includedir}/cuda" \
@@ -655,6 +658,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Jan 16 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-4
+- Add HandBrake 1.6.x patches.
+
 * Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-3
 - Add additional build options.
 
