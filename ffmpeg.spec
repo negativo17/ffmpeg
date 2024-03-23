@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.0.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -147,12 +147,15 @@ BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
-%ifarch x86_64
+%ifarch x86_64 aarch64
 # Nvidia CUVID support and Performance Primitives based code
 BuildRequires:  cuda-cudart-devel
 BuildRequires:  cuda-nvcc
 BuildRequires:  libnpp-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
+%endif
+
+%ifarch x86_64
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
@@ -521,14 +524,16 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-cuvid \
     --enable-ffnvcodec \
     --enable-libnpp \
+    --enable-nvdec \
+    --enable-nvenc \
+    --extra-cflags="-I%{_includedir}/cuda" \
+%endif
+%ifarch x86_64
     --enable-libsvtav1 \
     --enable-libsvthevc \
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
-    --enable-nvdec \
-    --enable-nvenc \
-    --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch ppc
     --cpu=g3 \
@@ -665,6 +670,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Mar 23 2024 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-4
+- Enable Nvidia CUDA, performance primitives, encoding/decoding also on aarch64.
+
 * Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-3
 - Add additional build options.
 
