@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -74,6 +74,7 @@ BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fribidi)
+BuildRequires:  pkgconfig(harfbuzz)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 BuildRequires:  pkgconfig(lcms2) >= 2.13
@@ -431,6 +432,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libfontconfig \
     --enable-libfreetype \
     --enable-libfribidi \
+    --enable-libharfbuzz \
     --enable-libglslang \
     --enable-libgme \
     --enable-libgsm \
@@ -662,6 +664,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Mar 23 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-3
+- Enable drawtext.
+
 * Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-2
 - Add additional build options.
 
