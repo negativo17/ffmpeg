@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -36,7 +36,6 @@ BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
-BuildRequires:  glslang-devel
 BuildRequires:  gmp-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
@@ -436,7 +435,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libharfbuzz \
-    --enable-libglslang \
     --enable-libgme \
     --enable-libgsm \
     --enable-libiec61883 \
@@ -669,6 +667,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sun Mar 24 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-5
+- Disable glslang.
+
 * Sat Mar 23 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-4
 - Enable Nvidia CUDA, performance primitives, encoding/decoding also on aarch64.
 
