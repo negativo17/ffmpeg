@@ -12,28 +12,27 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.4
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
-Patch0:         %{name}-cuda11.patch
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
-Patch1:         %{name}-svt-vp9.patch
+Patch0:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
-Patch2:         %{name}-svt-hevc.patch
+Patch1:         %{name}-svt-hevc.patch
 # https://framagit.org/tytan652/ffmpeg-ndi-patch
-Patch3:         %{name}-ndi.patch
+Patch2:         %{name}-ndi.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/9212b53ed5b2f7346036936d500e7954190fb08b
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/1ebb0e43f9a15a12cd94db44e4bc5424f8a5b0c9
-Patch4:         %{name}-nvenc.patch
+Patch3:         %{name}-nvenc.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
-Patch5:         %{name}-chromium.patch
+Patch4:         %{name}-chromium.patch
 # https://github.com/HandBrake/HandBrake/tree/b94291a97d0587ba1ce23a87f6987ec78248ec8c
-Patch6:         %{name}-HandBrake.patch
+Patch5:         %{name}-HandBrake.patch
 
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
@@ -647,6 +646,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sun Mar 24 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-6
+- Remove leftover patch.
+
 * Sat Mar 23 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.4-5
 - Enable Nvidia CUDA, performance primitives, encoding/decoding also on aarch64.
 
