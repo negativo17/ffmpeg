@@ -12,23 +12,22 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
-Patch0:         %{name}-cuda11.patch
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
-Patch1:         %{name}-svt-vp9.patch
+Patch0:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
-Patch2:         %{name}-svt-hevc.patch
+Patch1:         %{name}-svt-hevc.patch
 # https://github.com/HandBrake/HandBrake/tree/6247edabd251c26f219f08eaab6bd52168b0e99c
-Patch3:         %{name}-HandBrake.patch
+Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
-Patch4:         %{name}-chromium.patch
+Patch3:         %{name}-chromium.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -667,6 +666,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sun Mar 24 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-6
+- Remove leftover patch.
+
 * Sun Mar 24 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-5
 - Disable glslang.
 
