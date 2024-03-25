@@ -39,6 +39,7 @@ BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
+BuildRequires:  gcc-c++
 BuildRequires:  glslang-devel
 BuildRequires:  gmp-devel
 BuildRequires:  gsm-devel
@@ -672,6 +673,7 @@ mv doc/*.html doc/html
 %changelog
 * Sat Mar 23 2024 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-4
 - Enable Nvidia CUDA, performance primitives, encoding/decoding also on aarch64.
+- Add missing gcc-c++ build requirement.
 
 * Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-3
 - Add additional build options.
