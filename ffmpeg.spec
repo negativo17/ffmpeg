@@ -19,19 +19,18 @@ Epoch:          1
 
 Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
-Patch0:         %{name}-cuda11.patch
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
-Patch1:         %{name}-svt-vp9.patch
+Patch0:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
-Patch2:         %{name}-svt-hevc.patch
+Patch1:         %{name}-svt-hevc.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/11eca6018c40f5ebe6af93cbc4b4dce447d8b3bc
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/1231003c3c6d4839a9e838d06f8e16ee7690958f
-Patch3:         %{name}-libplacebo.patch
+Patch2:         %{name}-libplacebo.patch
 # https://github.com/HandBrake/HandBrake/tree/d95ba3f9fb738c7263b60fb8d9dc4f83d83d6c9b
-Patch4:         %{name}-HandBrake.patch
+Patch3:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
-Patch5:         %{name}-chromium.patch
+Patch4:         %{name}-chromium.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -674,6 +673,7 @@ mv doc/*.html doc/html
 * Sat Mar 23 2024 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-4
 - Enable Nvidia CUDA, performance primitives, encoding/decoding also on aarch64.
 - Add missing gcc-c++ build requirement.
+- Remove leftover patch.
 
 * Mon Jan 15 2024 Simone Caronni <negativo17@gmail.com> - 1:6.0.1-3
 - Add additional build options.
