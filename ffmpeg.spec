@@ -9,10 +9,25 @@
 %global swresample_soversion 4
 %global swscale_soversion 7
 
+# NVCC + Glibc 2.38 (f39+) on aarch64 currently broken:
+%ifarch x86_64
+%bcond_without cuda
+%else
+%bcond_with cuda
+%endif
+
+%ifarch aarch64
+%if 0%{?fedora} == 38 || 0%{?rhel} >= 7
+%bcond_without cuda
+%else
+%bcond_with cuda
+%endif
+%endif
+
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -143,10 +158,10 @@ BuildRequires:  pkgconfig(zimg) >= 2.7.0
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
-%ifarch x86_64 aarch64
 # Nvidia CUVID support and Performance Primitives based code
-BuildRequires:  cuda-cudart-devel
+%ifarch x86_64 aarch64
 BuildRequires:  cuda-nvcc
+BuildRequires:  cuda-cudart-devel
 BuildRequires:  libnpp-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %endif
@@ -516,7 +531,9 @@ This subpackage contains the headers for FFmpeg libswscale.
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %ifarch x86_64 aarch64
+%if %{with cuda}
     --enable-cuda-nvcc \
+%endif
     --enable-cuvid \
     --enable-ffnvcodec \
     --enable-libnpp \
@@ -666,6 +683,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Mar 25 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-7
+- NVCC + Glibc 2.38 on ARM is currently broken.
+
 * Sun Mar 24 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-6
 - Remove leftover patch.
 
