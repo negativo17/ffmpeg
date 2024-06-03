@@ -27,7 +27,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -43,6 +43,10 @@ Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch3:         %{name}-chromium.patch
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/e06ce6d2b45edac4a2df04f304e18d4727417d24
+Patch4:         %{name}-vulkan.patch
+# https://src.fedoraproject.org/rpms/ffmpeg/c/774d42a0072430fdef97ce11b40bdec97bf925ad
+Patch5:         %{name}-gcc14.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -683,6 +687,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Jun 03 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-8
+- Update patches.
+
 * Mon Mar 25 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-7
 - NVCC + Glibc 2.38 on ARM is currently broken.
 
