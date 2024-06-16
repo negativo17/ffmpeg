@@ -27,7 +27,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        6.1.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -683,6 +683,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sun Jun 16 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-8
+- Rebuild for updated dependencies.
+
 * Mon Mar 25 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-7
 - NVCC + Glibc 2.38 on ARM is currently broken.
 
