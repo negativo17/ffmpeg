@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -53,6 +53,7 @@ BuildRequires:  libklvanc-devel
 BuildRequires:  libndi-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
+BuildRequires:  libxavs-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nasm
 BuildRequires:  ocl-icd-devel
@@ -70,7 +71,7 @@ BuildRequires:  xz-devel
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(aom) >= 1.0.0
-#BuildRequires:  pkgconfig(aribb24) >= 1.0.3
+BuildRequires:  pkgconfig(aribb24) >= 1.0.3
 BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dav1d) >= 0.5.0
 BuildRequires:  pkgconfig(davs2) >= 1.6.0
@@ -90,13 +91,14 @@ BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libgme)
 BuildRequires:  pkgconfig(libjxl) >= 0.7.0
 BuildRequires:  pkgconfig(libmodplug)
-#BuildRequires:  pkgconfig(libmysofa)
+BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librsvg-2.0)
+BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
 BuildRequires:  pkgconfig(libva) >= 0.35.0
@@ -416,6 +418,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-ladspa \
     --enable-libass \
     --enable-libaom \
+    --enable-libaribb24 \
     --enable-libbluray \
     --enable-libbs2b \
     --enable-libcaca \
@@ -439,6 +442,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libkvazaar \
     --enable-libmodplug \
     --enable-libmp3lame \
+    --enable-libmysofa \
     --enable-libndi_newtek \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
@@ -450,6 +454,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-librabbitmq \
     --enable-librist \
     --enable-librsvg \
+    --enable-librtmp \
     --enable-librubberband \
     --enable-libsmbclient \
     --enable-libsnappy \
@@ -469,6 +474,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
+    --enable-libxavs \
     --enable-libxavs2 \
     --enable-libxcb \
     --enable-libxcb-shape \
@@ -656,6 +662,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.6-2
+- Enable aribb24, libmysofa, librtmp, xavs.
+- Trim changelog.
+
 * Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.6-1
 - Update to 5.1.6.
 
@@ -700,127 +710,3 @@ mv doc/*.html doc/html
 
 * Thu Jan 05 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-6
 - Rebuild for updated dependencies.
-
-* Fri Dec 23 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-5
-- Drop librtmp support, use native rtmp (#11).
-
-* Thu Dec 15 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-4
-- Rebuild for updated dependencies.
-
-* Sun Nov 20 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-3
-- Rebuild for updated dependencies.
-
-* Mon Oct 10 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-2
-- Rebuild for updated dependencies.
-
-* Sat Oct 08 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-1
-- Update to 5.1.2.
-
-* Thu Sep 22 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.1-1
-- Update to 5.1.1.
-- Disable OpenCV everywhere.
-- Enable more plugins for CentOS/RHEL 7+.
-
-* Tue Jul 05 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-3
-- Disable opencv and frei0r on CentOS/RHEL 9.
-
-* Tue May 24 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-2
-- Drop XVideo Motion Compensation support.
-
-* Wed Apr 06 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-1
-- Update to 5.0.1.
-- Adjust dependencies for libs-devel/subpackages.
-
-* Wed Mar 30 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0-1
-- Update to 5.0.
-
-* Thu Mar 17 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-7
-- Split libraries in subpackages like in Fedora 36.
-
-* Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-6
-- Enable AVS3 decoder for real.
-
-* Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-5
-- Enable AVS3 decoder.
-
-* Mon Mar 14 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-4
-- Enable NDI support also for aarch64.
-
-* Thu Feb 10 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-3
-- Enable Advanced Media Framework support (Mesa/PRO AMD encoding).
-
-* Sun Feb 06 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-2
-- Stop putting headers under a subfolder.
-- Reorganize CUDA build.
-
-* Tue Nov 02 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-1
-- Update to 4.4.1.
-
-* Fri Jul 23 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4-1
-- Update to 4.4, review libraries and options.
-- Update external patches.
-- Switch from GnuTLS to OpenSSL.
-- Trim changelog.
-
-* Tue Jul 20 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-4
-- Rebuild for updated dependencies.
-
-* Sun Jun 20 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-3
-- Rebuild for updated dependencies.
-
-* Thu Mar 25 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-2
-- Re-enable NDI support.
-
-* Mon Mar 01 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-1
-- Update to 4.3.2.
-
-* Sat Dec 05 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-4
-- Rebuild for updated dependencies.
-
-* Thu Nov 26 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-3
-- Add SVT HEVC, AV1 and VP9 patches.
-
-* Tue Nov 17 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-2
-- Rebuild for updated CUDA libraries.
-
-* Tue Aug 25 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-1
-- Update to 4.3.1.
-
-* Tue Jul 14 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-4
-- Rebuild for updated dependencies.
-
-* Thu Jul 09 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-3
-- Rebuild for updated dependencies.
-
-* Tue Jun 30 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-2
-- Enable AV1 support also on CentOS/RHEL.
-
-* Tue Jun 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-1
-- Update to 4.3.
-- Enable VMAF support.
-- Disable ZeroMQ support on RHEL/CentOS 7."
-
-* Mon Jun 08 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.3-2
-- Rebuild for updated dependencies.
-
-* Sat May 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.3-1
-- Update to 4.2.3.
-- Update SPEC file.
-
-* Fri May 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-6
-- Rebuild for updated dependencies.
-
-* Fri Mar 27 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-5
-- Enable iec6188 to support DV capure wia Firewire.
-
-* Sun Mar 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-4
-- Fix build on Fedora 32.
-
-* Sun Jan 19 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-3
-- Rebuild for updated dependencies.
-
-* Thu Jan 16 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-2
-- Enable vapoursynth on Fedora & RHEL/CentOS 8.
-
-* Sat Jan 11 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-1
-- Update to 4.2.2.
