@@ -1,7 +1,7 @@
-diff -Naur ffmpeg-5.1.4.old/configure ffmpeg-5.1.4/configure
---- ffmpeg-5.1.4.old/configure	2023-11-21 16:12:21.487676582 +0100
-+++ ffmpeg-5.1.4/configure	2023-11-21 16:12:26.940782069 +0100
-@@ -6981,7 +6981,7 @@
+diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
+--- ffmpeg-5.1.6.old/configure	2024-08-13 09:22:40.115818172 +0200
++++ ffmpeg-5.1.6/configure	2024-08-13 09:22:40.119818192 +0200
+@@ -6998,7 +6998,7 @@
      test_cc -I$source_path <<EOF || disable nvenc
  #include <ffnvcodec/nvEncodeAPI.h>
  NV_ENCODE_API_FUNCTION_LIST flist;
@@ -10,9 +10,9 @@ diff -Naur ffmpeg-5.1.4.old/configure ffmpeg-5.1.4/configure
  int main(void) { return 0; }
  EOF
  
-diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc.c ffmpeg-5.1.4/libavcodec/nvenc.c
---- ffmpeg-5.1.4.old/libavcodec/nvenc.c	2023-11-21 16:12:21.331673565 +0100
-+++ ffmpeg-5.1.4/libavcodec/nvenc.c	2023-11-21 16:12:57.139366234 +0100
+diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc.c ffmpeg-5.1.6/libavcodec/nvenc.c
+--- ffmpeg-5.1.6.old/libavcodec/nvenc.c	2024-08-13 09:22:38.727810996 +0200
++++ ffmpeg-5.1.6/libavcodec/nvenc.c	2024-08-13 09:22:40.119818192 +0200
 @@ -39,9 +39,14 @@
  #define CHECK_CU(x) FF_CUDA_CHECK_DL(avctx, dl_fn->cuda_dl, x)
  
@@ -67,9 +67,9 @@ diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc.c ffmpeg-5.1.4/libavcodec/nvenc.c
  
      if (ctx->flags & NVENC_LOSSLESS) {
          h264->qpPrimeYZeroTransformBypassFlag = 1;
-diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc.h ffmpeg-5.1.4/libavcodec/nvenc.h
---- ffmpeg-5.1.4.old/libavcodec/nvenc.h	2023-11-21 16:12:21.355674029 +0100
-+++ ffmpeg-5.1.4/libavcodec/nvenc.h	2023-11-21 16:12:57.140366253 +0100
+diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc.h ffmpeg-5.1.6/libavcodec/nvenc.h
+--- ffmpeg-5.1.6.old/libavcodec/nvenc.h	2024-08-13 09:22:38.776811250 +0200
++++ ffmpeg-5.1.6/libavcodec/nvenc.h	2024-08-13 09:22:40.119818192 +0200
 @@ -77,6 +77,11 @@
  #define NVENC_HAVE_SINGLE_SLICE_INTRA_REFRESH
  #endif
@@ -82,9 +82,9 @@ diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc.h ffmpeg-5.1.4/libavcodec/nvenc.h
  typedef struct NvencSurface
  {
      NV_ENC_INPUT_PTR input_surface;
-diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc_h264.c ffmpeg-5.1.4/libavcodec/nvenc_h264.c
---- ffmpeg-5.1.4.old/libavcodec/nvenc_h264.c	2023-11-21 16:12:21.350673932 +0100
-+++ ffmpeg-5.1.4/libavcodec/nvenc_h264.c	2023-11-21 16:12:57.140366253 +0100
+diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc_h264.c ffmpeg-5.1.6/libavcodec/nvenc_h264.c
+--- ffmpeg-5.1.6.old/libavcodec/nvenc_h264.c	2024-08-13 09:22:38.764811188 +0200
++++ ffmpeg-5.1.6/libavcodec/nvenc_h264.c	2024-08-13 09:22:40.119818192 +0200
 @@ -100,6 +100,7 @@
      { "constqp",      "Constant QP mode",                   0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CONSTQP },                   0, 0, VE, "rc" },
      { "vbr",          "Variable bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_VBR },                       0, 0, VE, "rc" },
@@ -111,9 +111,9 @@ diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc_h264.c ffmpeg-5.1.4/libavcodec/nven
      { "rc-lookahead", "Number of frames to look ahead for rate-control",
                                                              OFFSET(rc_lookahead), AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, INT_MAX, VE },
      { "surfaces",     "Number of concurrent surfaces",      OFFSET(nb_surfaces),  AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, MAX_REGISTERED_FRAMES, VE },
-diff -Naur ffmpeg-5.1.4.old/libavcodec/nvenc_hevc.c ffmpeg-5.1.4/libavcodec/nvenc_hevc.c
---- ffmpeg-5.1.4.old/libavcodec/nvenc_hevc.c	2023-11-21 16:12:21.336673662 +0100
-+++ ffmpeg-5.1.4/libavcodec/nvenc_hevc.c	2023-11-21 16:12:57.140366253 +0100
+diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc_hevc.c ffmpeg-5.1.6/libavcodec/nvenc_hevc.c
+--- ffmpeg-5.1.6.old/libavcodec/nvenc_hevc.c	2024-08-13 09:22:38.738811053 +0200
++++ ffmpeg-5.1.6/libavcodec/nvenc_hevc.c	2024-08-13 09:22:40.120818197 +0200
 @@ -89,6 +89,7 @@
      { "constqp",      "Constant QP mode",                   0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CONSTQP },                   0, 0, VE, "rc" },
      { "vbr",          "Variable bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_VBR },                       0, 0, VE, "rc" },
