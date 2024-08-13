@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-5.1.1.old/configure ffmpeg-5.1.1/configure
---- ffmpeg-5.1.1.old/configure	2022-09-22 10:43:57.531038663 +0200
-+++ ffmpeg-5.1.1/configure	2022-09-22 10:44:05.266177165 +0200
+diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
+--- ffmpeg-5.1.6.old/configure	2024-08-13 09:22:39.966817401 +0200
++++ ffmpeg-5.1.6/configure	2024-08-13 09:22:39.969817417 +0200
 @@ -309,6 +309,7 @@
    --enable-lv2             enable LV2 audio filtering [no]
    --disable-lzma           disable lzma [autodetect]
@@ -28,7 +28,7 @@ diff -Naur ffmpeg-5.1.1.old/configure ffmpeg-5.1.1/configure
  dshow_indev_deps="IBaseFilter"
  dshow_indev_extralibs="-lpsapi -lole32 -lstrmiids -luuid -loleaut32 -lshlwapi"
  fbdev_indev_deps="linux_fb_h"
-@@ -6523,6 +6529,7 @@
+@@ -6525,6 +6531,7 @@
  enabled chromaprint       && require chromaprint chromaprint.h chromaprint_get_version -lchromaprint
  enabled decklink          && { require_headers DeckLinkAPI.h &&
                                 { test_cpp_condition DeckLinkAPIVersion.h "BLACKMAGIC_DECKLINK_API_VERSION >= 0x0a0b0000" || die "ERROR: Decklink API version must be >= 10.11"; } }
@@ -36,9 +36,9 @@ diff -Naur ffmpeg-5.1.1.old/configure ffmpeg-5.1.1/configure
  enabled frei0r            && require_headers "frei0r.h"
  enabled gmp               && require gmp gmp.h mpz_export -lgmp
  enabled gnutls            && require_pkg_config gnutls gnutls gnutls/gnutls.h gnutls_global_init
-diff -Naur ffmpeg-5.1.1.old/doc/indevs.texi ffmpeg-5.1.1/doc/indevs.texi
---- ffmpeg-5.1.1.old/doc/indevs.texi	2022-07-22 19:58:38.000000000 +0200
-+++ ffmpeg-5.1.1/doc/indevs.texi	2022-09-22 10:44:05.266177165 +0200
+diff -Naur ffmpeg-5.1.6.old/doc/indevs.texi ffmpeg-5.1.6/doc/indevs.texi
+--- ffmpeg-5.1.6.old/doc/indevs.texi	2024-08-13 09:22:39.165813260 +0200
++++ ffmpeg-5.1.6/doc/indevs.texi	2024-08-13 09:22:39.970817422 +0200
 @@ -1136,6 +1136,71 @@
  Default is @code{qvga}.
  @end table
@@ -111,9 +111,9 @@ diff -Naur ffmpeg-5.1.1.old/doc/indevs.texi ffmpeg-5.1.1/doc/indevs.texi
  @section openal
  
  The OpenAL input device provides audio capture on all systems with a
-diff -Naur ffmpeg-5.1.1.old/doc/outdevs.texi ffmpeg-5.1.1/doc/outdevs.texi
---- ffmpeg-5.1.1.old/doc/outdevs.texi	2022-07-22 19:58:38.000000000 +0200
-+++ ffmpeg-5.1.1/doc/outdevs.texi	2022-09-22 10:44:05.300177773 +0200
+diff -Naur ffmpeg-5.1.6.old/doc/outdevs.texi ffmpeg-5.1.6/doc/outdevs.texi
+--- ffmpeg-5.1.6.old/doc/outdevs.texi	2024-08-13 09:22:39.170813286 +0200
++++ ffmpeg-5.1.6/doc/outdevs.texi	2024-08-13 09:22:39.970817422 +0200
 @@ -296,6 +296,51 @@
  
  See also @url{http://linux-fbdev.sourceforge.net/}, and fbset(1).
@@ -166,9 +166,9 @@ diff -Naur ffmpeg-5.1.1.old/doc/outdevs.texi ffmpeg-5.1.1/doc/outdevs.texi
  @section opengl
  OpenGL output device.
  
-diff -Naur ffmpeg-5.1.1.old/libavdevice/alldevices.c ffmpeg-5.1.1/libavdevice/alldevices.c
---- ffmpeg-5.1.1.old/libavdevice/alldevices.c	2022-07-22 19:58:39.000000000 +0200
-+++ ffmpeg-5.1.1/libavdevice/alldevices.c	2022-09-22 10:44:05.301177791 +0200
+diff -Naur ffmpeg-5.1.6.old/libavdevice/alldevices.c ffmpeg-5.1.6/libavdevice/alldevices.c
+--- ffmpeg-5.1.6.old/libavdevice/alldevices.c	2024-08-13 09:22:39.077812805 +0200
++++ ffmpeg-5.1.6/libavdevice/alldevices.c	2024-08-13 09:22:39.970817422 +0200
 @@ -31,6 +31,8 @@
  extern const AVOutputFormat ff_caca_muxer;
  extern const AVInputFormat  ff_decklink_demuxer;
@@ -178,9 +178,9 @@ diff -Naur ffmpeg-5.1.1.old/libavdevice/alldevices.c ffmpeg-5.1.1/libavdevice/al
  extern const AVInputFormat  ff_dshow_demuxer;
  extern const AVInputFormat  ff_fbdev_demuxer;
  extern const AVOutputFormat ff_fbdev_muxer;
-diff -Naur ffmpeg-5.1.1.old/libavdevice/libndi_newtek_common.h ffmpeg-5.1.1/libavdevice/libndi_newtek_common.h
---- ffmpeg-5.1.1.old/libavdevice/libndi_newtek_common.h	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-5.1.1/libavdevice/libndi_newtek_common.h	2022-09-22 10:44:05.301177791 +0200
+diff -Naur ffmpeg-5.1.6.old/libavdevice/libndi_newtek_common.h ffmpeg-5.1.6/libavdevice/libndi_newtek_common.h
+--- ffmpeg-5.1.6.old/libavdevice/libndi_newtek_common.h	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-5.1.6/libavdevice/libndi_newtek_common.h	2024-08-13 09:22:39.970817422 +0200
 @@ -0,0 +1,30 @@
 +/*
 + * NewTek NDI common code
@@ -212,9 +212,9 @@ diff -Naur ffmpeg-5.1.1.old/libavdevice/libndi_newtek_common.h ffmpeg-5.1.1/liba
 +#define NDI_TIME_BASE_Q (AVRational){1, NDI_TIME_BASE}
 +
 +#endif
-diff -Naur ffmpeg-5.1.1.old/libavdevice/libndi_newtek_dec.c ffmpeg-5.1.1/libavdevice/libndi_newtek_dec.c
---- ffmpeg-5.1.1.old/libavdevice/libndi_newtek_dec.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-5.1.1/libavdevice/libndi_newtek_dec.c	2022-09-22 10:44:05.301177791 +0200
+diff -Naur ffmpeg-5.1.6.old/libavdevice/libndi_newtek_dec.c ffmpeg-5.1.6/libavdevice/libndi_newtek_dec.c
+--- ffmpeg-5.1.6.old/libavdevice/libndi_newtek_dec.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-5.1.6/libavdevice/libndi_newtek_dec.c	2024-08-13 09:22:39.970817422 +0200
 @@ -0,0 +1,342 @@
 +/*
 + * Newtek NDI input
@@ -558,9 +558,9 @@ diff -Naur ffmpeg-5.1.1.old/libavdevice/libndi_newtek_dec.c ffmpeg-5.1.1/libavde
 +    .read_packet   = ndi_read_packet,
 +    .read_close    = ndi_read_close,
 +};
-diff -Naur ffmpeg-5.1.1.old/libavdevice/libndi_newtek_enc.c ffmpeg-5.1.1/libavdevice/libndi_newtek_enc.c
---- ffmpeg-5.1.1.old/libavdevice/libndi_newtek_enc.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-5.1.1/libavdevice/libndi_newtek_enc.c	2022-09-22 10:44:05.302177809 +0200
+diff -Naur ffmpeg-5.1.6.old/libavdevice/libndi_newtek_enc.c ffmpeg-5.1.6/libavdevice/libndi_newtek_enc.c
+--- ffmpeg-5.1.6.old/libavdevice/libndi_newtek_enc.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-5.1.6/libavdevice/libndi_newtek_enc.c	2024-08-13 09:22:39.970817422 +0200
 @@ -0,0 +1,299 @@
 +/*
 + * NewTek NDI output
@@ -861,9 +861,9 @@ diff -Naur ffmpeg-5.1.1.old/libavdevice/libndi_newtek_enc.c ffmpeg-5.1.1/libavde
 +    .write_packet   = ndi_write_packet,
 +    .write_trailer  = ndi_write_trailer,
 +};
-diff -Naur ffmpeg-5.1.1.old/libavdevice/Makefile ffmpeg-5.1.1/libavdevice/Makefile
---- ffmpeg-5.1.1.old/libavdevice/Makefile	2022-07-22 19:58:39.000000000 +0200
-+++ ffmpeg-5.1.1/libavdevice/Makefile	2022-09-22 10:44:05.302177809 +0200
+diff -Naur ffmpeg-5.1.6.old/libavdevice/Makefile ffmpeg-5.1.6/libavdevice/Makefile
+--- ffmpeg-5.1.6.old/libavdevice/Makefile	2024-08-13 09:22:39.075812795 +0200
++++ ffmpeg-5.1.6/libavdevice/Makefile	2024-08-13 09:22:39.970817422 +0200
 @@ -22,6 +22,8 @@
  OBJS-$(CONFIG_CACA_OUTDEV)               += caca.o
  OBJS-$(CONFIG_DECKLINK_OUTDEV)           += decklink_enc.o decklink_enc_c.o decklink_common.o
