@@ -1,17 +1,17 @@
 %global _lto_cflags %{nil}
 
-%global avcodec_soversion 60
-%global avdevice_soversion 60
-%global avfilter_soversion 9
-%global avformat_soversion 60
-%global avutil_soversion 58
-%global postproc_soversion 57
-%global swresample_soversion 4
-%global swscale_soversion 7
+%global avcodec_soversion 61
+%global avdevice_soversion 61
+%global avfilter_soversion 10
+%global avformat_soversion 61
+%global avutil_soversion 59
+%global postproc_soversion 58
+%global swresample_soversion 5
+%global swscale_soversion 8
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        6.1.2
+Version:        7.0.2
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -23,13 +23,11 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 Patch0:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch1:         %{name}-svt-hevc.patch
-# https://github.com/HandBrake/HandBrake/tree/69d5a6b37fafa298eb43e537c4d99a8fd70a3e3c
+# https://github.com/HandBrake/HandBrake/tree/3ff49f2ef02918638cc70c0dc23a91fa6974be00
 Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch3:         %{name}-chromium.patch
-# https://src.fedoraproject.org/rpms/ffmpeg/c/774d42a0072430fdef97ce11b40bdec97bf925ad
-Patch4:         %{name}-gcc14.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -49,6 +47,7 @@ BuildRequires:  libiec61883-devel
 BuildRequires:  libklvanc-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
+BuildRequires:  libxavs-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  nasm
 BuildRequires:  ocl-icd-devel
@@ -66,10 +65,11 @@ BuildRequires:  xz-devel
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(aom) >= 1.0.0
-#BuildRequires:  pkgconfig(aribb24) >= 1.0.3
+BuildRequires:  pkgconfig(aribb24) >= 1.0.3
 BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dav1d) >= 0.5.0
 BuildRequires:  pkgconfig(davs2) >= 1.6.0
+BuildRequires:  pkgconfig(dvdnav) >= 6.1.1
 BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
@@ -78,6 +78,7 @@ BuildRequires:  pkgconfig(harfbuzz)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 BuildRequires:  pkgconfig(lcms2) >= 2.13
+BuildRequires:  pkgconfig(libaribcaption) >= 1.1.1
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
@@ -86,15 +87,18 @@ BuildRequires:  pkgconfig(libdc1394-2)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libgme)
 BuildRequires:  pkgconfig(libjxl) >= 0.7.0
-#BuildRequires:  pkgconfig(lensfun)
+#BuildRequires:  pkgconfig(lensfun) > 0.3.95
 BuildRequires:  pkgconfig(libmodplug)
-#BuildRequires:  pkgconfig(libmysofa)
+BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libqrencode)
+#BuildRequires:  pkgconfig(libquirc)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 BuildRequires:  pkgconfig(librist) >= 0.2.7
+BuildRequires:  pkgconfig(librtmp)
 BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
@@ -109,6 +113,7 @@ BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
 #BuildRequires:  pkgconfig(OpenCL)
+#BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
@@ -422,66 +427,85 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-lcms2 \
     --enable-libass \
     --enable-libaom \
+    --enable-libaribb24 \
+    --enable-libaribcaption \
+    --enable-libass \
     --enable-libbluray \
     --enable-libbs2b \
     --enable-libcaca \
     --enable-libcdio \
     --enable-libcodec2 \
-    --enable-libdc1394 \
     --enable-libdav1d \
     --enable-libdavs2 \
+    --enable-libdc1394 \
     --enable-libdrm \
+    --enable-libdvdnav \
+    --enable-libdvdread \
     --enable-libfdk-aac \
     --enable-libfontconfig \
     --enable-libfreetype \
     --enable-libfribidi \
-    --enable-libharfbuzz \
     --enable-libgme \
     --enable-libgsm \
+    --enable-libharfbuzz \
     --enable-libiec61883 \
     --enable-libilbc \
     --enable-libjack \
     --enable-libjxl \
     --enable-libklvanc \
     --enable-libkvazaar \
+    --disable-liblensfun \
     --enable-libmodplug \
     --enable-libmp3lame \
+    --enable-libmysofa \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
+    --disable-libopencv \
     --enable-libopenh264 \
     --enable-libopenjpeg \
     --enable-libopenmpt \
     --enable-libopus \
     --enable-libplacebo \
     --enable-libpulse \
+    --enable-libqrencode \
+    --disable-libquirc \
     --enable-librabbitmq \
     --enable-librav1e \
     --enable-librist \
     --enable-librsvg \
+    --enable-librtmp \
     --enable-librubberband \
+    --enable-libshaderc \
+    --disable-libshine \
     --enable-libsmbclient \
     --enable-libsnappy \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libsrt \
     --enable-libssh \
+    --disable-libtensorflow \
     --enable-libtesseract \
     --enable-libtheora \
+    --disable-libtorch \
     --enable-libtwolame \
     --enable-libuavs3d \
     --enable-libv4l2 \
     --enable-libvidstab \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
+    --enable-libvpl \
     --enable-libvpx \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
     --enable-libxavs2 \
+    --enable-libxavs \
     --enable-libxcb \
     --enable-libxcb-shape \
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
+    --disable-libxevd \
+    --disable-libxeve \
     --enable-libxml2 \
     --enable-libxvid \
     --enable-libzimg \
@@ -490,6 +514,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-lv2 \
     --enable-lzma \
     --enable-nonfree \
+    --enable-manpages \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
@@ -668,6 +693,11 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-1
+- Update to 7.0.2.
+- Enable aribb24/aribcaption, dvdnav, libmysofa, librtmp, qrencode.
+- Trim changelog.
+
 * Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.2-1
 - Update to 6.1.2.
 - Re-enable CUDA on aarch64.
@@ -733,127 +763,3 @@ mv doc/*.html doc/html
 
 * Thu Jan 05 2023 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-6
 - Rebuild for updated dependencies.
-
-* Fri Dec 23 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-5
-- Drop librtmp support, use native rtmp (#11).
-
-* Thu Dec 15 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-4
-- Rebuild for updated dependencies.
-
-* Sun Nov 20 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-3
-- Rebuild for updated dependencies.
-
-* Mon Oct 10 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-2
-- Rebuild for updated dependencies.
-
-* Sat Oct 08 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.2-1
-- Update to 5.1.2.
-
-* Thu Sep 22 2022 Simone Caronni <negativo17@gmail.com> - 1:5.1.1-1
-- Update to 5.1.1.
-- Disable OpenCV everywhere.
-- Enable more plugins for CentOS/RHEL 7+.
-
-* Tue Jul 05 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-3
-- Disable opencv and frei0r on CentOS/RHEL 9.
-
-* Tue May 24 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-2
-- Drop XVideo Motion Compensation support.
-
-* Wed Apr 06 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0.1-1
-- Update to 5.0.1.
-- Adjust dependencies for libs-devel/subpackages.
-
-* Wed Mar 30 2022 Simone Caronni <negativo17@gmail.com> - 1:5.0-1
-- Update to 5.0.
-
-* Thu Mar 17 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-7
-- Split libraries in subpackages like in Fedora 36.
-
-* Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-6
-- Enable AVS3 decoder for real.
-
-* Wed Mar 16 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-5
-- Enable AVS3 decoder.
-
-* Mon Mar 14 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-4
-- Enable NDI support also for aarch64.
-
-* Thu Feb 10 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-3
-- Enable Advanced Media Framework support (Mesa/PRO AMD encoding).
-
-* Sun Feb 06 2022 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-2
-- Stop putting headers under a subfolder.
-- Reorganize CUDA build.
-
-* Tue Nov 02 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4.1-1
-- Update to 4.4.1.
-
-* Fri Jul 23 2021 Simone Caronni <negativo17@gmail.com> - 1:4.4-1
-- Update to 4.4, review libraries and options.
-- Update external patches.
-- Switch from GnuTLS to OpenSSL.
-- Trim changelog.
-
-* Tue Jul 20 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-4
-- Rebuild for updated dependencies.
-
-* Sun Jun 20 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-3
-- Rebuild for updated dependencies.
-
-* Thu Mar 25 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-2
-- Re-enable NDI support.
-
-* Mon Mar 01 2021 Simone Caronni <negativo17@gmail.com> - 1:4.3.2-1
-- Update to 4.3.2.
-
-* Sat Dec 05 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-4
-- Rebuild for updated dependencies.
-
-* Thu Nov 26 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-3
-- Add SVT HEVC, AV1 and VP9 patches.
-
-* Tue Nov 17 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-2
-- Rebuild for updated CUDA libraries.
-
-* Tue Aug 25 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3.1-1
-- Update to 4.3.1.
-
-* Tue Jul 14 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-4
-- Rebuild for updated dependencies.
-
-* Thu Jul 09 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-3
-- Rebuild for updated dependencies.
-
-* Tue Jun 30 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-2
-- Enable AV1 support also on CentOS/RHEL.
-
-* Tue Jun 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.3-1
-- Update to 4.3.
-- Enable VMAF support.
-- Disable ZeroMQ support on RHEL/CentOS 7."
-
-* Mon Jun 08 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.3-2
-- Rebuild for updated dependencies.
-
-* Sat May 23 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.3-1
-- Update to 4.2.3.
-- Update SPEC file.
-
-* Fri May 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-6
-- Rebuild for updated dependencies.
-
-* Fri Mar 27 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-5
-- Enable iec6188 to support DV capure wia Firewire.
-
-* Sun Mar 15 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-4
-- Fix build on Fedora 32.
-
-* Sun Jan 19 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-3
-- Rebuild for updated dependencies.
-
-* Thu Jan 16 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-2
-- Enable vapoursynth on Fedora & RHEL/CentOS 8.
-
-* Sat Jan 11 2020 Simone Caronni <negativo17@gmail.com> - 1:4.2.2-1
-- Update to 4.2.2.
