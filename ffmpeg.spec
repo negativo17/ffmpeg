@@ -26,8 +26,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        6.1.1
-Release:        8%{?dist}
+Version:        6.1.2
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -38,7 +38,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 Patch0:         %{name}-svt-vp9.patch
 # https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
 Patch1:         %{name}-svt-hevc.patch
-# https://github.com/HandBrake/HandBrake/tree/6247edabd251c26f219f08eaab6bd52168b0e99c
+# https://github.com/HandBrake/HandBrake/tree/69d5a6b37fafa298eb43e537c4d99a8fd70a3e3c
 Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -683,6 +683,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.2-1
+- Update to 6.1.2.
+
 * Sun Jun 16 2024 Simone Caronni <negativo17@gmail.com> - 1:6.1.1-8
 - Rebuild for updated dependencies.
 
