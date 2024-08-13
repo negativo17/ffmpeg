@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-6.1.1.old/ffbuild/common.mak ffmpeg-6.1.1/ffbuild/common.mak
---- ffmpeg-6.1.1.old/ffbuild/common.mak	2024-01-13 16:38:26.124793745 +0100
-+++ ffmpeg-6.1.1/ffbuild/common.mak	2024-01-13 16:47:04.443248759 +0100
+diff -Naur ffmpeg-6.1.2.old/ffbuild/common.mak ffmpeg-6.1.2/ffbuild/common.mak
+--- ffmpeg-6.1.2.old/ffbuild/common.mak	2024-08-13 08:27:28.053305205 +0200
++++ ffmpeg-6.1.2/ffbuild/common.mak	2024-08-13 08:27:29.036310295 +0200
 @@ -130,7 +130,7 @@
  ifdef CONFIG_PTX_COMPRESSION
  %.ptx.gz: TAG = GZIP
@@ -10,9 +10,9 @@ diff -Naur ffmpeg-6.1.1.old/ffbuild/common.mak ffmpeg-6.1.1/ffbuild/common.mak
  
  %.ptx.c: %.ptx.gz $(BIN2CEXE)
  	$(BIN2C) $(patsubst $(SRC_PATH)/%,$(SRC_LINK)/%,$<) $@ $(subst .,_,$(basename $(notdir $@)))
-diff -Naur ffmpeg-6.1.1.old/fftools/ffprobe.c ffmpeg-6.1.1/fftools/ffprobe.c
---- ffmpeg-6.1.1.old/fftools/ffprobe.c	2024-01-13 16:38:26.125793763 +0100
-+++ ffmpeg-6.1.1/fftools/ffprobe.c	2024-01-13 16:47:04.427248472 +0100
+diff -Naur ffmpeg-6.1.2.old/fftools/ffprobe.c ffmpeg-6.1.2/fftools/ffprobe.c
+--- ffmpeg-6.1.2.old/fftools/ffprobe.c	2024-08-13 08:27:28.055305216 +0200
++++ ffmpeg-6.1.2/fftools/ffprobe.c	2024-08-13 08:27:29.027310249 +0200
 @@ -2392,6 +2392,9 @@
              AVContentLightMetadata *metadata = (AVContentLightMetadata *)sd->data;
              print_int("max_content", metadata->MaxCLL);
@@ -23,9 +23,9 @@ diff -Naur ffmpeg-6.1.1.old/fftools/ffprobe.c ffmpeg-6.1.1/fftools/ffprobe.c
          } else if (sd->type == AV_PKT_DATA_DYNAMIC_HDR10_PLUS) {
              AVDynamicHDRPlus *metadata = (AVDynamicHDRPlus *)sd->data;
              print_dynamic_hdr10_plus(w, metadata);
-diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc_av1.c ffmpeg-6.1.1/libavcodec/amfenc_av1.c
---- ffmpeg-6.1.1.old/libavcodec/amfenc_av1.c	2024-01-13 16:38:25.846788743 +0100
-+++ ffmpeg-6.1.1/libavcodec/amfenc_av1.c	2024-01-13 16:47:04.425248436 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/amfenc_av1.c ffmpeg-6.1.2/libavcodec/amfenc_av1.c
+--- ffmpeg-6.1.2.old/libavcodec/amfenc_av1.c	2024-08-13 08:27:27.612302923 +0200
++++ ffmpeg-6.1.2/libavcodec/amfenc_av1.c	2024-08-13 08:27:29.026310243 +0200
 @@ -77,7 +77,7 @@
      { "qvbr_quality_level",     "Sets the QVBR quality level",              OFFSET(qvbr_quality_level),             AV_OPT_TYPE_INT,   {.i64 = -1 }, -1, 51, VE },
  
@@ -46,9 +46,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc_av1.c ffmpeg-6.1.1/libavcodec/amfe
  
      // Rate control
      // autodetect rate control method
-diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc.c ffmpeg-6.1.1/libavcodec/amfenc.c
---- ffmpeg-6.1.1.old/libavcodec/amfenc.c	2024-01-13 16:38:25.802787951 +0100
-+++ ffmpeg-6.1.1/libavcodec/amfenc.c	2024-01-13 16:47:04.424248418 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/amfenc.c ffmpeg-6.1.2/libavcodec/amfenc.c
+--- ffmpeg-6.1.2.old/libavcodec/amfenc.c	2024-08-13 08:27:27.516302426 +0200
++++ ffmpeg-6.1.2/libavcodec/amfenc.c	2024-08-13 08:27:29.025310238 +0200
 @@ -36,6 +36,55 @@
  #include "amfenc.h"
  #include "encode.h"
@@ -222,9 +222,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc.c ffmpeg-6.1.1/libavcodec/amfenc.c
              res_resubmit = ctx->encoder->pVtbl->SubmitInput(ctx->encoder, (AMFData*)ctx->delayed_surface);
              if (res_resubmit != AMF_INPUT_FULL) {
                  int64_t pts = ctx->delayed_surface->pVtbl->GetPts(ctx->delayed_surface);
-diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc.h ffmpeg-6.1.1/libavcodec/amfenc.h
---- ffmpeg-6.1.1.old/libavcodec/amfenc.h	2024-01-13 16:38:25.782787591 +0100
-+++ ffmpeg-6.1.1/libavcodec/amfenc.h	2024-01-13 16:47:04.399247969 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/amfenc.h ffmpeg-6.1.2/libavcodec/amfenc.h
+--- ffmpeg-6.1.2.old/libavcodec/amfenc.h	2024-08-13 08:27:27.478302228 +0200
++++ ffmpeg-6.1.2/libavcodec/amfenc.h	2024-08-13 08:27:29.024310233 +0200
 @@ -21,6 +21,7 @@
  
  #include <AMF/core/Factory.h>
@@ -233,9 +233,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc.h ffmpeg-6.1.1/libavcodec/amfenc.h
  #include <AMF/components/VideoEncoderVCE.h>
  #include <AMF/components/VideoEncoderHEVC.h>
  #include <AMF/components/VideoEncoderAV1.h>
-diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc_h264.c ffmpeg-6.1.1/libavcodec/amfenc_h264.c
---- ffmpeg-6.1.1.old/libavcodec/amfenc_h264.c	2024-01-13 16:38:25.865789085 +0100
-+++ ffmpeg-6.1.1/libavcodec/amfenc_h264.c	2024-01-13 16:47:04.399247969 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/amfenc_h264.c ffmpeg-6.1.2/libavcodec/amfenc_h264.c
+--- ffmpeg-6.1.2.old/libavcodec/amfenc_h264.c	2024-08-13 08:27:27.653303135 +0200
++++ ffmpeg-6.1.2/libavcodec/amfenc_h264.c	2024-08-13 08:27:29.024310233 +0200
 @@ -199,6 +199,9 @@
      AMFRate                          framerate;
      AMFSize                          framesize = AMFConstructSize(avctx->width, avctx->height);
@@ -299,9 +299,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc_h264.c ffmpeg-6.1.1/libavcodec/amf
  
      // autodetect rate control method
      if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_RATE_CONTROL_METHOD_UNKNOWN) {
-diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc_hevc.c ffmpeg-6.1.1/libavcodec/amfenc_hevc.c
---- ffmpeg-6.1.1.old/libavcodec/amfenc_hevc.c	2024-01-13 16:38:25.783787609 +0100
-+++ ffmpeg-6.1.1/libavcodec/amfenc_hevc.c	2024-01-13 16:47:04.400247987 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/amfenc_hevc.c ffmpeg-6.1.2/libavcodec/amfenc_hevc.c
+--- ffmpeg-6.1.2.old/libavcodec/amfenc_hevc.c	2024-08-13 08:27:27.479302234 +0200
++++ ffmpeg-6.1.2/libavcodec/amfenc_hevc.c	2024-08-13 08:27:29.024310233 +0200
 @@ -34,8 +34,9 @@
      { "high_quality",           "high quality trancoding",                  0, AV_OPT_TYPE_CONST, {.i64 = AMF_VIDEO_ENCODER_HEVC_USAGE_HIGH_QUALITY              }, 0, 0, VE, "usage" },
      { "lowlatency_high_quality","low latency yet high quality trancoding",  0, AV_OPT_TYPE_CONST, {.i64 = AMF_VIDEO_ENCODER_HEVC_USAGE_LOW_LATENCY_HIGH_QUALITY  }, 0, 0, VE, "usage" },
@@ -391,9 +391,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/amfenc_hevc.c ffmpeg-6.1.1/libavcodec/amf
      // Picture control properties
      AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_NUM_GOPS_PER_IDR, ctx->gops_per_idr);
      AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_GOP_SIZE, avctx->gop_size);
-diff -Naur ffmpeg-6.1.1.old/libavcodec/avpacket.c ffmpeg-6.1.1/libavcodec/avpacket.c
---- ffmpeg-6.1.1.old/libavcodec/avpacket.c	2024-01-13 16:38:25.796787843 +0100
-+++ ffmpeg-6.1.1/libavcodec/avpacket.c	2024-01-13 16:47:04.427248472 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/avpacket.c ffmpeg-6.1.2/libavcodec/avpacket.c
+--- ffmpeg-6.1.2.old/libavcodec/avpacket.c	2024-08-13 08:27:27.503302358 +0200
++++ ffmpeg-6.1.2/libavcodec/avpacket.c	2024-08-13 08:27:29.027310249 +0200
 @@ -301,6 +301,7 @@
      case AV_PKT_DATA_DOVI_CONF:                  return "DOVI configuration record";
      case AV_PKT_DATA_S12M_TIMECODE:              return "SMPTE ST 12-1:2014 timecode";
@@ -402,9 +402,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/avpacket.c ffmpeg-6.1.1/libavcodec/avpack
      }
      return NULL;
  }
-diff -Naur ffmpeg-6.1.1.old/libavcodec/ccaption_dec.c ffmpeg-6.1.1/libavcodec/ccaption_dec.c
---- ffmpeg-6.1.1.old/libavcodec/ccaption_dec.c	2024-01-13 16:38:25.862789030 +0100
-+++ ffmpeg-6.1.1/libavcodec/ccaption_dec.c	2024-01-13 16:47:04.362247305 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/ccaption_dec.c ffmpeg-6.1.2/libavcodec/ccaption_dec.c
+--- ffmpeg-6.1.2.old/libavcodec/ccaption_dec.c	2024-08-13 08:27:27.646303099 +0200
++++ ffmpeg-6.1.2/libavcodec/ccaption_dec.c	2024-08-13 08:27:29.021310217 +0200
 @@ -873,12 +873,13 @@
  
          if (ctx->buffer[bidx].str[0] || ctx->real_time) {
@@ -423,10 +423,10 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/ccaption_dec.c ffmpeg-6.1.1/libavcodec/cc
              else
                  sub->end_display_time = -1;
              ret = ff_ass_add_rect2(sub, ctx->buffer[bidx].str, ctx->readorder++, 0, NULL, NULL, &nb_rect_allocated);
-diff -Naur ffmpeg-6.1.1.old/libavcodec/decode.c ffmpeg-6.1.1/libavcodec/decode.c
---- ffmpeg-6.1.1.old/libavcodec/decode.c	2024-01-13 16:38:25.820788275 +0100
-+++ ffmpeg-6.1.1/libavcodec/decode.c	2024-01-13 16:47:04.429248507 +0100
-@@ -1434,6 +1434,7 @@
+diff -Naur ffmpeg-6.1.2.old/libavcodec/decode.c ffmpeg-6.1.2/libavcodec/decode.c
+--- ffmpeg-6.1.2.old/libavcodec/decode.c	2024-08-13 08:27:27.554302622 +0200
++++ ffmpeg-6.1.2/libavcodec/decode.c	2024-08-13 08:27:29.027310249 +0200
+@@ -1435,6 +1435,7 @@
      { AV_PKT_DATA_CONTENT_LIGHT_LEVEL,        AV_FRAME_DATA_CONTENT_LIGHT_LEVEL },
      { AV_PKT_DATA_ICC_PROFILE,                AV_FRAME_DATA_ICC_PROFILE },
      { AV_PKT_DATA_DYNAMIC_HDR10_PLUS,         AV_FRAME_DATA_DYNAMIC_HDR_PLUS },
@@ -434,9 +434,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/decode.c ffmpeg-6.1.1/libavcodec/decode.c
  };
  
  int ff_decode_frame_props_from_pkt(const AVCodecContext *avctx,
-diff -Naur ffmpeg-6.1.1.old/libavcodec/dvdsubdec.c ffmpeg-6.1.1/libavcodec/dvdsubdec.c
---- ffmpeg-6.1.1.old/libavcodec/dvdsubdec.c	2024-01-13 16:38:25.776787483 +0100
-+++ ffmpeg-6.1.1/libavcodec/dvdsubdec.c	2024-01-13 16:47:04.362247305 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/dvdsubdec.c ffmpeg-6.1.2/libavcodec/dvdsubdec.c
+--- ffmpeg-6.1.2.old/libavcodec/dvdsubdec.c	2024-08-13 08:27:27.465302162 +0200
++++ ffmpeg-6.1.2/libavcodec/dvdsubdec.c	2024-08-13 08:27:29.020310212 +0200
 @@ -44,6 +44,7 @@
    int      buf_size;
    int      forced_subs_only;
@@ -525,9 +525,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/dvdsubdec.c ffmpeg-6.1.1/libavcodec/dvdsu
  
      return 1;
  }
-diff -Naur ffmpeg-6.1.1.old/libavcodec/hevc_mp4toannexb_bsf.c ffmpeg-6.1.1/libavcodec/hevc_mp4toannexb_bsf.c
---- ffmpeg-6.1.1.old/libavcodec/hevc_mp4toannexb_bsf.c	2024-01-13 16:38:25.765787285 +0100
-+++ ffmpeg-6.1.1/libavcodec/hevc_mp4toannexb_bsf.c	2024-01-13 16:47:04.443248759 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/hevc_mp4toannexb_bsf.c ffmpeg-6.1.2/libavcodec/hevc_mp4toannexb_bsf.c
+--- ffmpeg-6.1.2.old/libavcodec/hevc_mp4toannexb_bsf.c	2024-08-13 08:27:27.442302042 +0200
++++ ffmpeg-6.1.2/libavcodec/hevc_mp4toannexb_bsf.c	2024-08-13 08:27:29.035310290 +0200
 @@ -121,7 +121,7 @@
      HEVCBSFContext *s = ctx->priv_data;
      AVPacket *in;
@@ -552,9 +552,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/hevc_mp4toannexb_bsf.c ffmpeg-6.1.1/libav
          extra_size    = add_extradata * ctx->par_out->extradata_size;
          got_irap     |= is_irap;
  
-diff -Naur ffmpeg-6.1.1.old/libavcodec/packet.h ffmpeg-6.1.1/libavcodec/packet.h
---- ffmpeg-6.1.1.old/libavcodec/packet.h	2024-01-13 16:38:25.826788383 +0100
-+++ ffmpeg-6.1.1/libavcodec/packet.h	2024-01-13 16:47:04.430248525 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/packet.h ffmpeg-6.1.2/libavcodec/packet.h
+--- ffmpeg-6.1.2.old/libavcodec/packet.h	2024-08-13 08:27:27.566302684 +0200
++++ ffmpeg-6.1.2/libavcodec/packet.h	2024-08-13 08:27:29.027310249 +0200
 @@ -300,6 +300,13 @@
      AV_PKT_DATA_DYNAMIC_HDR10_PLUS,
  
@@ -569,9 +569,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/packet.h ffmpeg-6.1.1/libavcodec/packet.h
       * The number of side data types.
       * This is not part of the public API/ABI in the sense that it may
       * change when new side data types are added.
-diff -Naur ffmpeg-6.1.1.old/libavcodec/videotoolbox.c ffmpeg-6.1.1/libavcodec/videotoolbox.c
---- ffmpeg-6.1.1.old/libavcodec/videotoolbox.c	2024-01-13 16:38:25.801787933 +0100
-+++ ffmpeg-6.1.1/libavcodec/videotoolbox.c	2024-01-13 16:47:04.440248705 +0100
+diff -Naur ffmpeg-6.1.2.old/libavcodec/videotoolbox.c ffmpeg-6.1.2/libavcodec/videotoolbox.c
+--- ffmpeg-6.1.2.old/libavcodec/videotoolbox.c	2024-08-13 08:27:27.513302410 +0200
++++ ffmpeg-6.1.2/libavcodec/videotoolbox.c	2024-08-13 08:27:29.033310279 +0200
 @@ -912,6 +912,23 @@
          break;
      }
@@ -596,9 +596,9 @@ diff -Naur ffmpeg-6.1.1.old/libavcodec/videotoolbox.c ffmpeg-6.1.1/libavcodec/vi
  #if defined(MAC_OS_X_VERSION_10_9) && !TARGET_OS_IPHONE && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9) && AV_HAS_BUILTIN(__builtin_available)
      if (avctx->codec_id == AV_CODEC_ID_PRORES) {
          if (__builtin_available(macOS 10.9, *)) {
-diff -Naur ffmpeg-6.1.1.old/libavformat/dump.c ffmpeg-6.1.1/libavformat/dump.c
---- ffmpeg-6.1.1.old/libavformat/dump.c	2024-01-13 16:38:25.956790722 +0100
-+++ ffmpeg-6.1.1/libavformat/dump.c	2024-01-13 16:47:04.431248543 +0100
+diff -Naur ffmpeg-6.1.2.old/libavformat/dump.c ffmpeg-6.1.2/libavformat/dump.c
+--- ffmpeg-6.1.2.old/libavformat/dump.c	2024-08-13 08:27:27.841304108 +0200
++++ ffmpeg-6.1.2/libavformat/dump.c	2024-08-13 08:27:29.029310259 +0200
 @@ -27,6 +27,7 @@
  #include "libavutil/intreadwrite.h"
  #include "libavutil/log.h"
@@ -635,9 +635,9 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/dump.c ffmpeg-6.1.1/libavformat/dump.c
          default:
              av_log(ctx, AV_LOG_INFO, "unknown side data type %d "
                     "(%"SIZE_SPECIFIER" bytes)", sd->type, sd->size);
-diff -Naur ffmpeg-6.1.1.old/libavformat/isom.h ffmpeg-6.1.1/libavformat/isom.h
---- ffmpeg-6.1.1.old/libavformat/isom.h	2024-01-13 16:38:25.953790668 +0100
-+++ ffmpeg-6.1.1/libavformat/isom.h	2024-01-13 16:47:04.432248561 +0100
+diff -Naur ffmpeg-6.1.2.old/libavformat/isom.h ffmpeg-6.1.2/libavformat/isom.h
+--- ffmpeg-6.1.2.old/libavformat/isom.h	2024-08-13 08:27:27.836304082 +0200
++++ ffmpeg-6.1.2/libavformat/isom.h	2024-08-13 08:27:29.029310259 +0200
 @@ -29,6 +29,7 @@
  
  #include "libavutil/encryption_info.h"
@@ -655,9 +655,9 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/isom.h ffmpeg-6.1.1/libavformat/isom.h
  
      uint32_t format;
  
-diff -Naur ffmpeg-6.1.1.old/libavformat/matroskaenc.c ffmpeg-6.1.1/libavformat/matroskaenc.c
---- ffmpeg-6.1.1.old/libavformat/matroskaenc.c	2024-01-13 16:38:25.967790920 +0100
-+++ ffmpeg-6.1.1/libavformat/matroskaenc.c	2024-01-13 16:47:04.363247323 +0100
+diff -Naur ffmpeg-6.1.2.old/libavformat/matroskaenc.c ffmpeg-6.1.2/libavformat/matroskaenc.c
+--- ffmpeg-6.1.2.old/libavformat/matroskaenc.c	2024-08-13 08:27:27.864304227 +0200
++++ ffmpeg-6.1.2/libavformat/matroskaenc.c	2024-08-13 08:27:29.022310223 +0200
 @@ -2894,6 +2894,16 @@
      case AV_CODEC_ID_AAC:
          if (side_data_size && mkv->track.bc) {
@@ -675,9 +675,9 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/matroskaenc.c ffmpeg-6.1.1/libavformat/m
              ret = get_aac_sample_rates(s, mkv, side_data, side_data_size,
                                         &track->sample_rate, &output_sample_rate);
              if (ret < 0)
-diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
---- ffmpeg-6.1.1.old/libavformat/mov.c	2024-01-13 16:38:25.947790560 +0100
-+++ ffmpeg-6.1.1/libavformat/mov.c	2024-01-13 16:47:04.436248633 +0100
+diff -Naur ffmpeg-6.1.2.old/libavformat/mov.c ffmpeg-6.1.2/libavformat/mov.c
+--- ffmpeg-6.1.2.old/libavformat/mov.c	2024-08-13 08:27:27.823304015 +0200
++++ ffmpeg-6.1.2/libavformat/mov.c	2024-08-13 08:27:29.030310264 +0200
 @@ -55,6 +55,7 @@
  #include "libavcodec/mpegaudiodecheader.h"
  #include "libavcodec/mlp_parse.h"
@@ -760,7 +760,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
  static int mov_read_udta_string(MOVContext *c, AVIOContext *pb, MOVAtom atom)
  {
      char tmp_key[AV_FOURCC_MAX_STRING_SIZE] = {0};
-@@ -307,6 +375,7 @@
+@@ -308,6 +376,7 @@
      int (*parse)(MOVContext*, AVIOContext*, unsigned, const char*) = NULL;
      int raw = 0;
      int num = 0;
@@ -768,7 +768,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
  
      switch (atom.type) {
      case MKTAG( '@','P','R','M'): key = "premiere_version"; raw = 1; break;
-@@ -320,15 +389,33 @@
+@@ -321,15 +390,33 @@
      case MKTAG( 'c','a','t','g'): key = "category"; break;
      case MKTAG( 'c','p','i','l'): key = "compilation";
          parse = mov_metadata_int8_no_padding; break;
@@ -805,7 +805,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
      case MKTAG( 'h','d','v','d'): key = "hd_video";
          parse = mov_metadata_int8_no_padding; break;
      case MKTAG( 'H','M','M','T'):
-@@ -339,6 +426,7 @@
+@@ -340,6 +427,7 @@
          return mov_metadata_loci(c, pb, atom.size);
      case MKTAG( 'm','a','n','u'): key = "make"; break;
      case MKTAG( 'm','o','d','l'): key = "model"; break;
@@ -813,7 +813,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
      case MKTAG( 'p','c','s','t'): key = "podcast";
          parse = mov_metadata_int8_no_padding; break;
      case MKTAG( 'p','g','a','p'): key = "gapless_playback";
-@@ -398,6 +486,15 @@
+@@ -399,6 +487,15 @@
      case MKTAG(0xa9,'w','r','n'): key = "warning";   break;
      case MKTAG(0xa9,'w','r','t'): key = "composer";  break;
      case MKTAG(0xa9,'x','y','z'): key = "location";  break;
@@ -829,7 +829,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
      }
  retry:
      if (c->itunes_metadata && atom.size > 8) {
-@@ -524,17 +621,23 @@
+@@ -525,17 +622,23 @@
              }
              str[str_size] = 0;
          }
@@ -862,7 +862,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
          }
      }
  
-@@ -6046,6 +6149,31 @@
+@@ -6059,6 +6162,31 @@
      return 0;
  }
  
@@ -894,7 +894,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
  static int mov_read_st3d(MOVContext *c, AVIOContext *pb, MOVAtom atom)
  {
      AVStream *st;
-@@ -7966,6 +8094,7 @@
+@@ -7982,6 +8110,7 @@
  { MKTAG('p','c','m','C'), mov_read_pcmc }, /* PCM configuration box */
  { MKTAG('p','i','t','m'), mov_read_pitm },
  { MKTAG('e','v','c','C'), mov_read_glbl },
@@ -902,7 +902,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
  { 0, NULL }
  };
  
-@@ -8436,6 +8565,7 @@
+@@ -8452,6 +8581,7 @@
          av_freep(&sc->spherical);
          av_freep(&sc->mastering);
          av_freep(&sc->coll);
@@ -910,7 +910,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
      }
  
      av_freep(&mov->dv_demux);
-@@ -8797,6 +8927,14 @@
+@@ -8813,6 +8943,14 @@
  
                  sc->coll = NULL;
              }
@@ -925,9 +925,9 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/mov.c ffmpeg-6.1.1/libavformat/mov.c
              break;
          }
      }
-diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc.c
---- ffmpeg-6.1.1.old/libavformat/movenc.c	2024-01-13 16:38:25.960790794 +0100
-+++ ffmpeg-6.1.1/libavformat/movenc.c	2024-01-13 16:47:04.439248687 +0100
+diff -Naur ffmpeg-6.1.2.old/libavformat/movenc.c ffmpeg-6.1.2/libavformat/movenc.c
+--- ffmpeg-6.1.2.old/libavformat/movenc.c	2024-08-13 08:27:27.850304155 +0200
++++ ffmpeg-6.1.2/libavformat/movenc.c	2024-08-13 08:27:29.030310264 +0200
 @@ -28,6 +28,7 @@
  
  #include "movenc.h"
@@ -936,7 +936,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
  #include "avio_internal.h"
  #include "dovi_isom.h"
  #include "riff.h"
-@@ -2226,6 +2227,27 @@
+@@ -2226,6 +2227,31 @@
      return 32;
  }
  
@@ -944,11 +944,15 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
 +{
 +    const int illuminance_den = 10000;
 +    const int ambient_den = 50000;
-+    const uint8_t *side_data;
-+    const AVAmbientViewingEnvironment *ambient;
++    const AVPacketSideData *side_data;
++    const AVAmbientViewingEnvironment *ambient = NULL;
 +
-+    side_data = av_stream_get_side_data(track->st, AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT, NULL);
-+    ambient = (const AVAmbientViewingEnvironment*)side_data;
++    side_data = av_packet_side_data_get(track->st->codecpar->coded_side_data,
++                                        track->st->codecpar->nb_coded_side_data,
++                                        AV_PKT_DATA_AMBIENT_VIEWING_ENVIRONMENT);
++
++    if (side_data)
++        ambient = (const AVAmbientViewingEnvironment*)side_data->data;
 +    if (!ambient || !ambient->ambient_illuminance.num) {
 +        return 0;
 +    }
@@ -964,7 +968,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
  static void find_compressor(char * compressor_name, int len, MOVTrack *track)
  {
      AVDictionaryEntry *encoder;
-@@ -2437,6 +2459,7 @@
+@@ -2437,6 +2463,7 @@
      if (track->mode == MODE_MOV || track->mode == MODE_MP4) {
          mov_write_clli_tag(pb, track);
          mov_write_mdcv_tag(pb, track);
@@ -972,7 +976,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
      }
  
      if (track->mode == MODE_MP4 && mov->fc->strict_std_compliance <= FF_COMPLIANCE_UNOFFICIAL) {
-@@ -3682,6 +3705,41 @@
+@@ -3682,6 +3709,41 @@
      return len + 24;
  }
  
@@ -1014,7 +1018,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
  static int mov_write_track_metadata(AVIOContext *pb, AVStream *st,
                                      const char *tag, const char *str)
  {
-@@ -3756,8 +3814,23 @@
+@@ -3756,8 +3818,23 @@
      if (ret < 0)
          return ret;
  
@@ -1039,7 +1043,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
  
      if (mov->mode & MODE_MP4) {
          if ((ret = mov_write_track_kinds(pb_buf, st)) < 0)
-@@ -4355,35 +4428,6 @@
+@@ -4355,35 +4432,6 @@
      return 0;
  }
  
@@ -1075,7 +1079,7 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
  static int mov_write_chpl_tag(AVIOContext *pb, AVFormatContext *s)
  {
      int64_t pos = avio_tell(pb);
-@@ -4422,14 +4466,14 @@
+@@ -4422,14 +4470,14 @@
          return ret;
  
      if (mov->mode & MODE_3GP) {
@@ -1098,9 +1102,9 @@ diff -Naur ffmpeg-6.1.1.old/libavformat/movenc.c ffmpeg-6.1.1/libavformat/movenc
          mov_write_loci_tag(s, pb_buf);
      } else if (mov->mode == MODE_MOV && !(mov->flags & FF_MOV_FLAG_USE_MDTA)) { // the title field breaks gtkpod with mp4 and my suspicion is that stuff is not valid in mp4
          mov_write_string_metadata(s, pb_buf, "\251ART", "artist",      0);
-diff -Naur ffmpeg-6.1.1.old/libswscale/swscale_unscaled.c ffmpeg-6.1.1/libswscale/swscale_unscaled.c
---- ffmpeg-6.1.1.old/libswscale/swscale_unscaled.c	2024-01-13 16:38:25.877789301 +0100
-+++ ffmpeg-6.1.1/libswscale/swscale_unscaled.c	2024-01-13 16:47:04.442248741 +0100
+diff -Naur ffmpeg-6.1.2.old/libswscale/swscale_unscaled.c ffmpeg-6.1.2/libswscale/swscale_unscaled.c
+--- ffmpeg-6.1.2.old/libswscale/swscale_unscaled.c	2024-08-13 08:27:27.678303264 +0200
++++ ffmpeg-6.1.2/libswscale/swscale_unscaled.c	2024-08-13 08:27:29.034310285 +0200
 @@ -297,7 +297,7 @@
          const uint8_t *tsrc0 = src[0];
          for (x = c->srcW; x > 0; x--) {
