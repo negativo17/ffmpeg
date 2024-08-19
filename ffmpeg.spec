@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.0.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -165,6 +165,8 @@ BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
+BuildRequires:  pkgconfig(xevd) >= 0.4.1
+BuildRequires:  pkgconfig(xeve) >= 0.4.3
 %endif
 
 Obsoletes:      %{name}-free < %{epoch}:%{version}-%{release}
@@ -504,8 +506,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libxcb-shape \
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
-    --disable-libxevd \
-    --disable-libxeve \
     --enable-libxml2 \
     --enable-libxvid \
     --enable-libzimg \
@@ -557,6 +557,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
+    --enable-libxevd \
+    --enable-libxeve \
 %endif
 %ifarch ppc
     --cpu=g3 \
@@ -693,6 +695,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Aug 19 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-2
+- Enable xevd/e (MPEG-5 EVC).
+
 * Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-1
 - Update to 7.0.2.
 - Enable aribb24/aribcaption, dvdnav, libmysofa, librtmp, qrencode.
