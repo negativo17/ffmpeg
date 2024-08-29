@@ -1,6 +1,6 @@
 diff -Naur ffmpeg-7.0.2.old/libavformat/avformat.h ffmpeg-7.0.2/libavformat/avformat.h
---- ffmpeg-7.0.2.old/libavformat/avformat.h	2024-08-13 12:17:46.070297769 +0200
-+++ ffmpeg-7.0.2/libavformat/avformat.h	2024-08-13 12:17:47.161303245 +0200
+--- ffmpeg-7.0.2.old/libavformat/avformat.h	2024-08-29 08:36:42.628111665 +0200
++++ ffmpeg-7.0.2/libavformat/avformat.h	2024-08-29 08:36:43.471120368 +0200
 @@ -1170,6 +1170,10 @@
  
  struct AVCodecParserContext *av_stream_get_parser(const AVStream *s);
@@ -13,8 +13,8 @@ diff -Naur ffmpeg-7.0.2.old/libavformat/avformat.h ffmpeg-7.0.2/libavformat/avfo
  
  /**
 diff -Naur ffmpeg-7.0.2.old/libavformat/utils.c ffmpeg-7.0.2/libavformat/utils.c
---- ffmpeg-7.0.2.old/libavformat/utils.c	2024-08-13 12:17:46.073297784 +0200
-+++ ffmpeg-7.0.2/libavformat/utils.c	2024-08-13 12:17:47.161303245 +0200
+--- ffmpeg-7.0.2.old/libavformat/utils.c	2024-08-29 08:36:42.632111707 +0200
++++ ffmpeg-7.0.2/libavformat/utils.c	2024-08-29 08:36:43.472120378 +0200
 @@ -56,6 +56,13 @@
      return ff_mutex_unlock(&avformat_mutex) ? -1 : 0;
  }

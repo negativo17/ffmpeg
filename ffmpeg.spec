@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.0.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -21,9 +21,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
-Patch1:         %{name}-svt-hevc.patch
-# https://github.com/HandBrake/HandBrake/tree/3ff49f2ef02918638cc70c0dc23a91fa6974be00
+# https://github.com/HandBrake/HandBrake/tree/e1bf776bf94f944974e860a704c05a150369ccc5
 Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -162,7 +160,6 @@ BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
-BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
 BuildRequires:  pkgconfig(xevd) >= 0.4.1
@@ -553,7 +550,6 @@ This subpackage contains the headers for FFmpeg libswscale.
 %endif
 %ifarch x86_64
     --enable-libsvtav1 \
-    --enable-libsvthevc \
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
@@ -695,6 +691,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Thu Aug 29 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-3
+- Drop SVT-HEVC encoder.
+
 * Mon Aug 19 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-2
 - Enable xevd/e (MPEG-5 EVC).
 
