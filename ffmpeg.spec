@@ -533,22 +533,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libvmaf \
     --enable-libvpl \
 %endif
-%ifarch ppc
-    --cpu=g3 \
-    --enable-pic \
-%endif
-%ifarch ppc64
-    --cpu=g5 \
-    --enable-pic \
-%endif
-%ifarch %{arm}
-    --arch=arm \
-%ifarch armv6hl
-    --cpu=armv6 \
-%else
-    --enable-thumb \
-%endif
-%endif
 
 %make_build V=1
 make documentation V=1
