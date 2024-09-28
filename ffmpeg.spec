@@ -569,15 +569,6 @@ rm -fr %{buildroot}%{_datadir}/examples
 mkdir doc/html
 mv doc/*.html doc/html
 
-%ldconfig_scriptlets -n libavcodec
-%ldconfig_scriptlets -n libavdevice
-%ldconfig_scriptlets -n libavfilter
-%ldconfig_scriptlets -n libavformat
-%ldconfig_scriptlets -n libavutil
-%ldconfig_scriptlets -n libpostproc
-%ldconfig_scriptlets -n libswresample
-%ldconfig_scriptlets -n libswscale
-
 %files
 %{_bindir}/%{name}
 %{_bindir}/ffplay
