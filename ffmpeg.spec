@@ -494,7 +494,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libvidstab \
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
-    --enable-libvpl \
     --enable-libvpx \
     --enable-libwebp \
     --enable-libx264 \
