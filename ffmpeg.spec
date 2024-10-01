@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.0.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -26,6 +26,8 @@ Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch3:         %{name}-chromium.patch
+# In 7.0.3+:
+Patch4:         https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/0458a86656b291c7e91564efe44e109f97f7032a#/%{name}-x265-4.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -666,6 +668,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Oct 01 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-4
+- Fix build with x265 4.0.
+
 * Thu Aug 29 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-3
 - Drop SVT-HEVC encoder.
 
