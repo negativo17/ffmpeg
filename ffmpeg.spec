@@ -164,8 +164,8 @@ BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
-BuildRequires:  pkgconfig(xevd) >= 0.4.1
-BuildRequires:  pkgconfig(xeve) >= 0.4.3
+#BuildRequires:  pkgconfig(xevd) >= 0.4.1
+#BuildRequires:  pkgconfig(xeve) >= 0.4.3
 %endif
 
 Obsoletes:      %{name}-free < %{epoch}:%{version}-%{release}
@@ -555,8 +555,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
-    --enable-libxevd \
-    --enable-libxeve \
+#    --enable-libxevd \
+#    --enable-libxeve \
 %endif
 
 %make_build V=1
@@ -670,6 +670,7 @@ mv doc/*.html doc/html
 %changelog
 * Tue Oct 01 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-4
 - Fix build with x265 4.0.
+- Momentarily disable xevd/e.
 
 * Thu Aug 29 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-3
 - Drop SVT-HEVC encoder.
