@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -27,6 +27,7 @@ Patch1:         %{name}-svt-hevc.patch
 Patch2:         %{name}-ndi.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/9212b53ed5b2f7346036936d500e7954190fb08b
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/1ebb0e43f9a15a12cd94db44e4bc5424f8a5b0c9
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/43b417d516b0fabbec1f02120d948f636b8a018e
 Patch3:         %{name}-nvenc.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -41,7 +42,6 @@ BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
 BuildRequires:  gmp-devel
-BuildRequires:  glslang-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
@@ -435,7 +435,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libfontconfig \
     --enable-libfreetype \
     --enable-libfribidi \
-    --enable-libglslang \
     --enable-libgme \
     --enable-libgsm \
     --enable-libiec61883 \
@@ -652,6 +651,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Fri Nov 22 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.6-3
+- Disable glslang.
+- Update nvenc patch for latest SDK.
+
 * Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.6-2
 - Enable aribb24, libmysofa, librtmp, xavs.
 - Trim changelog.
