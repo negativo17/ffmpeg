@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -30,6 +30,7 @@ Patch3:         %{name}-chromium.patch
 Patch4:         %{name}-nvcc.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
+BuildRequires:  LCEVCdec-static
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  doxygen
@@ -78,6 +79,7 @@ BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 BuildRequires:  pkgconfig(lc3) >= 1.1.0
 BuildRequires:  pkgconfig(lcms2) >= 2.13
+BuildRequires:  pkgconfig(lcevc_dec) >= 2.0.0
 BuildRequires:  pkgconfig(libaribcaption) >= 1.1.1
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
@@ -454,6 +456,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libkvazaar \
     --enable-liblc3 \
     --disable-liblensfun \
+    --enable-liblcevc-dec \
     --enable-libmodplug \
     --enable-libmp3lame \
     --enable-libmysofa \
@@ -663,6 +666,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Mar 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1-2
+- Enable LCEVC decoding support.
+
 * Mon Mar 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-1
 - Update to 7.1.1.
 - Disable Decklink.
