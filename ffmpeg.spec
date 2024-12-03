@@ -11,8 +11,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        7.0.2
-Release:        4%{?dist}
+Version:        7.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -21,13 +21,12 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/e1bf776bf94f944974e860a704c05a150369ccc5
+# https://github.com/HandBrake/HandBrake/tree/fa9154a20f3f64fdc183a097e6b63f7fd4bc6cab
 Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch3:         %{name}-chromium.patch
-# In 7.0.3+:
-Patch4:         https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/0458a86656b291c7e91564efe44e109f97f7032a#/%{name}-x265-4.patch
+Patch4:         https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/63f5c007a7da69248f664c988398204c21eac7cf#/%{name}-x265-4.1.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -77,6 +76,7 @@ BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(harfbuzz)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
+BuildRequires:  pkgconfig(lc3) >= 1.1.0
 BuildRequires:  pkgconfig(lcms2) >= 2.13
 BuildRequires:  pkgconfig(libaribcaption) >= 1.1.1
 BuildRequires:  pkgconfig(libass) >= 0.11.0
@@ -106,6 +106,7 @@ BuildRequires:  pkgconfig(libva) >= 0.35.0
 BuildRequires:  pkgconfig(libva-drm)
 BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  pkgconfig(libv4l2)
+BuildRequires:  pkgconfig(libvvenc) >= 1.6.1
 BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libxml-2.0)
@@ -135,7 +136,7 @@ BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vorbis)
 BuildRequires:  pkgconfig(vorbisenc)
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
-BuildRequires:  pkgconfig(vulkan) >= 1.2.189
+BuildRequires:  pkgconfig(vulkan) >= 1.3.277
 BuildRequires:  pkgconfig(xavs2) >= 1.3.0
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
@@ -455,6 +456,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libjxl \
     --enable-libklvanc \
     --enable-libkvazaar \
+    --enable-liblc3 \
     --disable-liblensfun \
     --enable-libmodplug \
     --enable-libmp3lame \
@@ -495,6 +497,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
+    --enable-libvvenc \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
@@ -667,6 +670,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Dec 03 2024 Simone Caronni <negativo17@gmail.com> - 1:7.1-1
+- Update to 7.1.
+- Enable LC3, VVC support.
+
 * Tue Oct 01 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-4
 - Fix build with x265 4.0.
 - Momentarily disable xevd/e.
