@@ -78,6 +78,7 @@ BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 BuildRequires:  pkgconfig(lc3) >= 1.1.0
 BuildRequires:  pkgconfig(lcms2) >= 2.13
+BuildRequires:  pkgconfig(lcevc_dec) >= 2.0.0
 BuildRequires:  pkgconfig(libaribcaption) >= 1.1.1
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
@@ -458,6 +459,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libkvazaar \
     --enable-liblc3 \
     --disable-liblensfun \
+    --enable-liblcevc-dec \
     --enable-libmodplug \
     --enable-libmp3lame \
     --enable-libmysofa \
@@ -672,7 +674,7 @@ mv doc/*.html doc/html
 %changelog
 * Tue Dec 03 2024 Simone Caronni <negativo17@gmail.com> - 1:7.1-1
 - Update to 7.1.
-- Enable LC3, VVC support.
+- Enable LC3, VVC and LCEVC support.
 
 * Tue Oct 01 2024 Simone Caronni <negativo17@gmail.com> - 1:7.0.2-4
 - Fix build with x265 4.0.
