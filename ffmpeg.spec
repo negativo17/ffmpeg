@@ -11,7 +11,7 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        7.1
+Version:        7.1.1
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -21,17 +21,17 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/fa9154a20f3f64fdc183a097e6b63f7fd4bc6cab
+# https://github.com/HandBrake/HandBrake/tree/e117cfe7fca37abeec59ea4201e5d93ed7477746
 Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch3:         %{name}-chromium.patch
-Patch4:         https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/63f5c007a7da69248f664c988398204c21eac7cf#/%{name}-x265-4.1.patch
+# Fix build with recent NVCC:
+Patch4:         %{name}-nvcc.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
-BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
 BuildRequires:  gmp-devel
@@ -106,7 +106,7 @@ BuildRequires:  pkgconfig(libva) >= 0.35.0
 BuildRequires:  pkgconfig(libva-drm)
 BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  pkgconfig(libv4l2)
-BuildRequires:  pkgconfig(libvvenc) >= 1.6.1
+BuildRequires:  pkgconfig(libvvenc) >= 1.11.0
 BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libxml-2.0)
@@ -418,7 +418,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-alsa \
     --enable-bzlib \
     --enable-chromaprint \
-    --enable-decklink \
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
@@ -670,6 +669,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Mar 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-1
+- Update to 7.1.1.
+- Disable Decklink.
+
 * Tue Dec 03 2024 Simone Caronni <negativo17@gmail.com> - 1:7.1-1
 - Update to 7.1.
 - Enable LC3, VVC support.
