@@ -118,9 +118,6 @@ BuildRequires:  pkgconfig(lv2)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
-%if 0%{?fedora} < 39
-BuildRequires:  pkgconfig(pocketsphinx)
-%endif
 BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
@@ -519,9 +516,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-opencl \
     --enable-opengl \
     --enable-openssl \
-%if 0%{?fedora} < 39
-    --enable-pocketsphinx \
-%endif
     --enable-postproc \
     --enable-sdl2 \
     --enable-shared \
