@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -30,7 +30,6 @@ Patch3:         %{name}-chromium.patch
 Patch4:         %{name}-nvcc.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
-BuildRequires:  LCEVCdec-static
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  doxygen
@@ -666,6 +665,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Jun 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-3
+- Rebuild for LCEVCdec package changes.
+
 * Mon Mar 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1-2
 - Enable LCEVC decoding support.
 
