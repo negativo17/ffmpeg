@@ -668,7 +668,7 @@ mv doc/*.html doc/html
 * Tue Jun 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-3
 - Rebuild for LCEVCdec package changes.
 
-* Mon Mar 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1-2
+* Fri Jun 20 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-2
 - Enable LCEVC decoding support.
 
 * Mon Mar 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-1
