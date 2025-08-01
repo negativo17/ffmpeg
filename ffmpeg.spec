@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -665,6 +665,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Fri Aug 01 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-4
+- Rebuild for updated LCEVCdec.
+
 * Tue Jun 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-3
 - Rebuild for LCEVCdec package changes.
 
