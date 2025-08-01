@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -28,6 +28,8 @@ Patch2:         %{name}-HandBrake.patch
 Patch3:         %{name}-chromium.patch
 # Fix build with recent NVCC:
 Patch4:         %{name}-nvcc.patch
+# Support LCEVCdec 4.0+:
+Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -665,6 +667,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Aug 02 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-4
+- Add patches for LCEVCdec 4.
+
 * Tue Jun 24 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-3
 - Rebuild for LCEVCdec package changes.
 
