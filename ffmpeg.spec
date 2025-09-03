@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -145,10 +145,6 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
-# Nvidia CUVID support and Performance Primitives based code
-BuildRequires:  cuda-cudart-devel
-BuildRequires:  cuda-nvcc
-BuildRequires:  libnpp-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 9.1.23.1
 %endif
 
@@ -410,6 +406,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-alsa \
     --enable-bzlib \
     --enable-chromaprint \
+    --disable-cuda-nvcc \
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
@@ -445,6 +442,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libmp3lame \
     --enable-libmysofa \
     --enable-libndi_newtek \
+    --disable-libnpp \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -515,13 +513,10 @@ This subpackage contains the headers for FFmpeg libswscale.
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %ifarch x86_64 aarch64
-    --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
-    --enable-libnpp \
     --enable-nvdec \
     --enable-nvenc \
-    --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch x86_64
     --enable-libsvtav1 \
@@ -649,6 +644,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Sep 03 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-2
+- Disable deprecated NPP support:
+  https://ffmpeg.org/pipermail/ffmpeg-devel/2025-August/347779.html
+
 * Sun Aug 24 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-1
 - Update to 5.17.
 - Disabel decklink.
