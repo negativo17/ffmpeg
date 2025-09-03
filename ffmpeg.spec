@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -26,8 +26,6 @@ Patch2:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch3:         %{name}-chromium.patch
-# Fix build with recent NVCC:
-Patch4:         %{name}-nvcc.patch
 # Support LCEVCdec 4.0+:
 Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
 
@@ -72,6 +70,7 @@ BuildRequires:  pkgconfig(dav1d) >= 0.5.0
 BuildRequires:  pkgconfig(davs2) >= 1.6.0
 BuildRequires:  pkgconfig(dvdnav) >= 6.1.1
 BuildRequires:  pkgconfig(fdk-aac)
+BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fribidi)
@@ -152,10 +151,6 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
-# Nvidia CUVID support and Performance Primitives based code
-BuildRequires:  cuda-cudart-devel
-BuildRequires:  cuda-nvcc
-BuildRequires:  libnpp-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %endif
 
@@ -418,6 +413,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-alsa \
     --enable-bzlib \
     --enable-chromaprint \
+    --disable-cuda-nvcc \
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
@@ -461,6 +457,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libmodplug \
     --enable-libmp3lame \
     --enable-libmysofa \
+    --disable-libnpp \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --disable-libopencv \
@@ -541,10 +538,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %ifarch x86_64 aarch64
-    --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
-    --enable-libnpp \
     --enable-nvdec \
     --enable-nvenc \
     --extra-cflags="-I%{_includedir}/cuda" \
@@ -667,6 +662,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Sep 03 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-5
+- Disable deprecated NPP support, incompatible with CUDA 13+:
+  https://ffmpeg.org/pipermail/ffmpeg-devel/2025-August/347779.html
+
 * Sat Aug 02 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-4
 - Add patches for LCEVCdec 4.
 
