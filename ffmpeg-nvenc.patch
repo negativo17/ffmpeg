@@ -1,6 +1,6 @@
 diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
---- ffmpeg-5.1.6.old/configure	2024-08-13 09:22:40.115818172 +0200
-+++ ffmpeg-5.1.6/configure	2024-08-13 09:22:40.119818192 +0200
+--- ffmpeg-5.1.6.old/configure	2024-11-22 09:15:59.844490057 +0100
++++ ffmpeg-5.1.6/configure	2024-11-22 09:16:16.850641393 +0100
 @@ -6998,7 +6998,7 @@
      test_cc -I$source_path <<EOF || disable nvenc
  #include <ffnvcodec/nvEncodeAPI.h>
@@ -11,8 +11,8 @@ diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
  EOF
  
 diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc.c ffmpeg-5.1.6/libavcodec/nvenc.c
---- ffmpeg-5.1.6.old/libavcodec/nvenc.c	2024-08-13 09:22:38.727810996 +0200
-+++ ffmpeg-5.1.6/libavcodec/nvenc.c	2024-08-13 09:22:40.119818192 +0200
+--- ffmpeg-5.1.6.old/libavcodec/nvenc.c	2024-11-22 09:15:05.466006126 +0100
++++ ffmpeg-5.1.6/libavcodec/nvenc.c	2024-11-22 09:21:03.499192368 +0100
 @@ -39,9 +39,14 @@
  #define CHECK_CU(x) FF_CUDA_CHECK_DL(avctx, dl_fn->cuda_dl, x)
  
@@ -67,10 +67,54 @@ diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc.c ffmpeg-5.1.6/libavcodec/nvenc.c
  
      if (ctx->flags & NVENC_LOSSLESS) {
          h264->qpPrimeYZeroTransformBypassFlag = 1;
+@@ -1187,6 +1198,11 @@
+ 
+     h264->level = ctx->level;
+ 
++#ifdef NVENC_HAVE_NEW_BIT_DEPTH_API
++    h264->inputBitDepth = h264->outputBitDepth =
++        IS_10BIT(ctx->data_pix_fmt) ? NV_ENC_BIT_DEPTH_10 : NV_ENC_BIT_DEPTH_8;
++#endif
++
+     if (ctx->coder >= 0)
+         h264->entropyCodingMode = ctx->coder;
+ 
+@@ -1290,7 +1306,12 @@
+ 
+     hevc->chromaFormatIDC = IS_YUV444(ctx->data_pix_fmt) ? 3 : 1;
+ 
++#ifdef NVENC_HAVE_NEW_BIT_DEPTH_API
++    hevc->inputBitDepth = hevc->outputBitDepth =
++        IS_10BIT(ctx->data_pix_fmt) ? NV_ENC_BIT_DEPTH_10 : NV_ENC_BIT_DEPTH_8;
++#else
+     hevc->pixelBitDepthMinus8 = IS_10BIT(ctx->data_pix_fmt) ? 2 : 0;
++#endif
+ 
+     hevc->level = ctx->level;
+ 
+@@ -1502,15 +1523,15 @@
+ {
+     switch (pix_fmt) {
+     case AV_PIX_FMT_YUV420P:
+-        return NV_ENC_BUFFER_FORMAT_YV12_PL;
++        return NV_ENC_BUFFER_FORMAT_YV12;
+     case AV_PIX_FMT_NV12:
+-        return NV_ENC_BUFFER_FORMAT_NV12_PL;
++        return NV_ENC_BUFFER_FORMAT_NV12;
+     case AV_PIX_FMT_P010:
+     case AV_PIX_FMT_P016:
+         return NV_ENC_BUFFER_FORMAT_YUV420_10BIT;
+     case AV_PIX_FMT_GBRP:
+     case AV_PIX_FMT_YUV444P:
+-        return NV_ENC_BUFFER_FORMAT_YUV444_PL;
++        return NV_ENC_BUFFER_FORMAT_YUV444;
+     case AV_PIX_FMT_GBRP16:
+     case AV_PIX_FMT_YUV444P16:
+         return NV_ENC_BUFFER_FORMAT_YUV444_10BIT;
 diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc.h ffmpeg-5.1.6/libavcodec/nvenc.h
---- ffmpeg-5.1.6.old/libavcodec/nvenc.h	2024-08-13 09:22:38.776811250 +0200
-+++ ffmpeg-5.1.6/libavcodec/nvenc.h	2024-08-13 09:22:40.119818192 +0200
-@@ -77,6 +77,11 @@
+--- ffmpeg-5.1.6.old/libavcodec/nvenc.h	2024-11-22 09:15:05.545006829 +0100
++++ ffmpeg-5.1.6/libavcodec/nvenc.h	2024-11-22 09:21:03.499192368 +0100
+@@ -77,6 +77,16 @@
  #define NVENC_HAVE_SINGLE_SLICE_INTRA_REFRESH
  #endif
  
@@ -79,12 +123,17 @@ diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc.h ffmpeg-5.1.6/libavcodec/nvenc.h
 +#define NVENC_NO_DEPRECATED_RC
 +#endif
 +
++// SDK 12.2 compile time feature checks
++#if NVENCAPI_CHECK_VERSION(12, 2)
++#define NVENC_HAVE_NEW_BIT_DEPTH_API
++#endif
++
  typedef struct NvencSurface
  {
      NV_ENC_INPUT_PTR input_surface;
 diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc_h264.c ffmpeg-5.1.6/libavcodec/nvenc_h264.c
---- ffmpeg-5.1.6.old/libavcodec/nvenc_h264.c	2024-08-13 09:22:38.764811188 +0200
-+++ ffmpeg-5.1.6/libavcodec/nvenc_h264.c	2024-08-13 09:22:40.119818192 +0200
+--- ffmpeg-5.1.6.old/libavcodec/nvenc_h264.c	2024-11-22 09:15:05.526006659 +0100
++++ ffmpeg-5.1.6/libavcodec/nvenc_h264.c	2024-11-22 09:16:16.853641420 +0100
 @@ -100,6 +100,7 @@
      { "constqp",      "Constant QP mode",                   0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CONSTQP },                   0, 0, VE, "rc" },
      { "vbr",          "Variable bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_VBR },                       0, 0, VE, "rc" },
@@ -112,8 +161,8 @@ diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc_h264.c ffmpeg-5.1.6/libavcodec/nven
                                                              OFFSET(rc_lookahead), AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, INT_MAX, VE },
      { "surfaces",     "Number of concurrent surfaces",      OFFSET(nb_surfaces),  AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, MAX_REGISTERED_FRAMES, VE },
 diff -Naur ffmpeg-5.1.6.old/libavcodec/nvenc_hevc.c ffmpeg-5.1.6/libavcodec/nvenc_hevc.c
---- ffmpeg-5.1.6.old/libavcodec/nvenc_hevc.c	2024-08-13 09:22:38.738811053 +0200
-+++ ffmpeg-5.1.6/libavcodec/nvenc_hevc.c	2024-08-13 09:22:40.120818197 +0200
+--- ffmpeg-5.1.6.old/libavcodec/nvenc_hevc.c	2024-11-22 09:15:05.482006268 +0100
++++ ffmpeg-5.1.6/libavcodec/nvenc_hevc.c	2024-11-22 09:16:16.853641420 +0100
 @@ -89,6 +89,7 @@
      { "constqp",      "Constant QP mode",                   0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CONSTQP },                   0, 0, VE, "rc" },
      { "vbr",          "Variable bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_VBR },                       0, 0, VE, "rc" },

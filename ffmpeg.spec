@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -644,9 +644,12 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Sep 02 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-2
+- Update NVENC patch.
+
 * Sun Aug 24 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-1
 - Update to 5.17.
-- Disabel decklink.
+- Disable decklink.
 
 * Tue Aug 13 2024 Simone Caronni <negativo17@gmail.com> - 1:5.1.6-2
 - Enable aribb24, libmysofa, librtmp, xavs.
