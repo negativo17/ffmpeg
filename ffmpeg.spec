@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -141,6 +141,8 @@ BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
 BuildRequires:  pkgconfig(xcb-shm)
 BuildRequires:  pkgconfig(xcb-xfixes)
+BuildRequires:  pkgconfig(xevd) >= 0.4.1
+BuildRequires:  pkgconfig(xeve) >= 0.4.3
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(x264)
@@ -160,8 +162,6 @@ BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
-#BuildRequires:  pkgconfig(xevd) >= 0.4.1
-#BuildRequires:  pkgconfig(xeve) >= 0.4.3
 %endif
 
 Obsoletes:      %{name}-free < %{epoch}:%{version}-%{release}
@@ -504,6 +504,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libxcb-shape \
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
+    --enable-libxevd \
+    --enable-libxeve \
     --enable-libxml2 \
     --enable-libxvid \
     --enable-libzimg \
@@ -549,8 +551,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
-#    --enable-libxevd \
-#    --enable-libxeve \
 %endif
 
 %make_build V=1
@@ -662,6 +662,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Sep 08 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-6
+- Re-enable xevd/e (MPEG-5 EVC) now that they also build with full profile on
+  aarch64.
+
 * Wed Sep 03 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-5
 - Disable deprecated NPP support, incompatible with CUDA 13+:
   https://ffmpeg.org/pipermail/ffmpeg-devel/2025-August/347779.html
