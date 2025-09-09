@@ -1,6 +1,7 @@
---- a/libavcodec/lcevcdec.c
-+++ b/libavcodec/lcevcdec.c
-@@ -139,7 +139,7 @@ static int lcevc_send_frame(void *logctx
+diff -Naur ffmpeg-7.1.1.old/libavcodec/lcevcdec.c ffmpeg-7.1.1/libavcodec/lcevcdec.c
+--- ffmpeg-7.1.1.old/libavcodec/lcevcdec.c	2025-09-09 17:23:09.668817873 +0200
++++ ffmpeg-7.1.1/libavcodec/lcevcdec.c	2025-09-09 17:23:10.291564024 +0200
+@@ -139,7 +139,7 @@
      if (!sd)
          return 1;
  
@@ -9,7 +10,7 @@
      if (res != LCEVC_Success)
          return AVERROR_EXTERNAL;
  
-@@ -147,7 +147,7 @@ static int lcevc_send_frame(void *logctx
+@@ -147,7 +147,7 @@
      if (ret < 0)
          return ret;
  
@@ -18,9 +19,10 @@
      if (res != LCEVC_Success)
          return AVERROR_EXTERNAL;
  
---- a/libavfilter/vf_lcevc.c
-+++ b/libavfilter/vf_lcevc.c
-@@ -139,7 +139,7 @@ static int send_frame(AVFilterLink *inlink, AVFrame *in)
+diff -Naur ffmpeg-7.1.1.old/libavfilter/vf_lcevc.c ffmpeg-7.1.1/libavfilter/vf_lcevc.c
+--- ffmpeg-7.1.1.old/libavfilter/vf_lcevc.c	2025-09-09 17:23:09.918580609 +0200
++++ ffmpeg-7.1.1/libavfilter/vf_lcevc.c	2025-09-09 17:23:10.291876663 +0200
+@@ -139,7 +139,7 @@
          return ret;
  
      if (sd) {
@@ -29,7 +31,7 @@
          if (res == LCEVC_Again)
              return AVERROR(EAGAIN);
          else if (res != LCEVC_Success) {
-@@ -148,7 +148,7 @@ static int send_frame(AVFilterLink *inlink, AVFrame *in)
+@@ -148,7 +148,7 @@
          }
      }
  
