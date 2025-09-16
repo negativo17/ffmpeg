@@ -11,8 +11,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        7.1.1
-Release:        8%{?dist}
+Version:        7.1.2
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -666,6 +666,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-1
+- Update to 7.1.2.
+
 * Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-8
 - Enable DeckLink support with SDK 14.4.
 

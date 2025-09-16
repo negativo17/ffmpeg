@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-7.1.1.old/libavcodec/lcevcdec.c ffmpeg-7.1.1/libavcodec/lcevcdec.c
---- ffmpeg-7.1.1.old/libavcodec/lcevcdec.c	2025-09-09 17:23:09.668817873 +0200
-+++ ffmpeg-7.1.1/libavcodec/lcevcdec.c	2025-09-09 17:23:10.291564024 +0200
+diff -Naur ffmpeg-7.1.2.old/libavcodec/lcevcdec.c ffmpeg-7.1.2/libavcodec/lcevcdec.c
+--- ffmpeg-7.1.2.old/libavcodec/lcevcdec.c	2025-09-16 15:39:28.720889137 +0200
++++ ffmpeg-7.1.2/libavcodec/lcevcdec.c	2025-09-16 15:39:29.513547763 +0200
 @@ -139,7 +139,7 @@
      if (!sd)
          return 1;
@@ -19,9 +19,9 @@ diff -Naur ffmpeg-7.1.1.old/libavcodec/lcevcdec.c ffmpeg-7.1.1/libavcodec/lcevcd
      if (res != LCEVC_Success)
          return AVERROR_EXTERNAL;
  
-diff -Naur ffmpeg-7.1.1.old/libavfilter/vf_lcevc.c ffmpeg-7.1.1/libavfilter/vf_lcevc.c
---- ffmpeg-7.1.1.old/libavfilter/vf_lcevc.c	2025-09-09 17:23:09.918580609 +0200
-+++ ffmpeg-7.1.1/libavfilter/vf_lcevc.c	2025-09-09 17:23:10.291876663 +0200
+diff -Naur ffmpeg-7.1.2.old/libavfilter/vf_lcevc.c ffmpeg-7.1.2/libavfilter/vf_lcevc.c
+--- ffmpeg-7.1.2.old/libavfilter/vf_lcevc.c	2025-09-16 15:39:29.046835886 +0200
++++ ffmpeg-7.1.2/libavfilter/vf_lcevc.c	2025-09-16 15:39:29.513856695 +0200
 @@ -139,7 +139,7 @@
          return ret;
  
