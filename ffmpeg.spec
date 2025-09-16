@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.7
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -38,6 +38,7 @@ Patch5:         %{name}-HandBrake.patch
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
+BuildRequires:  decklink-devel >= 10.11
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
 BuildRequires:  gmp-devel
@@ -407,6 +408,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-bzlib \
     --enable-chromaprint \
     --disable-cuda-nvcc \
+    --enable-decklink \
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
@@ -644,6 +646,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-3
+- Re-enable DeckLink support with SDK version 12.9.
+
 * Wed Sep 03 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-2
 - Disable deprecated NPP support:
   https://ffmpeg.org/pipermail/ffmpeg-devel/2025-August/347779.html
