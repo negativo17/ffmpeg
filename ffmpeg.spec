@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -28,10 +28,13 @@ Patch2:         %{name}-HandBrake.patch
 Patch3:         %{name}-chromium.patch
 # Support LCEVCdec 4.0+:
 Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
+# https://github.com/magarnicle/FFmpeg/commits/DeckLink_SDK_14_4/
+Patch6:         %{name}-decklink-14.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
+BuildRequires:  decklink-devel >= 14.2
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
 BuildRequires:  gmp-devel
@@ -414,6 +417,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-bzlib \
     --enable-chromaprint \
     --disable-cuda-nvcc \
+    --enable-decklink \
     --enable-frei0r \
     --enable-gcrypt \
     --enable-gmp \
@@ -662,6 +666,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-8
+- Enable DeckLink support with SDK 14.4.
+
 * Tue Sep 09 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.1-7
 - Update HandBrake patches to 1.10.2.
 
