@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -131,6 +131,7 @@ BuildRequires:  pkgconfig(shaderc) >= 2019.1
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(srt) >= 1.3.0
+BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(uavs3d) >= 1.1.41
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
@@ -162,7 +163,6 @@ BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %ifarch x86_64
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
-BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
 %endif
@@ -426,7 +426,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-iconv \
     --enable-ladspa \
     --enable-lcms2 \
-    --enable-libass \
     --enable-libaom \
     --enable-libaribb24 \
     --enable-libaribcaption \
@@ -483,6 +482,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --disable-libshine \
     --enable-libsmbclient \
     --enable-libsnappy \
+    --enable-libsvtav1 \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libsrt \
@@ -551,7 +551,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch x86_64
-    --enable-libsvtav1 \
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
@@ -666,6 +665,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Oct 15 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-2
+- Adjust build options.
+
 * Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-1
 - Update to 7.1.2.
 
