@@ -1,3 +1,13 @@
+%bcond bootstrap 1
+
+%if %{with bootstrap}
+%bcond chromaprint 0
+%bcond lcevcdec 0
+%else
+%bcond chromaprint 1
+%bcond lcevcdec 1
+%endif
+
 %global _lto_cflags %{nil}
 
 %global avcodec_soversion 61
@@ -43,7 +53,9 @@ BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  ladspa-devel
 BuildRequires:  libavc1394-devel
+%if %{with chromaprint}
 BuildRequires:  libchromaprint-devel
+%endif
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
 BuildRequires:  libklvanc-devel
@@ -82,7 +94,9 @@ BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
 BuildRequires:  pkgconfig(lc3) >= 1.1.0
 BuildRequires:  pkgconfig(lcms2) >= 2.13
+%if %{with lcevcdec}
 BuildRequires:  pkgconfig(lcevc_dec) >= 2.0.0
+%endif
 BuildRequires:  pkgconfig(libaribcaption) >= 1.1.1
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
@@ -415,7 +429,11 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-avformat \
     --enable-alsa \
     --enable-bzlib \
+%if %{with chromaprint}
     --enable-chromaprint \
+%else
+    --disable-chromaprint \
+%endif
     --disable-cuda-nvcc \
     --enable-decklink \
     --enable-frei0r \
@@ -456,7 +474,11 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libkvazaar \
     --enable-liblc3 \
     --disable-liblensfun \
+%if %{with lcevcdec}
     --enable-liblcevc-dec \
+%else
+    --disable-liblcevc-dec \
+%endif
     --enable-libmodplug \
     --enable-libmp3lame \
     --enable-libmysofa \
@@ -667,6 +689,7 @@ mv doc/*.html doc/html
 %changelog
 * Wed Oct 15 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-2
 - Adjust build options.
+- Add bootstrap option (chromaprint/LCEVCdec).
 
 * Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-1
 - Update to 7.1.2.
