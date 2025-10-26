@@ -1,0 +1,13 @@
+diff -Naur ffmpeg-5.1.7.old/configure ffmpeg-5.1.7/configure
+--- ffmpeg-5.1.7.old/configure	2025-10-27 11:15:34.304830048 +0100
++++ ffmpeg-5.1.7/configure	2025-10-27 11:15:47.672721207 +0100
+@@ -4469,6 +4469,9 @@
+     if $nvcc $nvccflags_default 2>&1 | grep -qi unsupported; then
+         nvccflags_default="-gencode arch=compute_60,code=sm_60 -O2"
+     fi
++    if $nvcc $nvccflags_default 2>&1 | grep -qi unsupported; then
++        nvccflags_default="-gencode arch=compute_75,code=sm_75 -O2"
++    fi
+ fi
+ 
+ set_default arch cc cxx doxygen pkg_config ranlib strip sysinclude \
