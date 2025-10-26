@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
---- ffmpeg-5.1.6.old/configure	2024-08-13 09:22:38.972812263 +0200
-+++ ffmpeg-5.1.6/configure	2024-08-13 09:22:39.355814243 +0200
+diff -Naur ffmpeg-5.1.7.old/configure ffmpeg-5.1.7/configure
+--- ffmpeg-5.1.7.old/configure	2025-10-27 11:12:09.917329337 +0100
++++ ffmpeg-5.1.7/configure	2025-10-27 11:12:13.462364745 +0100
 @@ -288,6 +288,7 @@
    --enable-libvorbis       enable Vorbis en/decoding via libvorbis,
                             native implementation exists [no]
@@ -9,7 +9,7 @@ diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
    --enable-libwebp         enable WebP encoding via libwebp [no]
    --enable-libx264         enable H.264 encoding via x264 [no]
    --enable-libx265         enable HEVC encoding via x265 [no]
-@@ -1858,6 +1859,7 @@
+@@ -1860,6 +1861,7 @@
      libshaderc
      libshine
      libsmbclient
@@ -17,7 +17,7 @@ diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
      libsnappy
      libsoxr
      libspeex
-@@ -3379,6 +3381,7 @@
+@@ -3384,6 +3386,7 @@
  libvpx_vp8_encoder_deps="libvpx"
  libvpx_vp9_decoder_deps="libvpx"
  libvpx_vp9_encoder_deps="libvpx"
@@ -25,7 +25,7 @@ diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
  libwebp_encoder_deps="libwebp"
  libwebp_anim_encoder_deps="libwebp"
  libx262_encoder_deps="libx262"
-@@ -6665,6 +6668,7 @@
+@@ -6675,6 +6678,7 @@
      fi
  }
  
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-5.1.6.old/configure ffmpeg-5.1.6/configure
  enabled libwebp           && {
      enabled libwebp_encoder      && require_pkg_config libwebp "libwebp >= 0.2.0" webp/encode.h WebPGetEncoderVersion
      enabled libwebp_anim_encoder && check_pkg_config libwebp_anim_encoder "libwebpmux >= 0.4.0" webp/mux.h WebPAnimEncoderOptionsInit; }
-diff -Naur ffmpeg-5.1.6.old/libavcodec/allcodecs.c ffmpeg-5.1.6/libavcodec/allcodecs.c
---- ffmpeg-5.1.6.old/libavcodec/allcodecs.c	2024-08-13 09:22:38.895811865 +0200
-+++ ffmpeg-5.1.6/libavcodec/allcodecs.c	2024-08-13 09:22:39.355814243 +0200
+diff -Naur ffmpeg-5.1.7.old/libavcodec/allcodecs.c ffmpeg-5.1.7/libavcodec/allcodecs.c
+--- ffmpeg-5.1.7.old/libavcodec/allcodecs.c	2025-10-27 11:12:09.804328208 +0100
++++ ffmpeg-5.1.7/libavcodec/allcodecs.c	2025-10-27 11:12:13.463635170 +0100
 @@ -781,6 +781,7 @@
  extern const FFCodec ff_libvpx_vp8_decoder;
  extern FFCodec ff_libvpx_vp9_encoder;
@@ -44,9 +44,9 @@ diff -Naur ffmpeg-5.1.6.old/libavcodec/allcodecs.c ffmpeg-5.1.6/libavcodec/allco
  /* preferred over libwebp */
  extern const FFCodec ff_libwebp_anim_encoder;
  extern const FFCodec ff_libwebp_encoder;
-diff -Naur ffmpeg-5.1.6.old/libavcodec/libsvt_vp9.c ffmpeg-5.1.6/libavcodec/libsvt_vp9.c
---- ffmpeg-5.1.6.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-5.1.6/libavcodec/libsvt_vp9.c	2024-08-13 09:22:39.355814243 +0200
+diff -Naur ffmpeg-5.1.7.old/libavcodec/libsvt_vp9.c ffmpeg-5.1.7/libavcodec/libsvt_vp9.c
+--- ffmpeg-5.1.7.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-5.1.7/libavcodec/libsvt_vp9.c	2025-10-27 11:12:13.464248646 +0100
 @@ -0,0 +1,699 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
@@ -747,9 +747,9 @@ diff -Naur ffmpeg-5.1.6.old/libavcodec/libsvt_vp9.c ffmpeg-5.1.6/libavcodec/libs
 +    .caps_internal    = FF_CODEC_CAP_INIT_CLEANUP,
 +    .p.wrapper_name   = "libsvt_vp9",
 +};
-diff -Naur ffmpeg-5.1.6.old/libavcodec/Makefile ffmpeg-5.1.6/libavcodec/Makefile
---- ffmpeg-5.1.6.old/libavcodec/Makefile	2024-08-13 09:22:38.734811033 +0200
-+++ ffmpeg-5.1.6/libavcodec/Makefile	2024-08-13 09:22:39.355814243 +0200
+diff -Naur ffmpeg-5.1.7.old/libavcodec/Makefile ffmpeg-5.1.7/libavcodec/Makefile
+--- ffmpeg-5.1.7.old/libavcodec/Makefile	2025-10-27 11:12:09.567325840 +0100
++++ ffmpeg-5.1.7/libavcodec/Makefile	2025-10-27 11:12:13.464450086 +0100
 @@ -1099,6 +1099,7 @@
  OBJS-$(CONFIG_LIBVPX_VP8_ENCODER)         += libvpxenc.o
  OBJS-$(CONFIG_LIBVPX_VP9_DECODER)         += libvpxdec.o libvpx.o

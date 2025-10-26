@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.7
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -33,6 +33,8 @@ Patch3:         %{name}-nvenc.patch
 Patch4:         %{name}-chromium.patch
 # https://github.com/HandBrake/HandBrake/tree/b94291a97d0587ba1ce23a87f6987ec78248ec8c
 Patch5:         %{name}-HandBrake.patch
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/f8a300c6739ea2ca648579d7faf3ae9811b9f19a
+Patch6:         %{name}-cuda-13.patch
 
 BuildRequires:  AMF-devel
 BuildRequires:  bzip2-devel
@@ -143,6 +145,8 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
+BuildRequires:  cuda-cudart-devel
+BuildRequires:  cuda-nvcc
 BuildRequires:  pkgconfig(ffnvcodec) >= 9.1.23.1
 %endif
 
@@ -404,7 +408,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-alsa \
     --enable-bzlib \
     --enable-chromaprint \
-    --disable-cuda-nvcc \
     --enable-decklink \
     --enable-frei0r \
     --enable-gcrypt \
@@ -441,7 +444,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libmp3lame \
     --enable-libmysofa \
     --enable-libndi_newtek \
-    --disable-libnpp \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --enable-libopenh264 \
@@ -510,10 +512,12 @@ This subpackage contains the headers for FFmpeg libswscale.
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %ifarch x86_64 aarch64
+    --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
     --enable-nvdec \
     --enable-nvenc \
+    --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch x86_64
     --enable-libsvtav1 \
@@ -641,6 +645,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sun Oct 26 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-5
+- Re-enable CUDA filters with CUDA 13.
+
 * Tue Sep 16 2025 Simone Caronni <negativo17@gmail.com> - 1:5.1.7-4
 - Re-enable DeckLink support with SDK version 12.9.
 
