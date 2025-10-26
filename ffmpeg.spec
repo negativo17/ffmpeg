@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -32,10 +32,14 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
 # https://github.com/HandBrake/HandBrake/tree/8902805364f00e0d420c4d4b33053a31d27045ab
-Patch2:         %{name}-HandBrake.patch
+Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
-Patch3:         %{name}-chromium.patch
+Patch2:         %{name}-chromium.patch
+# Fix build with recent NVCC:
+Patch3:         %{name}-nvcc.patch
+# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/f8a300c6739ea2ca648579d7faf3ae9811b9f19a
+Patch4:         %{name}-cuda-13.patch
 # Support LCEVCdec 4.0+:
 Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
 # https://github.com/magarnicle/FFmpeg/commits/DeckLink_SDK_14_4/
@@ -85,7 +89,6 @@ BuildRequires:  pkgconfig(dav1d) >= 0.5.0
 BuildRequires:  pkgconfig(davs2) >= 1.6.0
 BuildRequires:  pkgconfig(dvdnav) >= 6.1.1
 BuildRequires:  pkgconfig(fdk-aac)
-BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fribidi)
@@ -171,6 +174,8 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
+BuildRequires:  cuda-cudart-devel
+BuildRequires:  cuda-nvcc
 BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %endif
 
@@ -434,7 +439,6 @@ This subpackage contains the headers for FFmpeg libswscale.
 %else
     --disable-chromaprint \
 %endif
-    --disable-cuda-nvcc \
     --enable-decklink \
     --enable-frei0r \
     --enable-gcrypt \
@@ -566,6 +570,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %ifarch x86_64 aarch64
+    --enable-cuda-llvm \
+    --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
     --enable-nvdec \
@@ -687,6 +693,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sun Oct 26 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-3
+- Re-enable CUDA filters with CUDA 13.
+
 * Wed Oct 15 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-2
 - Adjust build options.
 - Add bootstrap option (chromaprint/LCEVCdec).
