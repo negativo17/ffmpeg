@@ -1,4 +1,4 @@
-%bcond bootstrap 0
+%bcond bootstrap 1
 
 %if %{with bootstrap}
 %bcond chromaprint 0
@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -44,6 +44,9 @@ Patch4:         %{name}-cuda-13.patch
 Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
 # https://github.com/magarnicle/FFmpeg/commits/DeckLink_SDK_14_4/
 Patch6:         %{name}-decklink-14.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2345698
+# Currently set at 0, be changed every time vapoursynth changes ABI:
+Patch7:         %{name}-vapoursynth-script-soname.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -174,7 +177,6 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
-BuildRequires:  cuda-cudart-devel
 BuildRequires:  cuda-nvcc
 BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %endif
@@ -693,6 +695,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Oct 27 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-4
+- Fix vapoursynth dlopening (#2345698).
+- Bootstrap for i386.
+
 * Sun Oct 26 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-3
 - Re-enable CUDA filters with CUDA 13.
 
