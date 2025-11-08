@@ -1,4 +1,4 @@
-%bcond bootstrap 1
+%bcond bootstrap 0
 
 %if %{with bootstrap}
 %bcond chromaprint 0
@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -695,6 +695,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Nov 08 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-5
+- Disable bootstrap.
+
 * Mon Oct 27 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-4
 - Fix vapoursynth dlopening (#2345698).
 - Bootstrap for i386.
