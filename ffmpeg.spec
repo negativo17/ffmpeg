@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -217,7 +217,14 @@ This metapackage pulls in all the %{name} libraries.
 
 %package        devel
 Summary:        Metapackage for %{name} development files
-Requires:       %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavcodec-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavdevice-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavfilter-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavformat-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libpostproc-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       libswscale-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 
 %description    devel
@@ -695,6 +702,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Thu Dec 25 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-6
+- Fix devel subpackage dependencies.
+
 * Sat Nov 08 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-5
 - Disable bootstrap.
 
