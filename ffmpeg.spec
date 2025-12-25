@@ -21,8 +21,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        7.1.2
-Release:        6%{?dist}
+Version:        7.1.3
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -702,6 +702,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Thu Dec 25 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.3-1
+- Update to 7.1.3.
+
 * Thu Dec 25 2025 Simone Caronni <negativo17@gmail.com> - 1:7.1.2-6
 - Fix devel subpackage dependencies.
 
