@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-7.1.2.old/doc/outdevs.texi ffmpeg-7.1.2/doc/outdevs.texi
---- ffmpeg-7.1.2.old/doc/outdevs.texi	2025-10-27 10:07:00.979477433 +0100
-+++ ffmpeg-7.1.2/doc/outdevs.texi	2025-10-27 10:07:02.002148270 +0100
+diff -Naur ffmpeg-8.0.1.old/doc/outdevs.texi ffmpeg-8.0.1/doc/outdevs.texi
+--- ffmpeg-8.0.1.old/doc/outdevs.texi	2026-02-12 18:12:37.795512325 +0100
++++ ffmpeg-8.0.1/doc/outdevs.texi	2026-02-12 18:12:38.697252789 +0100
 @@ -240,6 +240,10 @@
  outgoing VANC data will be dropped.
  Defaults to @samp{1048576}.
@@ -12,9 +12,9 @@ diff -Naur ffmpeg-7.1.2.old/doc/outdevs.texi ffmpeg-7.1.2/doc/outdevs.texi
  @end table
  
  @subsection Examples
-diff -Naur ffmpeg-7.1.2.old/fftools/ffmpeg_sched.c ffmpeg-7.1.2/fftools/ffmpeg_sched.c
---- ffmpeg-7.1.2.old/fftools/ffmpeg_sched.c	2025-10-27 10:07:01.220479559 +0100
-+++ ffmpeg-7.1.2/fftools/ffmpeg_sched.c	2025-10-27 10:07:02.002549025 +0100
+diff -Naur ffmpeg-8.0.1.old/fftools/ffmpeg_sched.c ffmpeg-8.0.1/fftools/ffmpeg_sched.c
+--- ffmpeg-8.0.1.old/fftools/ffmpeg_sched.c	2026-02-12 18:12:38.062515589 +0100
++++ ffmpeg-8.0.1/fftools/ffmpeg_sched.c	2026-02-12 18:12:38.697592739 +0100
 @@ -22,6 +22,7 @@
  #include <stdatomic.h>
  #include <stddef.h>
@@ -23,9 +23,9 @@ diff -Naur ffmpeg-7.1.2.old/fftools/ffmpeg_sched.c ffmpeg-7.1.2/fftools/ffmpeg_s
  
  #include "cmdutils.h"
  #include "ffmpeg_sched.h"
-diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_common_c.h ffmpeg-7.1.2/libavdevice/decklink_common_c.h
---- ffmpeg-7.1.2.old/libavdevice/decklink_common_c.h	2025-10-27 10:07:00.829476109 +0100
-+++ ffmpeg-7.1.2/libavdevice/decklink_common_c.h	2025-10-27 10:07:02.003002589 +0100
+diff -Naur ffmpeg-8.0.1.old/libavdevice/decklink_common_c.h ffmpeg-8.0.1/libavdevice/decklink_common_c.h
+--- ffmpeg-8.0.1.old/libavdevice/decklink_common_c.h	2026-02-12 18:12:37.664510724 +0100
++++ ffmpeg-8.0.1/libavdevice/decklink_common_c.h	2026-02-12 18:12:38.698036776 +0100
 @@ -74,6 +74,7 @@
      int64_t timestamp_align;
      int timing_offset;
@@ -34,9 +34,9 @@ diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_common_c.h ffmpeg-7.1.2/libavde
      DecklinkSignalLossAction signal_loss_action;
  };
  
-diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_common.cpp ffmpeg-7.1.2/libavdevice/decklink_common.cpp
---- ffmpeg-7.1.2.old/libavdevice/decklink_common.cpp	2025-10-27 10:07:00.828476101 +0100
-+++ ffmpeg-7.1.2/libavdevice/decklink_common.cpp	2025-10-27 10:07:02.003115933 +0100
+diff -Naur ffmpeg-8.0.1.old/libavdevice/decklink_common.cpp ffmpeg-8.0.1/libavdevice/decklink_common.cpp
+--- ffmpeg-8.0.1.old/libavdevice/decklink_common.cpp	2026-02-12 18:12:37.663510712 +0100
++++ ffmpeg-8.0.1/libavdevice/decklink_common.cpp	2026-02-12 18:12:38.698140271 +0100
 @@ -25,7 +25,7 @@
  #include "libavformat/internal.h"
  }
@@ -82,9 +82,9 @@ diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_common.cpp ffmpeg-7.1.2/libavde
                  input_config->Release();
                  add = 1;
              }
-diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_common.h ffmpeg-7.1.2/libavdevice/decklink_common.h
---- ffmpeg-7.1.2.old/libavdevice/decklink_common.h	2025-10-27 10:07:00.831476127 +0100
-+++ ffmpeg-7.1.2/libavdevice/decklink_common.h	2025-10-27 10:07:02.003408083 +0100
+diff -Naur ffmpeg-8.0.1.old/libavdevice/decklink_common.h ffmpeg-8.0.1/libavdevice/decklink_common.h
+--- ffmpeg-8.0.1.old/libavdevice/decklink_common.h	2026-02-12 18:12:37.665510736 +0100
++++ ffmpeg-8.0.1/libavdevice/decklink_common.h	2026-02-12 18:12:38.698395682 +0100
 @@ -93,8 +93,8 @@
  struct decklink_ctx {
      /* DeckLink SDK interfaces */
@@ -126,9 +126,9 @@ diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_common.h ffmpeg-7.1.2/libavdevi
  
  #endif /* AVDEVICE_DECKLINK_COMMON_H */
 +
-diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_dec.cpp ffmpeg-7.1.2/libavdevice/decklink_dec.cpp
---- ffmpeg-7.1.2.old/libavdevice/decklink_dec.cpp	2025-10-27 10:07:00.828476101 +0100
-+++ ffmpeg-7.1.2/libavdevice/decklink_dec.cpp	2025-10-27 10:07:02.003669356 +0100
+diff -Naur ffmpeg-8.0.1.old/libavdevice/decklink_dec.cpp ffmpeg-8.0.1/libavdevice/decklink_dec.cpp
+--- ffmpeg-8.0.1.old/libavdevice/decklink_dec.cpp	2026-02-12 18:12:37.663510712 +0100
++++ ffmpeg-8.0.1/libavdevice/decklink_dec.cpp	2026-02-12 18:12:38.698620255 +0100
 @@ -31,7 +31,7 @@
  #include "libavformat/internal.h"
  }
@@ -271,9 +271,9 @@ diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_dec.cpp ffmpeg-7.1.2/libavdevic
          av_log(avctx, AV_LOG_ERROR, "Could not open input device from '%s'\n",
                 avctx->url);
          ret = AVERROR(EIO);
-diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_enc_c.c ffmpeg-7.1.2/libavdevice/decklink_enc_c.c
---- ffmpeg-7.1.2.old/libavdevice/decklink_enc_c.c	2025-10-27 10:07:00.833476145 +0100
-+++ ffmpeg-7.1.2/libavdevice/decklink_enc_c.c	2025-10-27 10:07:02.004050964 +0100
+diff -Naur ffmpeg-8.0.1.old/libavdevice/decklink_enc_c.c ffmpeg-8.0.1/libavdevice/decklink_enc_c.c
+--- ffmpeg-8.0.1.old/libavdevice/decklink_enc_c.c	2026-02-12 18:12:37.667510761 +0100
++++ ffmpeg-8.0.1/libavdevice/decklink_enc_c.c	2026-02-12 18:12:38.698973540 +0100
 @@ -32,6 +32,7 @@
      { "list_devices", "use ffmpeg -sinks decklink instead", OFFSET(list_devices), AV_OPT_TYPE_BOOL, { .i64 = 0   }, 0, 1, ENC | AV_OPT_FLAG_DEPRECATED},
      { "list_formats", "list supported formats"  , OFFSET(list_formats), AV_OPT_TYPE_INT   , { .i64 = 0   }, 0, 1, ENC },
@@ -282,9 +282,9 @@ diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_enc_c.c ffmpeg-7.1.2/libavdevic
      { "vanc_queue_size", "VANC queue buffer size", OFFSET(vanc_queue_size), AV_OPT_TYPE_INT64, { .i64 = (1024 * 1024)}, 0, INT64_MAX, ENC },
  #if BLACKMAGIC_DECKLINK_API_VERSION >= 0x0b000000
      { "duplex_mode" , "duplex mode"             , OFFSET(duplex_mode ), AV_OPT_TYPE_INT   , { .i64 = 0   }, 0, 5, ENC, .unit = "duplex_mode"},
-diff -Naur ffmpeg-7.1.2.old/libavdevice/decklink_enc.cpp ffmpeg-7.1.2/libavdevice/decklink_enc.cpp
---- ffmpeg-7.1.2.old/libavdevice/decklink_enc.cpp	2025-10-27 10:07:00.832476136 +0100
-+++ ffmpeg-7.1.2/libavdevice/decklink_enc.cpp	2025-10-27 10:07:02.004296918 +0100
+diff -Naur ffmpeg-8.0.1.old/libavdevice/decklink_enc.cpp ffmpeg-8.0.1/libavdevice/decklink_enc.cpp
+--- ffmpeg-8.0.1.old/libavdevice/decklink_enc.cpp	2026-02-12 18:12:37.666510748 +0100
++++ ffmpeg-8.0.1/libavdevice/decklink_enc.cpp	2026-02-12 18:12:38.699182434 +0100
 @@ -20,6 +20,8 @@
   */
  

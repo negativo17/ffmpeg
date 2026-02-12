@@ -1,4 +1,4 @@
-%bcond bootstrap 0
+%bcond bootstrap 1
 
 %if %{with bootstrap}
 %bcond chromaprint 0
@@ -9,20 +9,22 @@
 %endif
 
 %global _lto_cflags %{nil}
+%ifarch %{ix86}
+%global _pkg_extra_ldflags "-Wl,-z,notext"
+%endif
 
-%global avcodec_soversion 61
-%global avdevice_soversion 61
-%global avfilter_soversion 10
-%global avformat_soversion 61
-%global avutil_soversion 59
-%global postproc_soversion 58
-%global swresample_soversion 5
-%global swscale_soversion 8
+%global avcodec_soversion 62
+%global avdevice_soversion 62
+%global avfilter_soversion 11
+%global avformat_soversion 62
+%global avutil_soversion 60
+%global swresample_soversion 6
+%global swscale_soversion 9
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        7.1.3
-Release:        2%{?dist}
+Version:        8.0.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -31,17 +33,13 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/8902805364f00e0d420c4d4b33053a31d27045ab
+# https://github.com/HandBrake/HandBrake/tree/d3a39115d76774ded7ea82f87063618d0a6b460e
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch2:         %{name}-chromium.patch
 # Fix build with recent NVCC:
 Patch3:         %{name}-nvcc.patch
-# https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/f8a300c6739ea2ca648579d7faf3ae9811b9f19a
-Patch4:         %{name}-cuda-13.patch
-# Support LCEVCdec 4.0+:
-Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
 # https://github.com/magarnicle/FFmpeg/commits/DeckLink_SDK_14_4/
 Patch6:         %{name}-decklink-14.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2345698
@@ -81,6 +79,7 @@ BuildRequires:  subversion
 BuildRequires:  texinfo
 BuildRequires:  twolame-devel >= 0.3.10
 BuildRequires:  vo-amrwbenc-devel
+#BuildRequires:  whisper-cpp-devel >= 1.7.5
 BuildRequires:  xvidcore-devel
 BuildRequires:  xz-devel
 
@@ -139,6 +138,7 @@ BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
 #BuildRequires:  pkgconfig(OpenCL)
+BuildRequires:  pkgconfig(oapv) >= 0.2.0.0
 #BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
@@ -204,7 +204,6 @@ Requires:       libavdevice%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavformat%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -222,7 +221,6 @@ Requires:       libavdevice-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavfilter-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavformat-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libpostproc-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
@@ -286,7 +284,6 @@ Summary:        FFmpeg audio and video filtering library
 Requires:       libavcodec%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavformat%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes:      libavfilter-free < %{epoch}:%{version}-%{release}
@@ -302,7 +299,6 @@ Requires:       libavcodec-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavformat-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libpostproc-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswresample-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       libswscale-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
@@ -356,27 +352,6 @@ Provides:       libavutil-free-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavutil-devel
 This subpackage contains the headers for FFmpeg libavutil.
-
-%package     -n libpostproc
-Summary:        FFmpeg post-processing library
-Obsoletes:      libpostproc-free < %{epoch}:%{version}-%{release}
-Provides:       libpostproc-free = %{epoch}:%{version}-%{release}
-
-%description -n libpostproc
-A library with video postprocessing filters, such as deblocking and
-deringing filters, noise reduction, automatic contrast and brightness
-correction, linear/cubic interpolating deinterlacing.
-
-%package     -n libpostproc-devel
-Summary:        Development files for the FFmpeg post-processing library
-Requires:       libavutil-devel%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libpostproc%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       pkgconfig
-Obsoletes:      libpostproc-free-devel < %{epoch}:%{version}-%{release}
-Provides:       libpostproc-free-devel = %{epoch}:%{version}-%{release}
-
-%description -n libpostproc-devel
-This subpackage contains the headers for FFmpeg libpostproc.
 
 %package     -n libswresample
 Summary:        FFmpeg software resampling library
@@ -496,6 +471,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libmp3lame \
     --enable-libmysofa \
     --disable-libnpp \
+    --enable-liboapv \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
     --disable-libopencv \
@@ -558,7 +534,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-opencl \
     --enable-opengl \
     --enable-openssl \
-    --enable-postproc \
     --enable-sdl2 \
     --enable-shared \
     --enable-swresample \
@@ -569,6 +544,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-version3 \
     --enable-vdpau \
     --enable-vulkan \
+    --disable-whisper \
     --enable-xlib \
     --enable-zlib \
     --extra-ldflags="%{build_ldflags}" \
@@ -672,15 +648,6 @@ mv doc/*.html doc/html
 %{_libdir}/libavutil.so
 %{_mandir}/man3/libavutil.3*
 
-%files -n libpostproc
-%license COPYING.GPLv2 LICENSE.md
-%{_libdir}/libpostproc.so.%{postproc_soversion}*
-
-%files -n libpostproc-devel
-%{_includedir}/libpostproc
-%{_libdir}/pkgconfig/libpostproc.pc
-%{_libdir}/libpostproc.so
-
 %files -n libswresample
 %license COPYING.GPLv2 LICENSE.md
 %{_libdir}/libswresample.so.%{swresample_soversion}*
@@ -702,6 +669,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Thu Feb 12 2026 Simone Caronni <negativo17@gmail.com> - 1:8.0.1-1
+- Update to 8.0.1.
+- Enable APV support.
+
 * Fri Jan 23 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.3-2
 - Rebuild for updated dependencies.
 
