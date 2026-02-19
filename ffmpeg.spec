@@ -24,7 +24,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        8.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -335,6 +335,11 @@ This subpackage contains the headers for FFmpeg libavformat.
 Summary:        FFmpeg's utility library
 Obsoletes:      libavutil-free < %{epoch}:%{version}-%{release}
 Provides:       libavutil-free = %{epoch}:%{version}-%{release}
+# FFMpeg 8.0 has removed libpostproc
+Obsoletes:      libpostproc-free < %{epoch}:%{version}-%{release}
+Provides:       libpostproc-free = %{epoch}:%{version}-%{release}
+Obsoletes:      libpostproc < %{epoch}:%{version}-%{release}
+Provides:       libpostproc = %{epoch}:%{version}-%{release}
 
 %description -n libavutil
 The libavutil library is a utility library to aid portable multimedia
@@ -349,6 +354,11 @@ Requires:       libavutil%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       pkgconfig
 Obsoletes:      libavutil-free-devel < %{epoch}:%{version}-%{release}
 Provides:       libavutil-free-devel = %{epoch}:%{version}-%{release}
+# FFMpeg 8.0 has removed libpostproc
+Obsoletes:      libpostproc-free-devel < %{epoch}:%{version}-%{release}
+Provides:       libpostproc-free-devel = %{epoch}:%{version}-%{release}
+Obsoletes:      libpostproc-devel < %{epoch}:%{version}-%{release}
+Provides:       libpostproc-devel = %{epoch}:%{version}-%{release}
 
 %description -n libavutil-devel
 This subpackage contains the headers for FFmpeg libavutil.
@@ -669,6 +679,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Thu Feb 19 2026 Simone Caronni <negativo17@gmail.com> - 1:8.0.1-2
+- Obsolete libpostproc.
+
 * Thu Feb 12 2026 Simone Caronni <negativo17@gmail.com> - 1:8.0.1-1
 - Update to 8.0.1.
 - Enable APV support.
