@@ -33,7 +33,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/d3a39115d76774ded7ea82f87063618d0a6b460e
+# https://github.com/HandBrake/HandBrake/tree/2c5ed0042f145e43c4bd1d2f1fdb80844e65f3a7
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560

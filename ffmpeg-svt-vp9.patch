@@ -1,6 +1,6 @@
 diff -Naur ffmpeg-8.0.1.old/configure ffmpeg-8.0.1/configure
---- ffmpeg-8.0.1.old/configure	2026-02-12 18:12:37.503508756 +0100
-+++ ffmpeg-8.0.1/configure	2026-02-12 18:12:38.065456609 +0100
+--- ffmpeg-8.0.1.old/configure	2026-03-10 10:00:58.102559577 +0100
++++ ffmpeg-8.0.1/configure	2026-03-10 10:00:58.530928613 +0100
 @@ -278,6 +278,7 @@
    --enable-libsrt          enable Haivision SRT protocol via libsrt [no]
    --enable-libssh          enable SFTP protocol via libssh [no]
@@ -34,8 +34,8 @@ diff -Naur ffmpeg-8.0.1.old/configure ffmpeg-8.0.1/configure
  enabled libvmaf           && require_pkg_config libvmaf "libvmaf >= 2.0.0" libvmaf.h vmaf_init
  enabled libvmaf           && check_pkg_config libvmaf_cuda "libvmaf >= 2.0.0" libvmaf_cuda.h vmaf_cuda_state_init
 diff -Naur ffmpeg-8.0.1.old/libavcodec/allcodecs.c ffmpeg-8.0.1/libavcodec/allcodecs.c
---- ffmpeg-8.0.1.old/libavcodec/allcodecs.c	2026-02-12 18:12:37.390507375 +0100
-+++ ffmpeg-8.0.1/libavcodec/allcodecs.c	2026-02-12 18:12:38.066771035 +0100
+--- ffmpeg-8.0.1.old/libavcodec/allcodecs.c	2026-03-10 10:00:58.023558651 +0100
++++ ffmpeg-8.0.1/libavcodec/allcodecs.c	2026-03-10 10:00:58.532243661 +0100
 @@ -809,6 +809,7 @@
  extern const FFCodec ff_libvo_amrwbenc_encoder;
  extern const FFCodec ff_libvorbis_encoder;
@@ -46,7 +46,7 @@ diff -Naur ffmpeg-8.0.1.old/libavcodec/allcodecs.c ffmpeg-8.0.1/libavcodec/allco
  extern FFCodec ff_libvpx_vp9_encoder;
 diff -Naur ffmpeg-8.0.1.old/libavcodec/libsvt_vp9.c ffmpeg-8.0.1/libavcodec/libsvt_vp9.c
 --- ffmpeg-8.0.1.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-8.0.1/libavcodec/libsvt_vp9.c	2026-02-12 18:12:38.067141083 +0100
++++ ffmpeg-8.0.1/libavcodec/libsvt_vp9.c	2026-03-10 10:00:58.532522466 +0100
 @@ -0,0 +1,701 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
@@ -750,8 +750,8 @@ diff -Naur ffmpeg-8.0.1.old/libavcodec/libsvt_vp9.c ffmpeg-8.0.1/libavcodec/libs
 +    .p.wrapper_name   = "libsvt_vp9",
 +};
 diff -Naur ffmpeg-8.0.1.old/libavcodec/Makefile ffmpeg-8.0.1/libavcodec/Makefile
---- ffmpeg-8.0.1.old/libavcodec/Makefile	2026-02-12 18:12:37.124504124 +0100
-+++ ffmpeg-8.0.1/libavcodec/Makefile	2026-02-12 18:12:38.067350988 +0100
+--- ffmpeg-8.0.1.old/libavcodec/Makefile	2026-03-10 10:00:57.848556599 +0100
++++ ffmpeg-8.0.1/libavcodec/Makefile	2026-03-10 10:00:58.532842559 +0100
 @@ -1191,6 +1191,7 @@
  OBJS-$(CONFIG_LIBVORBIS_DECODER)          += libvorbisdec.o
  OBJS-$(CONFIG_LIBVORBIS_ENCODER)          += libvorbisenc.o \

@@ -1,6 +1,6 @@
 diff -Naur ffmpeg-8.0.1.old/configure ffmpeg-8.0.1/configure
---- ffmpeg-8.0.1.old/configure	2026-02-12 18:12:38.550521554 +0100
-+++ ffmpeg-8.0.1/configure	2026-02-12 18:12:38.841782417 +0100
+--- ffmpeg-8.0.1.old/configure	2026-03-10 10:00:59.046570646 +0100
++++ ffmpeg-8.0.1/configure	2026-03-10 10:00:59.330954510 +0100
 @@ -4801,7 +4801,7 @@
  
  if enabled cuda_nvcc; then
