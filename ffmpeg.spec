@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -42,11 +42,12 @@ Patch3:         %{name}-nvcc.patch
 Patch4:         %{name}-cuda-13.patch
 # Support LCEVCdec 4.0+:
 Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
-# https://github.com/magarnicle/FFmpeg/commits/DeckLink_SDK_14_4/
-Patch6:         %{name}-decklink-14.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2345698
 # Currently set at 0, be changed every time vapoursynth changes ABI:
 Patch7:         %{name}-vapoursynth-script-soname.patch
+# Add support for newer DeckLink SDK:
+Patch8:         https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/0cd75dbfa0fc6c213cf9240b3c03c809070c5209.patch
+Patch9:         https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/27e94281d1c880b4cae28738e35c0d6f9a58f06b.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -702,6 +703,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon May 04 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.3-3
+- Backport patches for newer DeckLink SDK.
+
 * Fri Jan 23 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.3-2
 - Rebuild for updated dependencies.
 
