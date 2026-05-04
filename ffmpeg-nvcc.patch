@@ -1,16 +1,16 @@
-diff -Naur ffmpeg-8.0.1.old/configure ffmpeg-8.0.1/configure
---- ffmpeg-8.0.1.old/configure	2026-03-10 10:00:59.046570646 +0100
-+++ ffmpeg-8.0.1/configure	2026-03-10 10:00:59.330954510 +0100
-@@ -4801,7 +4801,7 @@
+diff -Naur ffmpeg-8.1.1.old/configure ffmpeg-8.1.1/configure
+--- ffmpeg-8.1.1.old/configure	2026-05-04 14:51:54.969446038 +0200
++++ ffmpeg-8.1.1/configure	2026-05-04 14:51:55.124837175 +0200
+@@ -4984,7 +4984,7 @@
  
  if enabled cuda_nvcc; then
      if $nvcc $nvccflags_default 2>&1 | grep -qi unsupported; then
 -        nvccflags_default="-gencode arch=compute_60,code=sm_60 -O2"
 +        nvccflags_default="-gencode arch=compute_75,code=sm_75 -O2"
      fi
- fi
- 
-@@ -6895,7 +6895,7 @@
+     if $nvcc $nvccflags_default 2>&1 | grep -qi unsupported; then
+         nvccflags_default="-gencode arch=compute_75,code=sm_75 -O2"
+@@ -7108,7 +7108,7 @@
      nvccflags=$nvccflags_default
  fi
  

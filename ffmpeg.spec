@@ -23,8 +23,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        8.0.1
-Release:        3%{?dist}
+Version:        8.1.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -33,15 +33,13 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/2c5ed0042f145e43c4bd1d2f1fdb80844e65f3a7
+# https://github.com/HandBrake/HandBrake/tree/c2e9183ce116bae1eb10ca796d271768132cf21a
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
 Patch2:         %{name}-chromium.patch
 # Fix build with recent NVCC:
 Patch3:         %{name}-nvcc.patch
-# https://github.com/magarnicle/FFmpeg/commits/DeckLink_SDK_14_4/
-Patch6:         %{name}-decklink-14.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2345698
 # Currently set at 0, be changed every time vapoursynth changes ABI:
 Patch7:         %{name}-vapoursynth-script-soname.patch
@@ -679,6 +677,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon May 04 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.1-1
+- Update to 8.1.1.
+- Drop DeckLink SDK patch.
+
 * Mon Mar 23 2026 Simone Caronni <negativo17@gmail.com> - 1:8.0.1-3
 - Rebuilt for updated dependencies.
 
