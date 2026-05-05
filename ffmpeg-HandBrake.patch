@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-7.1.2.old/configure ffmpeg-7.1.2/configure
---- ffmpeg-7.1.2.old/configure	2025-10-27 10:07:02.407490033 +0100
-+++ ffmpeg-7.1.2/configure	2025-10-27 10:07:02.458434476 +0100
+diff -Naur ffmpeg-7.1.4.old/configure ffmpeg-7.1.4/configure
+--- ffmpeg-7.1.4.old/configure	2026-05-05 08:18:38.574482787 +0200
++++ ffmpeg-7.1.4/configure	2026-05-05 08:18:38.619413139 +0200
 @@ -2466,6 +2466,7 @@
      kCMVideoCodecType_HEVC
      kCMVideoCodecType_HEVCWithAlpha
@@ -34,453 +34,9 @@ diff -Naur ffmpeg-7.1.2.old/configure ffmpeg-7.1.2/configure
      check_func_headers CoreVideo/CVPixelBuffer.h kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange "-framework CoreVideo"
      check_func_headers CoreVideo/CVPixelBuffer.h kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange "-framework CoreVideo"
      check_func_headers CoreVideo/CVPixelBuffer.h kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange "-framework CoreVideo"
-diff -Naur ffmpeg-7.1.2.old/libavcodec/ac3dec.c ffmpeg-7.1.2/libavcodec/ac3dec.c
---- ffmpeg-7.1.2.old/libavcodec/ac3dec.c	2025-10-27 10:07:00.254471036 +0100
-+++ ffmpeg-7.1.2/libavcodec/ac3dec.c	2025-10-27 10:07:02.463169316 +0100
-@@ -253,72 +253,6 @@
- }
- 
- /**
-- * Parse the 'sync info' and 'bit stream info' from the AC-3 bitstream.
-- * GetBitContext within AC3DecodeContext must point to
-- * the start of the synchronized AC-3 bitstream.
-- */
--static int ac3_parse_header(AC3DecodeContext *s)
--{
--    GetBitContext *gbc = &s->gbc;
--    int i;
--
--    /* read the rest of the bsi. read twice for dual mono mode. */
--    i = !s->channel_mode;
--    do {
--        s->dialog_normalization[(!s->channel_mode)-i] = -get_bits(gbc, 5);
--        if (s->dialog_normalization[(!s->channel_mode)-i] == 0) {
--            s->dialog_normalization[(!s->channel_mode)-i] = -31;
--        }
--        if (s->target_level != 0) {
--            s->level_gain[(!s->channel_mode)-i] = powf(2.0f,
--                (float)(s->target_level -
--                s->dialog_normalization[(!s->channel_mode)-i])/6.0f);
--        }
--        if (s->compression_exists[(!s->channel_mode)-i] = get_bits1(gbc)) {
--            s->heavy_dynamic_range[(!s->channel_mode)-i] =
--                AC3_HEAVY_RANGE(get_bits(gbc, 8));
--        }
--        if (get_bits1(gbc))
--            skip_bits(gbc, 8); //skip language code
--        if (get_bits1(gbc))
--            skip_bits(gbc, 7); //skip audio production information
--    } while (i--);
--
--    skip_bits(gbc, 2); //skip copyright bit and original bitstream bit
--
--    /* skip the timecodes or parse the Alternate Bit Stream Syntax */
--    if (s->bitstream_id != 6) {
--        if (get_bits1(gbc))
--            skip_bits(gbc, 14); //skip timecode1
--        if (get_bits1(gbc))
--            skip_bits(gbc, 14); //skip timecode2
--    } else {
--        if (get_bits1(gbc)) {
--            s->preferred_downmix       = get_bits(gbc, 2);
--            s->center_mix_level_ltrt   = get_bits(gbc, 3);
--            s->surround_mix_level_ltrt = av_clip(get_bits(gbc, 3), 3, 7);
--            s->center_mix_level        = get_bits(gbc, 3);
--            s->surround_mix_level      = av_clip(get_bits(gbc, 3), 3, 7);
--        }
--        if (get_bits1(gbc)) {
--            s->dolby_surround_ex_mode = get_bits(gbc, 2);
--            s->dolby_headphone_mode   = get_bits(gbc, 2);
--            skip_bits(gbc, 10); // skip adconvtyp (1), xbsi2 (8), encinfo (1)
--        }
--    }
--
--    /* skip additional bitstream info */
--    if (get_bits1(gbc)) {
--        i = get_bits(gbc, 6);
--        do {
--            skip_bits(gbc, 8);
--        } while (i--);
--    }
--
--    return 0;
--}
--
--/**
-  * Common function to parse AC-3 or E-AC-3 frame header
-  */
- static int parse_frame_header(AC3DecodeContext *s)
-@@ -375,10 +309,25 @@
-         s->dba_syntax            = 1;
-         s->skip_syntax           = 1;
-         memset(s->channel_uses_aht, 0, sizeof(s->channel_uses_aht));
--        return ac3_parse_header(s);
-+        /* volume control params */
-+        for (int i = 0; i < (s->channel_mode ? 1 : 2); i++) {
-+            s->dialog_normalization[i] = hdr.dialog_normalization[i];
-+            if (s->dialog_normalization[i] == 0) {
-+                s->dialog_normalization[i] = -31;
-+            }
-+            if (s->target_level != 0) {
-+                s->level_gain[i] = powf(2.0f,
-+                    (float)(s->target_level - s->dialog_normalization[i])/6.0f);
-+            }
-+            s->compression_exists[i] = hdr.compression_exists[i];
-+            if (s->compression_exists[i]) {
-+                s->heavy_dynamic_range[i] = AC3_HEAVY_RANGE(hdr.heavy_dynamic_range[i]);
-+            }
-+        }
-+        return 0;
-     } else if (CONFIG_EAC3_DECODER) {
-         s->eac3 = 1;
--        return ff_eac3_parse_header(s);
-+        return ff_eac3_parse_header(s, &hdr);
-     } else {
-         av_log(s->avctx, AV_LOG_ERROR, "E-AC-3 support not compiled in\n");
-         return AVERROR(ENOSYS);
-@@ -1562,6 +1511,9 @@
-                 av_log(avctx, AV_LOG_ERROR, "invalid frame type\n");
-             }
-             break;
-+        case AC3_PARSE_ERROR_CHANNEL_MAP:
-+            av_log(avctx, AV_LOG_ERROR, "invalid channel map\n");
-+            return AVERROR_INVALIDDATA;
-         case AC3_PARSE_ERROR_CRC:
-             break;
-         default: // Normal AVERROR do not try to recover.
-diff -Naur ffmpeg-7.1.2.old/libavcodec/ac3dec.h ffmpeg-7.1.2/libavcodec/ac3dec.h
---- ffmpeg-7.1.2.old/libavcodec/ac3dec.h	2025-10-27 10:07:00.587473974 +0100
-+++ ffmpeg-7.1.2/libavcodec/ac3dec.h	2025-10-27 10:07:02.463287298 +0100
-@@ -255,11 +255,12 @@
-     AVChannelLayout downmix_layout;
- } AC3DecodeContext;
- 
-+struct AC3HeaderInfo;
- /**
-  * Parse the E-AC-3 frame header.
-  * This parses both the bit stream info and audio frame header.
-  */
--static int ff_eac3_parse_header(AC3DecodeContext *s);
-+static int ff_eac3_parse_header(AC3DecodeContext *s, const struct AC3HeaderInfo *hdr);
- 
- /**
-  * Decode mantissas in a single channel for the entire frame.
-diff -Naur ffmpeg-7.1.2.old/libavcodec/ac3defs.h ffmpeg-7.1.2/libavcodec/ac3defs.h
---- ffmpeg-7.1.2.old/libavcodec/ac3defs.h	2025-10-27 10:07:00.586473965 +0100
-+++ ffmpeg-7.1.2/libavcodec/ac3defs.h	2025-10-27 10:07:02.463340118 +0100
-@@ -34,6 +34,8 @@
- #define AC3_CRITICAL_BANDS 50
- #define AC3_MAX_CPL_BANDS  18
- 
-+#define EAC3_SR_CODE_REDUCED 3
-+
- /* exponent encoding strategy */
- #define EXP_REUSE 0
- #define EXP_NEW   1
-diff -Naur ffmpeg-7.1.2.old/libavcodec/ac3_parser.c ffmpeg-7.1.2/libavcodec/ac3_parser.c
---- ffmpeg-7.1.2.old/libavcodec/ac3_parser.c	2025-10-27 10:07:00.290471354 +0100
-+++ ffmpeg-7.1.2/libavcodec/ac3_parser.c	2025-10-27 10:07:02.462962336 +0100
-@@ -73,6 +73,217 @@
-     return i;
- }
- 
-+/**
-+ * Parse the 'sync info' and 'bit stream info' from the AC-3 bitstream.
-+ * GetBitContext within AC3DecodeContext must point to
-+ * the start of the synchronized AC-3 bitstream.
-+ */
-+static int ac3_parse_header(GetBitContext *gbc, AC3HeaderInfo *hdr)
-+{
-+    /* read the rest of the bsi. read twice for dual mono mode. */
-+    for (int i = 0; i < (hdr->channel_mode ? 1 : 2); i++) {
-+        hdr->dialog_normalization[i] = -get_bits(gbc, 5);
-+        hdr->compression_exists[i] = get_bits1(gbc);
-+        if (hdr->compression_exists[i])
-+            hdr->heavy_dynamic_range[i] = get_bits(gbc, 8);
-+        if (get_bits1(gbc))
-+            skip_bits(gbc, 8); //skip language code
-+        if (get_bits1(gbc))
-+            skip_bits(gbc, 7); //skip audio production information
-+    }
-+
-+    skip_bits(gbc, 2); //skip copyright bit and original bitstream bit
-+
-+    /* skip the timecodes or parse the Alternate Bit Stream Syntax */
-+    if (hdr->bitstream_id != 6) {
-+        if (get_bits1(gbc))
-+            skip_bits(gbc, 14); //skip timecode1
-+        if (get_bits1(gbc))
-+            skip_bits(gbc, 14); //skip timecode2
-+    } else {
-+        if (get_bits1(gbc)) {
-+            hdr->preferred_downmix       = get_bits(gbc, 2);
-+            hdr->center_mix_level_ltrt   = get_bits(gbc, 3);
-+            hdr->surround_mix_level_ltrt = av_clip(get_bits(gbc, 3), 3, 7);
-+            hdr->center_mix_level        = get_bits(gbc, 3);
-+            hdr->surround_mix_level      = av_clip(get_bits(gbc, 3), 3, 7);
-+        }
-+        if (get_bits1(gbc)) {
-+            hdr->dolby_surround_ex_mode = get_bits(gbc, 2);
-+            hdr->dolby_headphone_mode   = get_bits(gbc, 2);
-+            skip_bits(gbc, 10); // skip adconvtyp (1), xbsi2 (8), encinfo (1)
-+        }
-+    }
-+
-+    /* skip additional bitstream info */
-+    if (get_bits1(gbc)) {
-+        int i = get_bits(gbc, 6);
-+        do {
-+            skip_bits(gbc, 8);
-+        } while (i--);
-+    }
-+
-+    return 0;
-+}
-+
-+static int eac3_parse_header(GetBitContext *gbc, AC3HeaderInfo *hdr)
-+{
-+    if (hdr->frame_type == EAC3_FRAME_TYPE_RESERVED)
-+        return AC3_PARSE_ERROR_FRAME_TYPE;
-+    if (hdr->substreamid)
-+        return AC3_PARSE_ERROR_FRAME_TYPE;
-+
-+    skip_bits(gbc, 5); // skip bitstream id
-+
-+    /* volume control params */
-+    for (int i = 0; i < (hdr->channel_mode ? 1 : 2); i++) {
-+        hdr->dialog_normalization[i] = -get_bits(gbc, 5);
-+        hdr->compression_exists[i] = get_bits1(gbc);
-+        if (hdr->compression_exists[i])
-+            hdr->heavy_dynamic_range[i] = get_bits(gbc, 8);
-+    }
-+
-+    /* dependent stream channel map */
-+    if (hdr->frame_type == EAC3_FRAME_TYPE_DEPENDENT) {
-+        hdr->channel_map_present = get_bits1(gbc);
-+        if (hdr->channel_map_present) {
-+            int64_t channel_layout = 0;
-+            int channel_map = get_bits(gbc, 16);
-+
-+            for (int i = 0; i < 16; i++)
-+                if (channel_map & (1 << (EAC3_MAX_CHANNELS - i - 1)))
-+                    channel_layout |= ff_eac3_custom_channel_map_locations[i][1];
-+
-+            if (av_popcount64(channel_layout) > EAC3_MAX_CHANNELS) {
-+                return AC3_PARSE_ERROR_CHANNEL_MAP;
-+            }
-+            hdr->channel_map = channel_map;
-+        }
-+    }
-+
-+    /* mixing metadata */
-+    if (get_bits1(gbc)) {
-+        /* center and surround mix levels */
-+        if (hdr->channel_mode > AC3_CHMODE_STEREO) {
-+            hdr->preferred_downmix = get_bits(gbc, 2);
-+            if (hdr->channel_mode & 1) {
-+                /* if three front channels exist */
-+                hdr->center_mix_level_ltrt = get_bits(gbc, 3);
-+                hdr->center_mix_level      = get_bits(gbc, 3);
-+            }
-+            if (hdr->channel_mode & 4) {
-+                /* if a surround channel exists */
-+                hdr->surround_mix_level_ltrt = av_clip(get_bits(gbc, 3), 3, 7);
-+                hdr->surround_mix_level      = av_clip(get_bits(gbc, 3), 3, 7);
-+            }
-+        }
-+
-+        /* lfe mix level */
-+        if (hdr->lfe_on && (hdr->lfe_mix_level_exists = get_bits1(gbc))) {
-+            hdr->lfe_mix_level = get_bits(gbc, 5);
-+        }
-+
-+        /* info for mixing with other streams and substreams */
-+        if (hdr->frame_type == EAC3_FRAME_TYPE_INDEPENDENT) {
-+            for (int i = 0; i < (hdr->channel_mode ? 1 : 2); i++) {
-+                // TODO: apply program scale factor
-+                if (get_bits1(gbc)) {
-+                    skip_bits(gbc, 6);  // skip program scale factor
-+                }
-+            }
-+            if (get_bits1(gbc)) {
-+                skip_bits(gbc, 6);  // skip external program scale factor
-+            }
-+            /* skip mixing parameter data */
-+            switch(get_bits(gbc, 2)) {
-+                case 1: skip_bits(gbc, 5);  break;
-+                case 2: skip_bits(gbc, 12); break;
-+                case 3: {
-+                    int mix_data_size = (get_bits(gbc, 5) + 2) << 3;
-+                    skip_bits_long(gbc, mix_data_size);
-+                    break;
-+                }
-+            }
-+            /* skip pan information for mono or dual mono source */
-+            if (hdr->channel_mode < AC3_CHMODE_STEREO) {
-+                for (int i = 0; i < (hdr->channel_mode ? 1 : 2); i++) {
-+                    if (get_bits1(gbc)) {
-+                        /* note: this is not in the ATSC A/52B specification
-+                           reference: ETSI TS 102 366 V1.1.1
-+                                      section: E.1.3.1.25 */
-+                        skip_bits(gbc, 8);  // skip pan mean direction index
-+                        skip_bits(gbc, 6);  // skip reserved paninfo bits
-+                    }
-+                }
-+            }
-+            /* skip mixing configuration information */
-+            if (get_bits1(gbc)) {
-+                for (int i = 0; i < hdr->num_blocks; i++) {
-+                    if (hdr->num_blocks == 1 || get_bits1(gbc)) {
-+                        skip_bits(gbc, 5);
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    /* informational metadata */
-+    if (get_bits1(gbc)) {
-+        hdr->bitstream_mode = get_bits(gbc, 3);
-+        skip_bits(gbc, 2); // skip copyright bit and original bitstream bit
-+        if (hdr->channel_mode == AC3_CHMODE_STEREO) {
-+            hdr->dolby_surround_mode  = get_bits(gbc, 2);
-+            hdr->dolby_headphone_mode = get_bits(gbc, 2);
-+        }
-+        if (hdr->channel_mode >= AC3_CHMODE_2F2R) {
-+            hdr->dolby_surround_ex_mode = get_bits(gbc, 2);
-+        }
-+        for (int i = 0; i < (hdr->channel_mode ? 1 : 2); i++) {
-+            if (get_bits1(gbc)) {
-+                skip_bits(gbc, 8); // skip mix level, room type, and A/D converter type
-+            }
-+        }
-+        if (hdr->sr_code != EAC3_SR_CODE_REDUCED) {
-+            skip_bits1(gbc); // skip source sample rate code
-+        }
-+    }
-+
-+    /* converter synchronization flag
-+       If frames are less than six blocks, this bit should be turned on
-+       once every 6 blocks to indicate the start of a frame set.
-+       reference: RFC 4598, Section 2.1.3  Frame Sets */
-+    if (hdr->frame_type == EAC3_FRAME_TYPE_INDEPENDENT && hdr->num_blocks != 6) {
-+        skip_bits1(gbc); // skip converter synchronization flag
-+    }
-+
-+    /* original frame size code if this stream was converted from AC-3 */
-+    if (hdr->frame_type == EAC3_FRAME_TYPE_AC3_CONVERT &&
-+            (hdr->num_blocks == 6 || get_bits1(gbc))) {
-+        skip_bits(gbc, 6); // skip frame size code
-+    }
-+
-+    /* additional bitstream info */
-+    if (get_bits1(gbc)) {
-+        int addbsil = get_bits(gbc, 6);
-+        for (int i = 0; i < addbsil + 1; i++) {
-+            if (i == 0) {
-+                /* In this 8 bit chunk, the LSB is equal to flag_ec3_extension_type_a
-+                   which can be used to detect Atmos presence */
-+                skip_bits(gbc, 7);
-+                hdr->eac3_extension_type_a = get_bits1(gbc);
-+                if (hdr->eac3_extension_type_a) {
-+                    hdr->complexity_index_type_a = get_bits(gbc, 8);
-+                    i++;
-+                }
-+            } else {
-+                skip_bits(gbc, 8); // skip additional bit stream info
-+            }
-+        }
-+    }
-+
-+    return 0;
-+}
-+
- int ff_ac3_parse_header(GetBitContext *gbc, AC3HeaderInfo *hdr)
- {
-     int frame_size_code;
-@@ -133,6 +344,10 @@
-         hdr->frame_size = ff_ac3_frame_size_tab[frame_size_code][hdr->sr_code] * 2;
-         hdr->frame_type = EAC3_FRAME_TYPE_AC3_CONVERT; //EAC3_FRAME_TYPE_INDEPENDENT;
-         hdr->substreamid = 0;
-+
-+        int ret = ac3_parse_header(gbc, hdr);
-+        if (ret < 0)
-+            return ret;
-     } else {
-         /* Enhanced AC-3 */
-         hdr->crc1 = 0;
-@@ -165,6 +380,10 @@
-         hdr->bit_rate = 8LL * hdr->frame_size * hdr->sample_rate /
-                         (hdr->num_blocks * 256);
-         hdr->channels = ff_ac3_channels_tab[hdr->channel_mode] + hdr->lfe_on;
-+
-+        int ret = eac3_parse_header(gbc, hdr);
-+        if (ret < 0)
-+            return ret;
-     }
-     hdr->channel_layout = ff_ac3_channel_layout_tab[hdr->channel_mode];
-     if (hdr->lfe_on)
-@@ -202,9 +421,13 @@
- {
-     GetBitContext gb;
-     AC3HeaderInfo hdr;
-+    uint8_t tmp[32 + AV_INPUT_BUFFER_PADDING_SIZE];
-     int err;
- 
--    err = init_get_bits8(&gb, buf, size);
-+    size = FFMIN(32, size);
-+    memcpy(tmp, buf, size);
-+    memset(tmp + size, 0, AV_INPUT_BUFFER_PADDING_SIZE);
-+    err = init_get_bits8(&gb, tmp, size);
-     if (err < 0)
-         return AVERROR_INVALIDDATA;
-     err = ff_ac3_parse_header(&gb, &hdr);
-diff -Naur ffmpeg-7.1.2.old/libavcodec/ac3_parser_internal.h ffmpeg-7.1.2/libavcodec/ac3_parser_internal.h
---- ffmpeg-7.1.2.old/libavcodec/ac3_parser_internal.h	2025-10-27 10:07:00.519473374 +0100
-+++ ffmpeg-7.1.2/libavcodec/ac3_parser_internal.h	2025-10-27 10:07:02.463059088 +0100
-@@ -46,6 +46,7 @@
-     int substreamid;                        ///< substream identification
-     int center_mix_level;                   ///< Center mix level index
-     int surround_mix_level;                 ///< Surround mix level index
-+    uint8_t channel_map_present;
-     uint16_t channel_map;
-     int num_blocks;                         ///< number of audio blocks
-     int dolby_surround_mode;
-@@ -62,6 +63,23 @@
-     uint64_t channel_layout;
-     int8_t ac3_bit_rate_code;
-     /** @} */
-+
-+    /** @name enhanced eac3 extension coded elements
-+     * @{
-+     */
-+    int8_t dialog_normalization[2];
-+    uint8_t compression_exists[2];
-+    uint8_t heavy_dynamic_range[2];
-+    uint8_t center_mix_level_ltrt;              ///< Center mix level index
-+    uint8_t surround_mix_level_ltrt;            ///< Surround mix level index
-+    uint8_t dolby_headphone_mode;
-+    uint8_t dolby_surround_ex_mode;
-+    uint8_t lfe_mix_level_exists;
-+    uint8_t lfe_mix_level;
-+    uint8_t preferred_downmix;
-+    uint8_t eac3_extension_type_a;
-+    uint8_t complexity_index_type_a;
-+    /** @} */
- } AC3HeaderInfo;
- 
- typedef enum {
-@@ -71,6 +89,7 @@
-     AC3_PARSE_ERROR_FRAME_SIZE  = -0x4030c0a,
-     AC3_PARSE_ERROR_FRAME_TYPE  = -0x5030c0a,
-     AC3_PARSE_ERROR_CRC         = -0x6030c0a,
-+    AC3_PARSE_ERROR_CHANNEL_MAP = -0x7030c0a,
- } AC3ParseError;
- 
- /**
-diff -Naur ffmpeg-7.1.2.old/libavcodec/allcodecs.c ffmpeg-7.1.2/libavcodec/allcodecs.c
---- ffmpeg-7.1.2.old/libavcodec/allcodecs.c	2025-10-27 10:07:01.864539025 +0100
-+++ ffmpeg-7.1.2/libavcodec/allcodecs.c	2025-10-27 10:07:02.458796899 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/allcodecs.c ffmpeg-7.1.4/libavcodec/allcodecs.c
+--- ffmpeg-7.1.4.old/libavcodec/allcodecs.c	2026-05-05 08:18:38.187758076 +0200
++++ ffmpeg-7.1.4/libavcodec/allcodecs.c	2026-05-05 08:18:38.619777085 +0200
 @@ -839,6 +839,7 @@
  extern const FFCodec ff_av1_qsv_decoder;
  extern const FFCodec ff_av1_qsv_encoder;
@@ -489,9 +45,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/allcodecs.c ffmpeg-7.1.2/libavcodec/allco
  extern const FFCodec ff_av1_vaapi_encoder;
  extern const FFCodec ff_libopenh264_encoder;
  extern const FFCodec ff_libopenh264_decoder;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc_av1.c ffmpeg-7.1.2/libavcodec/amfenc_av1.c
---- ffmpeg-7.1.2.old/libavcodec/amfenc_av1.c	2025-10-27 10:07:00.536473524 +0100
-+++ ffmpeg-7.1.2/libavcodec/amfenc_av1.c	2025-10-27 10:07:02.440481173 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/amfenc_av1.c ffmpeg-7.1.4/libavcodec/amfenc_av1.c
+--- ffmpeg-7.1.4.old/libavcodec/amfenc_av1.c	2026-05-05 08:18:37.273466467 +0200
++++ ffmpeg-7.1.4/libavcodec/amfenc_av1.c	2026-05-05 08:18:38.602834676 +0200
 @@ -116,6 +116,7 @@
      { "none",                   "no adaptive quantization",         0, AV_OPT_TYPE_CONST, {.i64 = AMF_VIDEO_ENCODER_AV1_AQ_MODE_NONE }, 0, 0, VE, .unit = "adaptive_quantisation_mode" },
      { "caq",                    "context adaptive quantization",    0, AV_OPT_TYPE_CONST, {.i64 = AMF_VIDEO_ENCODER_AV1_AQ_MODE_CAQ }, 0, 0, VE, .unit = "adaptive_quantisation_mode" },
@@ -538,9 +94,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc_av1.c ffmpeg-7.1.2/libavcodec/amfe
  
      profile_level = avctx->level;
      if (profile_level == AV_LEVEL_UNKNOWN) {
-diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc.c ffmpeg-7.1.2/libavcodec/amfenc.c
---- ffmpeg-7.1.2.old/libavcodec/amfenc.c	2025-10-27 10:07:00.387472209 +0100
-+++ ffmpeg-7.1.2/libavcodec/amfenc.c	2025-10-27 10:07:02.445244447 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/amfenc.c ffmpeg-7.1.4/libavcodec/amfenc.c
+--- ffmpeg-7.1.4.old/libavcodec/amfenc.c	2026-05-05 08:18:37.166465125 +0200
++++ ffmpeg-7.1.4/libavcodec/amfenc.c	2026-05-05 08:18:38.606845965 +0200
 @@ -415,10 +415,6 @@
      else
          pix_fmt = avctx->pix_fmt;
@@ -720,9 +276,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc.c ffmpeg-7.1.2/libavcodec/amfenc.c
  int ff_amf_get_color_profile(AVCodecContext *avctx)
  {
      amf_int64 color_profile = AMF_VIDEO_CONVERTER_COLOR_PROFILE_UNKNOWN;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc.h ffmpeg-7.1.2/libavcodec/amfenc.h
---- ffmpeg-7.1.2.old/libavcodec/amfenc.h	2025-10-27 10:07:00.322471636 +0100
-+++ ffmpeg-7.1.2/libavcodec/amfenc.h	2025-10-27 10:07:02.440421671 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/amfenc.h ffmpeg-7.1.4/libavcodec/amfenc.h
+--- ffmpeg-7.1.4.old/libavcodec/amfenc.h	2026-05-05 08:18:37.121464561 +0200
++++ ffmpeg-7.1.4/libavcodec/amfenc.h	2026-05-05 08:18:38.602756739 +0200
 @@ -114,6 +114,7 @@
      int                 max_b_frames;
      int                 qvbr_quality_level;
@@ -740,9 +296,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc.h ffmpeg-7.1.2/libavcodec/amfenc.h
  int ff_amf_get_color_profile(AVCodecContext *avctx);
  
  /**
-diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc_h264.c ffmpeg-7.1.2/libavcodec/amfenc_h264.c
---- ffmpeg-7.1.2.old/libavcodec/amfenc_h264.c	2025-10-27 10:07:00.604474124 +0100
-+++ ffmpeg-7.1.2/libavcodec/amfenc_h264.c	2025-10-27 10:07:02.440571423 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/amfenc_h264.c ffmpeg-7.1.4/libavcodec/amfenc_h264.c
+--- ffmpeg-7.1.4.old/libavcodec/amfenc_h264.c	2026-05-05 08:18:37.317467019 +0200
++++ ffmpeg-7.1.4/libavcodec/amfenc_h264.c	2026-05-05 08:18:38.602951907 +0200
 @@ -133,6 +133,7 @@
      { "me_half_pel",    "Enable ME Half Pixel",                 OFFSET(me_half_pel),   AV_OPT_TYPE_BOOL,  { .i64 = -1 }, -1, 1, VE },
      { "me_quarter_pel", "Enable ME Quarter Pixel",              OFFSET(me_quarter_pel),AV_OPT_TYPE_BOOL,  { .i64 = -1 }, -1, 1, VE },
@@ -783,9 +339,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc_h264.c ffmpeg-7.1.2/libavcodec/amf
  
      // autodetect rate control method
      if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_RATE_CONTROL_METHOD_UNKNOWN) {
-diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc_hevc.c ffmpeg-7.1.2/libavcodec/amfenc_hevc.c
---- ffmpeg-7.1.2.old/libavcodec/amfenc_hevc.c	2025-10-27 10:07:00.324471654 +0100
-+++ ffmpeg-7.1.2/libavcodec/amfenc_hevc.c	2025-10-27 10:07:02.440657756 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/amfenc_hevc.c ffmpeg-7.1.4/libavcodec/amfenc_hevc.c
+--- ffmpeg-7.1.4.old/libavcodec/amfenc_hevc.c	2026-05-05 08:18:37.123464586 +0200
++++ ffmpeg-7.1.4/libavcodec/amfenc_hevc.c	2026-05-05 08:18:38.603044231 +0200
 @@ -100,6 +100,7 @@
      { "me_half_pel",    "Enable ME Half Pixel",                     OFFSET(me_half_pel),   AV_OPT_TYPE_BOOL,{ .i64 = -1 },  -1, 1, VE },
      { "me_quarter_pel", "Enable ME Quarter Pixel ",                 OFFSET(me_quarter_pel),AV_OPT_TYPE_BOOL,{ .i64 = -1 },  -1, 1, VE },
@@ -831,10 +387,10 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/amfenc_hevc.c ffmpeg-7.1.2/libavcodec/amf
  
      // Picture control properties
      AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_NUM_GOPS_PER_IDR, ctx->gops_per_idr);
-diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
---- ffmpeg-7.1.2.old/libavcodec/av1dec.c	2025-10-27 10:07:00.478473013 +0100
-+++ ffmpeg-7.1.2/libavcodec/av1dec.c	2025-10-27 10:07:02.454638605 +0100
-@@ -541,6 +541,7 @@
+diff -Naur ffmpeg-7.1.4.old/libavcodec/av1dec.c ffmpeg-7.1.4/libavcodec/av1dec.c
+--- ffmpeg-7.1.4.old/libavcodec/av1dec.c	2026-05-05 08:18:37.232465953 +0200
++++ ffmpeg-7.1.4/libavcodec/av1dec.c	2026-05-05 08:18:38.615992352 +0200
+@@ -542,6 +542,7 @@
                       CONFIG_AV1_NVDEC_HWACCEL + \
                       CONFIG_AV1_VAAPI_HWACCEL + \
                       CONFIG_AV1_VDPAU_HWACCEL + \
@@ -842,7 +398,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
                       CONFIG_AV1_VULKAN_HWACCEL)
      enum AVPixelFormat pix_fmts[HWACCEL_MAX + 2], *fmtp = pix_fmts;
  
-@@ -568,6 +569,9 @@
+@@ -569,6 +570,9 @@
  #if CONFIG_AV1_VDPAU_HWACCEL
          *fmtp++ = AV_PIX_FMT_VDPAU;
  #endif
@@ -852,7 +408,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
  #if CONFIG_AV1_VULKAN_HWACCEL
          *fmtp++ = AV_PIX_FMT_VULKAN;
  #endif
-@@ -592,6 +596,9 @@
+@@ -593,6 +597,9 @@
  #if CONFIG_AV1_VDPAU_HWACCEL
          *fmtp++ = AV_PIX_FMT_VDPAU;
  #endif
@@ -862,7 +418,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
  #if CONFIG_AV1_VULKAN_HWACCEL
          *fmtp++ = AV_PIX_FMT_VULKAN;
  #endif
-@@ -1002,6 +1009,8 @@
+@@ -1003,6 +1010,8 @@
          break;
      }
      case ITU_T_T35_PROVIDER_CODE_DOLBY: {
@@ -871,7 +427,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
          int provider_oriented_code = bytestream2_get_be32(&gb);
          if (itut_t35->itu_t_t35_country_code != ITU_T_T35_COUNTRY_CODE_US ||
              provider_oriented_code != 0x800)
-@@ -1014,6 +1023,18 @@
+@@ -1015,6 +1024,18 @@
              break; // ignore
          }
  
@@ -890,7 +446,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
          ret = ff_dovi_attach_side_data(&s->dovi, frame);
          if (ret < 0)
              return ret;
-@@ -1439,6 +1460,10 @@
+@@ -1447,6 +1468,10 @@
  
          if (raw_tile_group && (s->tile_num == raw_tile_group->tg_end + 1)) {
              int show_frame = s->raw_frame_header->show_frame;
@@ -901,7 +457,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
              if (avctx->hwaccel && s->cur_frame.f) {
                  ret = FF_HW_SIMPLE_CALL(avctx, end_frame);
                  if (ret < 0) {
-@@ -1449,6 +1474,8 @@
+@@ -1457,6 +1482,8 @@
  
              update_reference_list(avctx);
  
@@ -910,7 +466,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
              raw_tile_group      = NULL;
              s->raw_frame_header = NULL;
  
-@@ -1478,7 +1505,7 @@
+@@ -1486,7 +1513,7 @@
              s->raw_frame_header = NULL;
          av_packet_unref(s->pkt);
          ff_cbs_fragment_reset(&s->current_obu);
@@ -919,7 +475,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
      }
      if (!ret && !frame->buf[0])
          ret = AVERROR(EAGAIN);
-@@ -1505,7 +1532,7 @@
+@@ -1513,7 +1540,7 @@
                  return ret;
              }
  
@@ -928,7 +484,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
              av_log(avctx, AV_LOG_DEBUG, "Total OBUs on this packet: %d.\n",
                     s->current_obu.nb_units);
          }
-@@ -1526,7 +1553,7 @@
+@@ -1534,7 +1561,7 @@
  
      av1_frame_unref(&s->cur_frame);
      s->operating_point_idc = 0;
@@ -937,7 +493,7 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
      s->raw_frame_header = NULL;
      s->raw_seq = NULL;
      s->cll = NULL;
-@@ -1594,6 +1621,9 @@
+@@ -1602,6 +1629,9 @@
  #if CONFIG_AV1_VDPAU_HWACCEL
          HWACCEL_VDPAU(av1),
  #endif
@@ -947,9 +503,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.c ffmpeg-7.1.2/libavcodec/av1dec.c
  #if CONFIG_AV1_VULKAN_HWACCEL
          HWACCEL_VULKAN(av1),
  #endif
-diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.h ffmpeg-7.1.2/libavcodec/av1dec.h
---- ffmpeg-7.1.2.old/libavcodec/av1dec.h	2025-10-27 10:07:00.402472342 +0100
-+++ ffmpeg-7.1.2/libavcodec/av1dec.h	2025-10-27 10:07:02.454762738 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/av1dec.h ffmpeg-7.1.4/libavcodec/av1dec.h
+--- ffmpeg-7.1.4.old/libavcodec/av1dec.h	2026-05-05 08:18:37.178465276 +0200
++++ ffmpeg-7.1.4/libavcodec/av1dec.h	2026-05-05 08:18:38.616125563 +0200
 @@ -114,7 +114,8 @@
      AV1Frame ref[AV1_NUM_REF_FRAMES];
      AV1Frame cur_frame;
@@ -960,9 +516,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/av1dec.h ffmpeg-7.1.2/libavcodec/av1dec.h
  
      // AVOptions
      int operating_point;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/bsf/hevc_mp4toannexb.c ffmpeg-7.1.2/libavcodec/bsf/hevc_mp4toannexb.c
---- ffmpeg-7.1.2.old/libavcodec/bsf/hevc_mp4toannexb.c	2025-10-27 10:07:00.449472757 +0100
-+++ ffmpeg-7.1.2/libavcodec/bsf/hevc_mp4toannexb.c	2025-10-27 10:07:02.435022530 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/bsf/hevc_mp4toannexb.c ffmpeg-7.1.4/libavcodec/bsf/hevc_mp4toannexb.c
+--- ffmpeg-7.1.4.old/libavcodec/bsf/hevc_mp4toannexb.c	2026-05-05 08:18:37.213465715 +0200
++++ ffmpeg-7.1.4/libavcodec/bsf/hevc_mp4toannexb.c	2026-05-05 08:18:38.598435796 +0200
 @@ -125,6 +125,7 @@
      AVPacket *in;
      GetByteContext gb;
@@ -987,9 +543,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/bsf/hevc_mp4toannexb.c ffmpeg-7.1.2/libav
          extra_size    = add_extradata * ctx->par_out->extradata_size;
          got_irap     |= is_irap;
  
-diff -Naur ffmpeg-7.1.2.old/libavcodec/ccaption_dec.c ffmpeg-7.1.2/libavcodec/ccaption_dec.c
---- ffmpeg-7.1.2.old/libavcodec/ccaption_dec.c	2025-10-27 10:07:00.593474027 +0100
-+++ ffmpeg-7.1.2/libavcodec/ccaption_dec.c	2025-10-27 10:07:02.429490227 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/ccaption_dec.c ffmpeg-7.1.4/libavcodec/ccaption_dec.c
+--- ffmpeg-7.1.4.old/libavcodec/ccaption_dec.c	2026-05-05 08:18:37.311466944 +0200
++++ ffmpeg-7.1.4/libavcodec/ccaption_dec.c	2026-05-05 08:18:38.594652647 +0200
 @@ -889,12 +889,13 @@
  
          if (ctx->buffer[bidx].str[0] || ctx->real_time) {
@@ -1008,9 +564,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/ccaption_dec.c ffmpeg-7.1.2/libavcodec/cc
              else
                  sub->end_display_time = -1;
              ret = ff_ass_add_rect2(sub, ctx->buffer[bidx].str, ctx->readorder++, 0, NULL, NULL, &nb_rect_allocated);
-diff -Naur ffmpeg-7.1.2.old/libavcodec/dvdsubdec.c ffmpeg-7.1.2/libavcodec/dvdsubdec.c
---- ffmpeg-7.1.2.old/libavcodec/dvdsubdec.c	2025-10-27 10:07:00.303471468 +0100
-+++ ffmpeg-7.1.2/libavcodec/dvdsubdec.c	2025-10-27 10:07:02.428490218 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/dvdsubdec.c ffmpeg-7.1.4/libavcodec/dvdsubdec.c
+--- ffmpeg-7.1.4.old/libavcodec/dvdsubdec.c	2026-05-05 08:18:37.106464373 +0200
++++ ffmpeg-7.1.4/libavcodec/dvdsubdec.c	2026-05-05 08:18:38.593876364 +0200
 @@ -45,6 +45,8 @@
    int      buf_size;
    int      forced_subs_only;
@@ -1126,206 +682,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/dvdsubdec.c ffmpeg-7.1.2/libavcodec/dvdsu
      { NULL }
  };
  static const AVClass dvdsub_class = {
-diff -Naur ffmpeg-7.1.2.old/libavcodec/eac3dec.c ffmpeg-7.1.2/libavcodec/eac3dec.c
---- ffmpeg-7.1.2.old/libavcodec/eac3dec.c	2025-10-27 10:07:00.490473118 +0100
-+++ ffmpeg-7.1.2/libavcodec/eac3dec.c	2025-10-27 10:07:02.463392296 +0100
-@@ -53,8 +53,6 @@
-     EAC3_GAQ_124
- } EAC3GaqMode;
- 
--#define EAC3_SR_CODE_REDUCED  3
--
- static void ff_eac3_apply_spectral_extension(AC3DecodeContext *s)
- {
-     int bin, bnd, ch, i;
-@@ -287,7 +285,7 @@
-     }
- }
- 
--static int ff_eac3_parse_header(AC3DecodeContext *s)
-+static int ff_eac3_parse_header(AC3DecodeContext *s, const AC3HeaderInfo *hdr)
- {
-     int i, blk, ch;
-     int ac3_exponent_strategy, parse_aht_info, parse_spx_atten_data;
-@@ -323,11 +321,10 @@
-         avpriv_request_sample(s->avctx, "Reduced sampling rate");
-         return AVERROR_PATCHWELCOME;
-     }
--    skip_bits(gbc, 5); // skip bitstream id
- 
-     /* volume control params */
-     for (i = 0; i < (s->channel_mode ? 1 : 2); i++) {
--        s->dialog_normalization[i] = -get_bits(gbc, 5);
-+        s->dialog_normalization[i] = hdr->dialog_normalization[i];
-         if (s->dialog_normalization[i] == 0) {
-             s->dialog_normalization[i] = -31;
-         }
-@@ -335,147 +332,30 @@
-             s->level_gain[i] = powf(2.0f,
-                 (float)(s->target_level - s->dialog_normalization[i])/6.0f);
-         }
--        s->compression_exists[i] = get_bits1(gbc);
--        if (s->compression_exists[i]) {
--            s->heavy_dynamic_range[i] = AC3_HEAVY_RANGE(get_bits(gbc, 8));
-+        if (hdr->compression_exists[i]) {
-+            s->heavy_dynamic_range[i] = AC3_HEAVY_RANGE(hdr->heavy_dynamic_range[i]);
-         }
-     }
- 
--    /* dependent stream channel map */
--    if (s->frame_type == EAC3_FRAME_TYPE_DEPENDENT) {
--        if (get_bits1(gbc)) {
--            int64_t channel_layout = 0;
--            int channel_map = get_bits(gbc, 16);
--            av_log(s->avctx, AV_LOG_DEBUG, "channel_map: %0X\n", channel_map);
--
--            for (i = 0; i < 16; i++)
--                if (channel_map & (1 << (EAC3_MAX_CHANNELS - i - 1)))
--                    channel_layout |= ff_eac3_custom_channel_map_locations[i][1];
--
--            if (av_popcount64(channel_layout) > EAC3_MAX_CHANNELS) {
--                return AVERROR_INVALIDDATA;
--            }
--            s->channel_map = channel_map;
--        }
--    }
-+    s->channel_map = hdr->channel_map;
- 
-     /* mixing metadata */
--    if (get_bits1(gbc)) {
--        /* center and surround mix levels */
--        if (s->channel_mode > AC3_CHMODE_STEREO) {
--            s->preferred_downmix = get_bits(gbc, 2);
--            if (s->channel_mode & 1) {
--                /* if three front channels exist */
--                s->center_mix_level_ltrt = get_bits(gbc, 3);
--                s->center_mix_level      = get_bits(gbc, 3);
--            }
--            if (s->channel_mode & 4) {
--                /* if a surround channel exists */
--                s->surround_mix_level_ltrt = av_clip(get_bits(gbc, 3), 3, 7);
--                s->surround_mix_level      = av_clip(get_bits(gbc, 3), 3, 7);
--            }
--        }
--
--        /* lfe mix level */
--        if (s->lfe_on && (s->lfe_mix_level_exists = get_bits1(gbc))) {
--            s->lfe_mix_level = get_bits(gbc, 5);
--        }
--
--        /* info for mixing with other streams and substreams */
--        if (s->frame_type == EAC3_FRAME_TYPE_INDEPENDENT) {
--            for (i = 0; i < (s->channel_mode ? 1 : 2); i++) {
--                // TODO: apply program scale factor
--                if (get_bits1(gbc)) {
--                    skip_bits(gbc, 6);  // skip program scale factor
--                }
--            }
--            if (get_bits1(gbc)) {
--                skip_bits(gbc, 6);  // skip external program scale factor
--            }
--            /* skip mixing parameter data */
--            switch(get_bits(gbc, 2)) {
--                case 1: skip_bits(gbc, 5);  break;
--                case 2: skip_bits(gbc, 12); break;
--                case 3: {
--                    int mix_data_size = (get_bits(gbc, 5) + 2) << 3;
--                    skip_bits_long(gbc, mix_data_size);
--                    break;
--                }
--            }
--            /* skip pan information for mono or dual mono source */
--            if (s->channel_mode < AC3_CHMODE_STEREO) {
--                for (i = 0; i < (s->channel_mode ? 1 : 2); i++) {
--                    if (get_bits1(gbc)) {
--                        /* note: this is not in the ATSC A/52B specification
--                           reference: ETSI TS 102 366 V1.1.1
--                                      section: E.1.3.1.25 */
--                        skip_bits(gbc, 8);  // skip pan mean direction index
--                        skip_bits(gbc, 6);  // skip reserved paninfo bits
--                    }
--                }
--            }
--            /* skip mixing configuration information */
--            if (get_bits1(gbc)) {
--                for (blk = 0; blk < s->num_blocks; blk++) {
--                    if (s->num_blocks == 1 || get_bits1(gbc)) {
--                        skip_bits(gbc, 5);
--                    }
--                }
--            }
--        }
--    }
-+    s->preferred_downmix       = hdr->preferred_downmix;
-+    s->center_mix_level_ltrt   = hdr->center_mix_level_ltrt;
-+    s->center_mix_level        = hdr->center_mix_level;
-+    s->surround_mix_level_ltrt = hdr->surround_mix_level_ltrt;
-+    s->surround_mix_level      = hdr->surround_mix_level;
-+    s->lfe_mix_level_exists    = hdr->lfe_mix_level_exists;
-+    s->lfe_mix_level           = hdr->lfe_mix_level;
-+    s->dolby_surround_mode     = hdr->dolby_surround_mode;
-+    s->dolby_headphone_mode    = hdr->dolby_headphone_mode;
-+    s->dolby_surround_ex_mode  = hdr->dolby_surround_ex_mode;
- 
-     /* informational metadata */
--    if (get_bits1(gbc)) {
--        s->bitstream_mode = get_bits(gbc, 3);
--        skip_bits(gbc, 2); // skip copyright bit and original bitstream bit
--        if (s->channel_mode == AC3_CHMODE_STEREO) {
--            s->dolby_surround_mode  = get_bits(gbc, 2);
--            s->dolby_headphone_mode = get_bits(gbc, 2);
--        }
--        if (s->channel_mode >= AC3_CHMODE_2F2R) {
--            s->dolby_surround_ex_mode = get_bits(gbc, 2);
--        }
--        for (i = 0; i < (s->channel_mode ? 1 : 2); i++) {
--            if (get_bits1(gbc)) {
--                skip_bits(gbc, 8); // skip mix level, room type, and A/D converter type
--            }
--        }
--        if (s->bit_alloc_params.sr_code != EAC3_SR_CODE_REDUCED) {
--            skip_bits1(gbc); // skip source sample rate code
--        }
--    }
--
--    /* converter synchronization flag
--       If frames are less than six blocks, this bit should be turned on
--       once every 6 blocks to indicate the start of a frame set.
--       reference: RFC 4598, Section 2.1.3  Frame Sets */
--    if (s->frame_type == EAC3_FRAME_TYPE_INDEPENDENT && s->num_blocks != 6) {
--        skip_bits1(gbc); // skip converter synchronization flag
--    }
--
--    /* original frame size code if this stream was converted from AC-3 */
--    if (s->frame_type == EAC3_FRAME_TYPE_AC3_CONVERT &&
--            (s->num_blocks == 6 || get_bits1(gbc))) {
--        skip_bits(gbc, 6); // skip frame size code
--    }
-+    s->bitstream_mode = hdr->bitstream_mode;
- 
-     /* additional bitstream info */
--    if (get_bits1(gbc)) {
--        int addbsil = get_bits(gbc, 6);
--        for (i = 0; i < addbsil + 1; i++) {
--            if (i == 0) {
--                /* In this 8 bit chunk, the LSB is equal to flag_ec3_extension_type_a
--                   which can be used to detect Atmos presence */
--                skip_bits(gbc, 7);
--                if (get_bits1(gbc)) {
--                    s->eac3_extension_type_a = 1;
--                }
--            } else {
--                skip_bits(gbc, 8); // skip additional bit stream info
--            }
--        }
--    }
-+    s->eac3_extension_type_a = hdr->eac3_extension_type_a;
- 
-     /* audio frame syntax flags, strategy data, and per-frame data */
- 
-diff -Naur ffmpeg-7.1.2.old/libavcodec/hwaccels.h ffmpeg-7.1.2/libavcodec/hwaccels.h
---- ffmpeg-7.1.2.old/libavcodec/hwaccels.h	2025-10-27 10:07:00.251471009 +0100
-+++ ffmpeg-7.1.2/libavcodec/hwaccels.h	2025-10-27 10:07:02.454807062 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/hwaccels.h ffmpeg-7.1.4/libavcodec/hwaccels.h
+--- ffmpeg-7.1.4.old/libavcodec/hwaccels.h	2026-05-05 08:18:37.056463745 +0200
++++ ffmpeg-7.1.4/libavcodec/hwaccels.h	2026-05-05 08:18:38.616168604 +0200
 @@ -26,6 +26,7 @@
  extern const struct FFHWAccel ff_av1_nvdec_hwaccel;
  extern const struct FFHWAccel ff_av1_vaapi_hwaccel;
@@ -1334,9 +693,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/hwaccels.h ffmpeg-7.1.2/libavcodec/hwacce
  extern const struct FFHWAccel ff_av1_vulkan_hwaccel;
  extern const struct FFHWAccel ff_h263_vaapi_hwaccel;
  extern const struct FFHWAccel ff_h263_videotoolbox_hwaccel;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/libdav1d.c ffmpeg-7.1.2/libavcodec/libdav1d.c
---- ffmpeg-7.1.2.old/libavcodec/libdav1d.c	2025-10-27 10:07:00.474472977 +0100
-+++ ffmpeg-7.1.2/libavcodec/libdav1d.c	2025-10-27 10:07:02.436286040 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/libdav1d.c ffmpeg-7.1.4/libavcodec/libdav1d.c
+--- ffmpeg-7.1.4.old/libavcodec/libdav1d.c	2026-05-05 08:18:37.229465915 +0200
++++ ffmpeg-7.1.4/libavcodec/libdav1d.c	2026-05-05 08:18:38.599295196 +0200
 @@ -563,6 +563,8 @@
              break;
          }
@@ -1365,9 +724,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/libdav1d.c ffmpeg-7.1.2/libavcodec/libdav
              res = ff_dovi_attach_side_data(&dav1d->dovi, frame);
              if (res < 0)
                  goto fail;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/Makefile ffmpeg-7.1.2/libavcodec/Makefile
---- ffmpeg-7.1.2.old/libavcodec/Makefile	2025-10-27 10:07:01.865180885 +0100
-+++ ffmpeg-7.1.2/libavcodec/Makefile	2025-10-27 10:07:02.454516424 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/Makefile ffmpeg-7.1.4/libavcodec/Makefile
+--- ffmpeg-7.1.4.old/libavcodec/Makefile	2026-05-05 08:18:38.188230747 +0200
++++ ffmpeg-7.1.4/libavcodec/Makefile	2026-05-05 08:18:38.615860023 +0200
 @@ -1008,6 +1008,7 @@
  OBJS-$(CONFIG_AV1_NVDEC_HWACCEL)          += nvdec_av1.o
  OBJS-$(CONFIG_AV1_VAAPI_HWACCEL)          += vaapi_av1.o
@@ -1376,17 +735,17 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/Makefile ffmpeg-7.1.2/libavcodec/Makefile
  OBJS-$(CONFIG_AV1_VULKAN_HWACCEL)         += vulkan_decode.o vulkan_av1.o
  OBJS-$(CONFIG_H263_VAAPI_HWACCEL)         += vaapi_mpeg4.o
  OBJS-$(CONFIG_H263_VIDEOTOOLBOX_HWACCEL)  += videotoolbox.o
-diff -Naur ffmpeg-7.1.2.old/libavcodec/mfenc.c ffmpeg-7.1.2/libavcodec/mfenc.c
---- ffmpeg-7.1.2.old/libavcodec/mfenc.c	2025-10-27 10:07:00.524473418 +0100
-+++ ffmpeg-7.1.2/libavcodec/mfenc.c	2025-10-27 10:07:02.459027162 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/mfenc.c ffmpeg-7.1.4/libavcodec/mfenc.c
+--- ffmpeg-7.1.4.old/libavcodec/mfenc.c	2026-05-05 08:18:37.265466367 +0200
++++ ffmpeg-7.1.4/libavcodec/mfenc.c	2026-05-05 08:18:38.620010044 +0200
 @@ -1315,3 +1315,4 @@
  
  MF_ENCODER(VIDEO, h264,        H264, venc_opts, VFMTS, VCAPS, defaults);
  MF_ENCODER(VIDEO, hevc,        HEVC, venc_opts, VFMTS, VCAPS, defaults);
 +MF_ENCODER(VIDEO, av1,         AV1,  venc_opts, VFMTS, VCAPS, defaults);
-diff -Naur ffmpeg-7.1.2.old/libavcodec/mf_utils.c ffmpeg-7.1.2/libavcodec/mf_utils.c
---- ffmpeg-7.1.2.old/libavcodec/mf_utils.c	2025-10-27 10:07:00.467472915 +0100
-+++ ffmpeg-7.1.2/libavcodec/mf_utils.c	2025-10-27 10:07:02.458887429 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/mf_utils.c ffmpeg-7.1.4/libavcodec/mf_utils.c
+--- ffmpeg-7.1.4.old/libavcodec/mf_utils.c	2026-05-05 08:18:37.224465852 +0200
++++ ffmpeg-7.1.4/libavcodec/mf_utils.c	2026-05-05 08:18:38.619863267 +0200
 @@ -240,6 +240,7 @@
      GUID_ENTRY(MFMediaType_Video),
      GUID_ENTRY(MFAudioFormat_PCM),
@@ -1403,9 +762,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/mf_utils.c ffmpeg-7.1.2/libavcodec/mf_uti
      case AV_CODEC_ID_H264:              return &MFVideoFormat_H264;
      case AV_CODEC_ID_HEVC:              return &ff_MFVideoFormat_HEVC;
      case AV_CODEC_ID_AC3:               return &MFAudioFormat_Dolby_AC3;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/mf_utils.h ffmpeg-7.1.2/libavcodec/mf_utils.h
---- ffmpeg-7.1.2.old/libavcodec/mf_utils.h	2025-10-27 10:07:00.429472580 +0100
-+++ ffmpeg-7.1.2/libavcodec/mf_utils.h	2025-10-27 10:07:02.458955668 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/mf_utils.h ffmpeg-7.1.4/libavcodec/mf_utils.h
+--- ffmpeg-7.1.4.old/libavcodec/mf_utils.h	2026-05-05 08:18:37.199465539 +0200
++++ ffmpeg-7.1.4/libavcodec/mf_utils.h	2026-05-05 08:18:38.619934792 +0200
 @@ -113,6 +113,7 @@
  
  DEFINE_MEDIATYPE_GUID(ff_MFVideoFormat_HEVC, 0x43564548); // FCC('HEVC')
@@ -1414,9 +773,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/mf_utils.h ffmpeg-7.1.2/libavcodec/mf_uti
  
  
  // This enum is missing from mingw-w64's codecapi.h by v7.0.0.
-diff -Naur ffmpeg-7.1.2.old/libavcodec/pgssubdec.c ffmpeg-7.1.2/libavcodec/pgssubdec.c
---- ffmpeg-7.1.2.old/libavcodec/pgssubdec.c	2025-10-27 10:07:00.318471601 +0100
-+++ ffmpeg-7.1.2/libavcodec/pgssubdec.c	2025-10-27 10:07:02.446191090 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/pgssubdec.c ffmpeg-7.1.4/libavcodec/pgssubdec.c
+--- ffmpeg-7.1.4.old/libavcodec/pgssubdec.c	2026-05-05 08:18:37.118464523 +0200
++++ ffmpeg-7.1.4/libavcodec/pgssubdec.c	2026-05-05 08:18:38.607736634 +0200
 @@ -35,9 +35,11 @@
  #include "libavutil/opt.h"
  
@@ -2197,9 +1556,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/pgssubdec.c ffmpeg-7.1.2/libavcodec/pgssu
              break;
          case DISPLAY_SEGMENT:
              if (*got_sub_ptr) {
-diff -Naur ffmpeg-7.1.2.old/libavcodec/qsvenc_av1.c ffmpeg-7.1.2/libavcodec/qsvenc_av1.c
---- ffmpeg-7.1.2.old/libavcodec/qsvenc_av1.c	2025-10-27 10:07:00.531473480 +0100
-+++ ffmpeg-7.1.2/libavcodec/qsvenc_av1.c	2025-10-27 10:07:02.443863055 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/qsvenc_av1.c ffmpeg-7.1.4/libavcodec/qsvenc_av1.c
+--- ffmpeg-7.1.4.old/libavcodec/qsvenc_av1.c	2026-05-05 08:18:37.270466430 +0200
++++ ffmpeg-7.1.4/libavcodec/qsvenc_av1.c	2026-05-05 08:18:38.605713732 +0200
 @@ -189,6 +189,10 @@
      { "tile_cols",  "Number of columns for tiled encoding",   OFFSET(qsv.tile_cols),    AV_OPT_TYPE_INT, { .i64 = 0 }, 0, UINT16_MAX, VE },
      { "tile_rows",  "Number of rows for tiled encoding",      OFFSET(qsv.tile_rows),    AV_OPT_TYPE_INT, { .i64 = 0 }, 0, UINT16_MAX, VE },
@@ -2211,9 +1570,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/qsvenc_av1.c ffmpeg-7.1.2/libavcodec/qsve
      { NULL },
  };
  
-diff -Naur ffmpeg-7.1.2.old/libavcodec/qsvenc.c ffmpeg-7.1.2/libavcodec/qsvenc.c
---- ffmpeg-7.1.2.old/libavcodec/qsvenc.c	2025-10-27 10:07:00.592474018 +0100
-+++ ffmpeg-7.1.2/libavcodec/qsvenc.c	2025-10-27 10:07:02.443621469 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/qsvenc.c ffmpeg-7.1.4/libavcodec/qsvenc.c
+--- ffmpeg-7.1.4.old/libavcodec/qsvenc.c	2026-05-05 08:18:37.310466931 +0200
++++ ffmpeg-7.1.4/libavcodec/qsvenc.c	2026-05-05 08:18:38.605466225 +0200
 @@ -494,6 +494,9 @@
      mfxExtAV1BitstreamParam *av1_bs_param = (mfxExtAV1BitstreamParam *)coding_opts[1];
      mfxExtCodingOption2 *co2 = (mfxExtCodingOption2*)coding_opts[2];
@@ -2303,9 +1662,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/qsvenc.c ffmpeg-7.1.2/libavcodec/qsvenc.c
      q->avctx = avctx;
  
      return 0;
-diff -Naur ffmpeg-7.1.2.old/libavcodec/qsvenc.h ffmpeg-7.1.2/libavcodec/qsvenc.h
---- ffmpeg-7.1.2.old/libavcodec/qsvenc.h	2025-10-27 10:07:00.282471283 +0100
-+++ ffmpeg-7.1.2/libavcodec/qsvenc.h	2025-10-27 10:07:02.443799916 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/qsvenc.h ffmpeg-7.1.4/libavcodec/qsvenc.h
+--- ffmpeg-7.1.4.old/libavcodec/qsvenc.h	2026-05-05 08:18:37.088464147 +0200
++++ ffmpeg-7.1.4/libavcodec/qsvenc.h	2026-05-05 08:18:38.605652346 +0200
 @@ -38,6 +38,7 @@
  
  #define QSV_HAVE_EXT_VP9_TILES QSV_VERSION_ATLEAST(1, 29)
@@ -2338,9 +1697,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/qsvenc.h ffmpeg-7.1.2/libavcodec/qsvenc.h
  } QSVEncContext;
  
  int ff_qsv_enc_init(AVCodecContext *avctx, QSVEncContext *q);
-diff -Naur ffmpeg-7.1.2.old/libavcodec/videotoolbox_av1.c ffmpeg-7.1.2/libavcodec/videotoolbox_av1.c
---- ffmpeg-7.1.2.old/libavcodec/videotoolbox_av1.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-7.1.2/libavcodec/videotoolbox_av1.c	2025-10-27 10:07:02.455024552 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/videotoolbox_av1.c ffmpeg-7.1.4/libavcodec/videotoolbox_av1.c
+--- ffmpeg-7.1.4.old/libavcodec/videotoolbox_av1.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-7.1.4/libavcodec/videotoolbox_av1.c	2026-05-05 08:18:38.616342712 +0200
 @@ -0,0 +1,105 @@
 +/*
 + * Videotoolbox hardware acceleration for AV1
@@ -2447,9 +1806,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/videotoolbox_av1.c ffmpeg-7.1.2/libavcode
 +    .uninit         = ff_videotoolbox_uninit,
 +    .priv_data_size = sizeof(VTContext),
 +};
-diff -Naur ffmpeg-7.1.2.old/libavcodec/videotoolbox.c ffmpeg-7.1.2/libavcodec/videotoolbox.c
---- ffmpeg-7.1.2.old/libavcodec/videotoolbox.c	2025-10-27 10:07:00.379472139 +0100
-+++ ffmpeg-7.1.2/libavcodec/videotoolbox.c	2025-10-27 10:07:02.456490466 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/videotoolbox.c ffmpeg-7.1.4/libavcodec/videotoolbox.c
+--- ffmpeg-7.1.4.old/libavcodec/videotoolbox.c	2026-05-05 08:18:37.160465050 +0200
++++ ffmpeg-7.1.4/libavcodec/videotoolbox.c	2026-05-05 08:18:38.618072362 +0200
 @@ -56,6 +56,10 @@
  enum { kCMVideoCodecType_VP9 = 'vp09' };
  #endif
@@ -2552,9 +1911,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/videotoolbox.c ffmpeg-7.1.2/libavcodec/vi
  #if defined(MAC_OS_X_VERSION_10_9) && !TARGET_OS_IPHONE && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9) && AV_HAS_BUILTIN(__builtin_available)
      if (avctx->codec_id == AV_CODEC_ID_PRORES) {
          if (__builtin_available(macOS 10.9, *)) {
-diff -Naur ffmpeg-7.1.2.old/libavcodec/vt_internal.h ffmpeg-7.1.2/libavcodec/vt_internal.h
---- ffmpeg-7.1.2.old/libavcodec/vt_internal.h	2025-10-27 10:07:00.531473480 +0100
-+++ ffmpeg-7.1.2/libavcodec/vt_internal.h	2025-10-27 10:07:02.455086969 +0100
+diff -Naur ffmpeg-7.1.4.old/libavcodec/vt_internal.h ffmpeg-7.1.4/libavcodec/vt_internal.h
+--- ffmpeg-7.1.4.old/libavcodec/vt_internal.h	2026-05-05 08:18:37.270466430 +0200
++++ ffmpeg-7.1.4/libavcodec/vt_internal.h	2026-05-05 08:18:38.616397616 +0200
 @@ -56,6 +56,9 @@
  int ff_videotoolbox_buffer_copy(VTContext *vtctx,
                                  const uint8_t *buffer,
@@ -2573,9 +1932,9 @@ diff -Naur ffmpeg-7.1.2.old/libavcodec/vt_internal.h ffmpeg-7.1.2/libavcodec/vt_
  CFDataRef ff_videotoolbox_avcc_extradata_create(AVCodecContext *avctx);
  CFDataRef ff_videotoolbox_hvcc_extradata_create(AVCodecContext *avctx);
  CFDataRef ff_videotoolbox_vpcc_extradata_create(AVCodecContext *avctx);
-diff -Naur ffmpeg-7.1.2.old/libavfilter/vf_vpp_qsv.c ffmpeg-7.1.2/libavfilter/vf_vpp_qsv.c
---- ffmpeg-7.1.2.old/libavfilter/vf_vpp_qsv.c	2025-10-27 10:07:00.764475536 +0100
-+++ ffmpeg-7.1.2/libavfilter/vf_vpp_qsv.c	2025-10-27 10:07:02.461658339 +0100
+diff -Naur ffmpeg-7.1.4.old/libavfilter/vf_vpp_qsv.c ffmpeg-7.1.4/libavfilter/vf_vpp_qsv.c
+--- ffmpeg-7.1.4.old/libavfilter/vf_vpp_qsv.c	2026-05-05 08:18:37.411468198 +0200
++++ ffmpeg-7.1.4/libavfilter/vf_vpp_qsv.c	2026-05-05 08:18:38.622133435 +0200
 @@ -494,9 +494,9 @@
      outvsi_conf.Header.BufferId          = MFX_EXTBUFF_VIDEO_SIGNAL_INFO_OUT;
      outvsi_conf.Header.BufferSz          = sizeof(mfxExtVideoSignalInfo);
@@ -2589,9 +1948,9 @@ diff -Naur ffmpeg-7.1.2.old/libavfilter/vf_vpp_qsv.c ffmpeg-7.1.2/libavfilter/vf
      outvsi_conf.ColourDescriptionPresent = 1;
  
      if (memcmp(&vpp->invsi_conf, &invsi_conf, sizeof(mfxExtVideoSignalInfo)) ||
-diff -Naur ffmpeg-7.1.2.old/libavformat/isom.h ffmpeg-7.1.2/libavformat/isom.h
---- ffmpeg-7.1.2.old/libavformat/isom.h	2025-10-27 10:07:00.909476815 +0100
-+++ ffmpeg-7.1.2/libavformat/isom.h	2025-10-27 10:07:02.422783282 +0100
+diff -Naur ffmpeg-7.1.4.old/libavformat/isom.h ffmpeg-7.1.4/libavformat/isom.h
+--- ffmpeg-7.1.4.old/libavformat/isom.h	2026-05-05 08:18:37.501469327 +0200
++++ ffmpeg-7.1.4/libavformat/isom.h	2026-05-05 08:18:38.588902601 +0200
 @@ -272,6 +272,9 @@
          MOVEncryptionIndex *encryption_index;
      } cenc;
@@ -2600,11 +1959,11 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/isom.h ffmpeg-7.1.2/libavformat/isom.h
 +    int fallback;
 +
      struct IAMFDemuxContext *iamf;
+     int iamf_stream_offset;
  } MOVStreamContext;
- 
-diff -Naur ffmpeg-7.1.2.old/libavformat/matroskaenc.c ffmpeg-7.1.2/libavformat/matroskaenc.c
---- ffmpeg-7.1.2.old/libavformat/matroskaenc.c	2025-10-27 10:07:00.955477221 +0100
-+++ ffmpeg-7.1.2/libavformat/matroskaenc.c	2025-10-27 10:07:02.430490236 +0100
+diff -Naur ffmpeg-7.1.4.old/libavformat/matroskaenc.c ffmpeg-7.1.4/libavformat/matroskaenc.c
+--- ffmpeg-7.1.4.old/libavformat/matroskaenc.c	2026-05-05 08:18:37.529469678 +0200
++++ ffmpeg-7.1.4/libavformat/matroskaenc.c	2026-05-05 08:18:38.595545480 +0200
 @@ -2933,6 +2933,16 @@
      case AV_CODEC_ID_AAC:
          if (side_data_size && mkv->track.bc) {
@@ -2622,9 +1981,9 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/matroskaenc.c ffmpeg-7.1.2/libavformat/m
              ret = get_aac_sample_rates(s, mkv, side_data, side_data_size,
                                         &track->sample_rate, &output_sample_rate);
              if (ret < 0)
-diff -Naur ffmpeg-7.1.2.old/libavformat/mov.c ffmpeg-7.1.2/libavformat/mov.c
---- ffmpeg-7.1.2.old/libavformat/mov.c	2025-10-27 10:07:00.889476639 +0100
-+++ ffmpeg-7.1.2/libavformat/mov.c	2025-10-27 10:07:02.447584145 +0100
+diff -Naur ffmpeg-7.1.4.old/libavformat/mov.c ffmpeg-7.1.4/libavformat/mov.c
+--- ffmpeg-7.1.4.old/libavformat/mov.c	2026-05-05 08:18:37.489469176 +0200
++++ ffmpeg-7.1.4/libavformat/mov.c	2026-05-05 08:18:38.609423122 +0200
 @@ -56,6 +56,7 @@
  #include "libavcodec/mpegaudiodecheader.h"
  #include "libavcodec/mlp_parse.h"
@@ -2937,7 +2296,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/mov.c ffmpeg-7.1.2/libavformat/mov.c
          }
      }
  
-@@ -9088,6 +9256,23 @@
+@@ -9122,6 +9290,23 @@
      return ret;
  }
  
@@ -2961,7 +2320,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/mov.c ffmpeg-7.1.2/libavformat/mov.c
  static const MOVParseTableEntry mov_default_parse_table[] = {
  { MKTAG('A','C','L','R'), mov_read_aclr },
  { MKTAG('A','P','R','G'), mov_read_avid },
-@@ -9190,6 +9375,7 @@
+@@ -9224,6 +9409,7 @@
  { MKTAG('v','p','c','C'), mov_read_vpcc },
  { MKTAG('m','d','c','v'), mov_read_mdcv },
  { MKTAG('c','l','l','i'), mov_read_clli },
@@ -2969,7 +2328,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/mov.c ffmpeg-7.1.2/libavformat/mov.c
  { MKTAG('d','v','c','C'), mov_read_dvcc_dvvc },
  { MKTAG('d','v','v','C'), mov_read_dvcc_dvvc },
  { MKTAG('d','v','w','C'), mov_read_dvcc_dvvc },
-@@ -10374,6 +10560,23 @@
+@@ -10446,6 +10632,23 @@
              err = ff_replaygain_export(st, s->metadata);
              if (err < 0)
                  return err;
@@ -2993,9 +2352,9 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/mov.c ffmpeg-7.1.2/libavformat/mov.c
              break;
          case AVMEDIA_TYPE_VIDEO:
              if (sc->display_matrix) {
-diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc.c
---- ffmpeg-7.1.2.old/libavformat/movenc.c	2025-10-27 10:07:00.933477027 +0100
-+++ ffmpeg-7.1.2/libavformat/movenc.c	2025-10-27 10:07:02.463726465 +0100
+diff -Naur ffmpeg-7.1.4.old/libavformat/movenc.c ffmpeg-7.1.4/libavformat/movenc.c
+--- ffmpeg-7.1.4.old/libavformat/movenc.c	2026-05-05 08:18:37.515469503 +0200
++++ ffmpeg-7.1.4/libavformat/movenc.c	2026-05-05 08:18:38.613300419 +0200
 @@ -28,6 +28,7 @@
  
  #include "movenc.h"
@@ -3004,78 +2363,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
  #include "avio_internal.h"
  #include "dovi_isom.h"
  #include "riff.h"
-@@ -393,6 +394,8 @@
-         uint16_t chan_loc;
-         /* if there is no dependent substream, then one bit reserved instead */
-     } substream[1]; /* TODO: support 8 independent substreams */
-+    /* indicates the decoding complexity, 8 bits */
-+    uint8_t complexity_index_type_a;
- };
- 
- static int mov_write_ac3_tag(AVFormatContext *s, AVIOContext *pb, MOVTrack *track)
-@@ -474,6 +477,8 @@
-     info->data_rate = FFMAX(info->data_rate, hdr->bit_rate / 1000);
-     info->ac3_bit_rate_code = FFMAX(info->ac3_bit_rate_code,
-                                     hdr->ac3_bit_rate_code);
-+    info->complexity_index_type_a = hdr->complexity_index_type_a;
-+    
-     num_blocks = hdr->num_blocks;
- 
-     if (!info->ec3_done) {
-@@ -532,8 +537,6 @@
-             int parent = hdr->substreamid;
- 
-             while (cumul_size != pkt->size) {
--                GetBitContext gbc;
--                int i;
-                 ret = avpriv_ac3_parse_header(&hdr, pkt->data + cumul_size, pkt->size - cumul_size);
-                 if (ret < 0)
-                     goto end;
-@@ -544,20 +547,9 @@
-                 info->substream[parent].num_dep_sub++;
-                 ret /= 8;
- 
--                /* header is parsed up to lfeon, but custom channel map may be needed */
--                init_get_bits8(&gbc, pkt->data + cumul_size + ret, pkt->size - cumul_size - ret);
--                /* skip bsid */
--                skip_bits(&gbc, 5);
--                /* skip volume control params */
--                for (i = 0; i < (hdr->channel_mode ? 1 : 2); i++) {
--                    skip_bits(&gbc, 5); // skip dialog normalization
--                    if (get_bits1(&gbc)) {
--                        skip_bits(&gbc, 8); // skip compression gain word
--                    }
--                }
-                 /* get the dependent stream channel map, if exists */
--                if (get_bits1(&gbc))
--                    info->substream[parent].chan_loc |= (get_bits(&gbc, 16) >> 5) & 0x1f;
-+                if (hdr->channel_map_present)
-+                    info->substream[parent].chan_loc |= (hdr->channel_map >> 5) & 0x1f;
-                 else
-                     info->substream[parent].chan_loc |= hdr->channel_mode;
-                 cumul_size += hdr->frame_size;
-@@ -614,7 +606,7 @@
-     }
- 
-     info = track->eac3_priv;
--    size = 2 + ((32 * (info->num_ind_sub + 1) + 7) >> 3);
-+    size = 2 + (4 * (info->num_ind_sub + 1)) + (2 * !!info->complexity_index_type_a);
-     buf = av_malloc(size);
-     if (!buf) {
-         return AVERROR(ENOMEM);
-@@ -639,6 +631,11 @@
-             put_bits(&pbc, 9, info->substream[i].chan_loc);
-         }
-     }
-+    if (info->complexity_index_type_a) {
-+        put_bits(&pbc, 7, 0); /* reserved */
-+        put_bits(&pbc, 1, 1); // flag_eac3_extension_type_a
-+        put_bits(&pbc, 8, info->complexity_index_type_a);
-+    }
-     flush_put_bits(&pbc);
-     size = put_bytes_output(&pbc);
- 
-@@ -4055,6 +4052,41 @@
+@@ -4055,6 +4056,41 @@
      return len + 24;
  }
  
@@ -3117,7 +2405,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
  static int mov_write_track_metadata(AVIOContext *pb, AVStream *st,
                                      const char *tag, const char *str)
  {
-@@ -4129,8 +4161,23 @@
+@@ -4129,8 +4165,23 @@
      if (ret < 0)
          return ret;
  
@@ -3142,7 +2430,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
  
      if (mov->mode & MODE_MP4) {
          if ((ret = mov_write_track_kinds(pb_buf, st)) < 0)
-@@ -4505,20 +4552,66 @@
+@@ -4505,20 +4556,66 @@
      return size;
  }
  
@@ -3212,7 +2500,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
  
      avio_wb32(pb, size);
      ffio_wfourcc(pb, name);
-@@ -4526,7 +4619,9 @@
+@@ -4526,7 +4623,9 @@
      ffio_wfourcc(pb, "data");
      avio_wb32(pb, 0x15);
      avio_wb32(pb, 0);
@@ -3223,7 +2511,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
      else        avio_w8 (pb, num);
  
      return size;
-@@ -4582,6 +4677,8 @@
+@@ -4582,6 +4681,8 @@
      mov_write_string_metadata(s, pb, "\251lyr", "lyrics"   , 1);
      mov_write_string_metadata(s, pb, "desc",    "description",1);
      mov_write_string_metadata(s, pb, "ldes",    "synopsis" , 1);
@@ -3232,7 +2520,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
      mov_write_string_metadata(s, pb, "tvsh",    "show"     , 1);
      mov_write_string_metadata(s, pb, "tven",    "episode_id",1);
      mov_write_string_metadata(s, pb, "tvnn",    "network"  , 1);
-@@ -4592,10 +4689,67 @@
+@@ -4592,10 +4693,67 @@
      mov_write_int8_metadata  (s, pb, "hdvd",    "hd_video",  1);
      mov_write_int8_metadata  (s, pb, "pgap",    "gapless_playback",1);
      mov_write_int8_metadata  (s, pb, "cpil",    "compilation", 1);
@@ -3300,7 +2588,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
      return update_size(pb, pos);
  }
  
-@@ -4727,35 +4881,6 @@
+@@ -4727,35 +4885,6 @@
      return 0;
  }
  
@@ -3336,7 +2624,7 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
  static int mov_write_chpl_tag(AVIOContext *pb, AVFormatContext *s)
  {
      int64_t pos = avio_tell(pb);
-@@ -4794,14 +4919,14 @@
+@@ -4794,14 +4923,14 @@
          return ret;
  
      if (mov->mode & MODE_3GP) {
@@ -3359,9 +2647,9 @@ diff -Naur ffmpeg-7.1.2.old/libavformat/movenc.c ffmpeg-7.1.2/libavformat/movenc
          mov_write_loci_tag(s, pb_buf);
      } else if (mov->mode == MODE_MOV && !(mov->flags & FF_MOV_FLAG_USE_MDTA)) { // the title field breaks gtkpod with mp4 and my suspicion is that stuff is not valid in mp4
          mov_write_string_metadata(s, pb_buf, "\251ART", "artist",      0);
-diff -Naur ffmpeg-7.1.2.old/libavutil/frame.c ffmpeg-7.1.2/libavutil/frame.c
---- ffmpeg-7.1.2.old/libavutil/frame.c	2025-10-27 10:07:00.804475889 +0100
-+++ ffmpeg-7.1.2/libavutil/frame.c	2025-10-27 10:07:02.436386459 +0100
+diff -Naur ffmpeg-7.1.4.old/libavutil/frame.c ffmpeg-7.1.4/libavutil/frame.c
+--- ffmpeg-7.1.4.old/libavutil/frame.c	2026-05-05 08:18:37.436468512 +0200
++++ ffmpeg-7.1.4/libavutil/frame.c	2026-05-05 08:18:38.599394273 +0200
 @@ -45,6 +45,7 @@
      [AV_FRAME_DATA_FILM_GRAIN_PARAMS]           = { "Film grain parameters" },
      [AV_FRAME_DATA_DETECTION_BBOXES]            = { "Bounding boxes for object detection and classification" },
@@ -3370,9 +2658,9 @@ diff -Naur ffmpeg-7.1.2.old/libavutil/frame.c ffmpeg-7.1.2/libavutil/frame.c
      [AV_FRAME_DATA_DOVI_METADATA]               = { "Dolby Vision Metadata" },
      [AV_FRAME_DATA_LCEVC]                       = { "LCEVC NAL data" },
      [AV_FRAME_DATA_VIEW_ID]                     = { "View ID" },
-diff -Naur ffmpeg-7.1.2.old/libavutil/frame.h ffmpeg-7.1.2/libavutil/frame.h
---- ffmpeg-7.1.2.old/libavutil/frame.h	2025-10-27 10:07:00.786475730 +0100
-+++ ffmpeg-7.1.2/libavutil/frame.h	2025-10-27 10:07:02.436480126 +0100
+diff -Naur ffmpeg-7.1.4.old/libavutil/frame.h ffmpeg-7.1.4/libavutil/frame.h
+--- ffmpeg-7.1.4.old/libavutil/frame.h	2026-05-05 08:18:37.425468374 +0200
++++ ffmpeg-7.1.4/libavutil/frame.h	2026-05-05 08:18:38.599485625 +0200
 @@ -201,6 +201,12 @@
      AV_FRAME_DATA_DOVI_RPU_BUFFER,
  
@@ -3386,9 +2674,9 @@ diff -Naur ffmpeg-7.1.2.old/libavutil/frame.h ffmpeg-7.1.2/libavutil/frame.h
       * Parsed Dolby Vision metadata, suitable for passing to a software
       * implementation. The payload is the AVDOVIMetadata struct defined in
       * libavutil/dovi_meta.h.
-diff -Naur ffmpeg-7.1.2.old/libavutil/hwcontext_videotoolbox.c ffmpeg-7.1.2/libavutil/hwcontext_videotoolbox.c
---- ffmpeg-7.1.2.old/libavutil/hwcontext_videotoolbox.c	2025-10-27 10:07:00.813475968 +0100
-+++ ffmpeg-7.1.2/libavutil/hwcontext_videotoolbox.c	2025-10-27 10:07:02.457067390 +0100
+diff -Naur ffmpeg-7.1.4.old/libavutil/hwcontext_videotoolbox.c ffmpeg-7.1.4/libavutil/hwcontext_videotoolbox.c
+--- ffmpeg-7.1.4.old/libavutil/hwcontext_videotoolbox.c	2026-05-05 08:18:37.442468587 +0200
++++ ffmpeg-7.1.4/libavutil/hwcontext_videotoolbox.c	2026-05-05 08:18:38.618207216 +0200
 @@ -183,7 +183,8 @@
      VTFramesContext *fctx = ctx->hwctx;
      AVVTFramesContext *hw_ctx = &fctx->p;
@@ -3415,10 +2703,10 @@ diff -Naur ffmpeg-7.1.2.old/libavutil/hwcontext_videotoolbox.c ffmpeg-7.1.2/liba
      err = CVPixelBufferPoolCreate(
          NULL,
          NULL,
-diff -Naur ffmpeg-7.1.2.old/libswscale/swscale_unscaled.c ffmpeg-7.1.2/libswscale/swscale_unscaled.c
---- ffmpeg-7.1.2.old/libswscale/swscale_unscaled.c	2025-10-27 10:07:00.644474477 +0100
-+++ ffmpeg-7.1.2/libswscale/swscale_unscaled.c	2025-10-27 10:07:02.433490262 +0100
-@@ -341,7 +341,7 @@
+diff -Naur ffmpeg-7.1.4.old/libswscale/swscale_unscaled.c ffmpeg-7.1.4/libswscale/swscale_unscaled.c
+--- ffmpeg-7.1.4.old/libswscale/swscale_unscaled.c	2026-05-05 08:18:37.342467333 +0200
++++ ffmpeg-7.1.4/libswscale/swscale_unscaled.c	2026-05-05 08:18:38.597665856 +0200
+@@ -345,7 +345,7 @@
          const uint8_t *tsrc0 = src[0];
          for (x = c->srcW; x > 0; x--) {
              t = *tsrc0++;
@@ -3427,7 +2715,7 @@ diff -Naur ffmpeg-7.1.2.old/libswscale/swscale_unscaled.c ffmpeg-7.1.2/libswscal
          }
          src[0] += srcStride[0];
          dstY += dstStride[0] / 2;
-@@ -352,9 +352,9 @@
+@@ -356,9 +356,9 @@
              const uint8_t *tsrc2 = src[2];
              for (x = c->srcW / 2; x > 0; x--) {
                  t = *tsrc1++;

@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-7.1.2.old/configure ffmpeg-7.1.2/configure
---- ffmpeg-7.1.2.old/configure	2025-10-27 10:07:02.273543997 +0100
-+++ ffmpeg-7.1.2/configure	2025-10-27 10:07:02.276510125 +0100
+diff -Naur ffmpeg-7.1.4.old/configure ffmpeg-7.1.4/configure
+--- ffmpeg-7.1.4.old/configure	2026-05-05 08:18:38.444481156 +0200
++++ ffmpeg-7.1.4/configure	2026-05-05 08:18:38.447424332 +0200
 @@ -4710,6 +4710,9 @@
      if $nvcc $nvccflags_default 2>&1 | grep -qi unsupported; then
          nvccflags_default="-gencode arch=compute_60,code=sm_60 -O2"

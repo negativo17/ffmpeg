@@ -21,8 +21,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        7.1.3
-Release:        3%{?dist}
+Version:        7.1.4
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -31,7 +31,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/8902805364f00e0d420c4d4b33053a31d27045ab
+# https://github.com/HandBrake/HandBrake/tree/8dec1804b6a33bef3337b10b535264955d9f2a34
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -40,8 +40,6 @@ Patch2:         %{name}-chromium.patch
 Patch3:         %{name}-nvcc.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/f8a300c6739ea2ca648579d7faf3ae9811b9f19a
 Patch4:         %{name}-cuda-13.patch
-# Support LCEVCdec 4.0+:
-Patch5:         https://aur.archlinux.org/cgit/aur.git/plain/080-ffmpeg-lcevcdec4.0.0-fix.patch?h=ffmpeg-full#/%{name}-LCEVCdec-4.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2345698
 # Currently set at 0, be changed every time vapoursynth changes ABI:
 Patch7:         %{name}-vapoursynth-script-soname.patch
@@ -703,6 +701,10 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue May 05 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.4-1
+- Update to 7.1.4.
+- Drop LCEVCdec 4+ patch.
+
 * Mon May 04 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.3-3
 - Backport patches for newer DeckLink SDK.
 
