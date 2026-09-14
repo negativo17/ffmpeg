@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -570,6 +570,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-vulkan \
     --enable-xlib \
     --enable-zlib \
+    --extra-cflags="-I%{_includedir}/decklink" \
+    --extra-cxxflags="-I%{_includedir}/decklink" \
     --extra-ldflags="%{build_ldflags}" \
     --incdir=%{_includedir} \
     --libdir=%{_libdir} \
@@ -701,6 +703,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Sep 14 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-2
+- Consume Decklink headers from main Fedora.
+
 * Tue Jun 30 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-1
 - Update to 7.1.5.
 
