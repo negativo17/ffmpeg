@@ -555,6 +555,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --disable-whisper \
     --enable-xlib \
     --enable-zlib \
+    --extra-cflags="-I%{_includedir}/decklink" \
+    --extra-cxxflags="-I%{_includedir}/decklink" \
     --extra-ldflags="%{build_ldflags}" \
     --incdir=%{_includedir} \
     --libdir=%{_libdir} \
@@ -679,6 +681,7 @@ mv doc/*.html doc/html
 %changelog
 * Mon Sep 14 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-2
 - Update patches.
+- Consume Decklink headers from main Fedora.
 
 * Tue Jun 30 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-1
 - Update to 8.1.2.
