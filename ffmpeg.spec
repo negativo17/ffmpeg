@@ -24,7 +24,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        8.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -33,7 +33,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/2f464fcf93d411ebdd969b39d67739ed658c5e58
+# https://github.com/HandBrake/HandBrake/tree/2aa59a5a2926c838f6856b64af735b9e978d2d9b
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -677,6 +677,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Sep 14 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-2
+- Update patches.
+
 * Tue Jun 30 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-1
 - Update to 8.1.2.
 

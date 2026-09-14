@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-8.1.1.old/libavcodec/amfenc.c ffmpeg-8.1.1/libavcodec/amfenc.c
---- ffmpeg-8.1.1.old/libavcodec/amfenc.c	2026-05-22 09:46:43.295257485 +0200
-+++ ffmpeg-8.1.1/libavcodec/amfenc.c	2026-05-22 09:46:44.835915513 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/amfenc.c ffmpeg-8.1.2/libavcodec/amfenc.c
+--- ffmpeg-8.1.2.old/libavcodec/amfenc.c	2026-09-14 18:32:59.785223074 +0200
++++ ffmpeg-8.1.2/libavcodec/amfenc.c	2026-09-14 18:33:01.078723996 +0200
 @@ -173,10 +173,6 @@
      else
          pix_fmt = avctx->pix_fmt;
@@ -12,9 +12,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/amfenc.c ffmpeg-8.1.1/libavcodec/amfenc.c
      ctx->format = av_av_to_amf_format(pix_fmt);
      AMF_RETURN_IF_FALSE(ctx, ctx->format != AMF_SURFACE_UNKNOWN, AVERROR(EINVAL),
                          "Format %s is not supported\n", av_get_pix_fmt_name(pix_fmt));
-diff -Naur ffmpeg-8.1.1.old/libavcodec/av1dec.c ffmpeg-8.1.1/libavcodec/av1dec.c
---- ffmpeg-8.1.1.old/libavcodec/av1dec.c	2026-05-22 09:46:43.359258035 +0200
-+++ ffmpeg-8.1.1/libavcodec/av1dec.c	2026-05-22 09:46:44.827987092 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/av1dec.c ffmpeg-8.1.2/libavcodec/av1dec.c
+--- ffmpeg-8.1.2.old/libavcodec/av1dec.c	2026-09-14 18:32:59.810223306 +0200
++++ ffmpeg-8.1.2/libavcodec/av1dec.c	2026-09-14 18:33:01.068460287 +0200
 @@ -1019,6 +1019,8 @@
          if (ret < 0)
              return ret;
@@ -43,9 +43,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/av1dec.c ffmpeg-8.1.1/libavcodec/av1dec.c
          ret = ff_dovi_attach_side_data(&s->dovi, frame);
          if (ret < 0)
              return ret;
-diff -Naur ffmpeg-8.1.1.old/libavcodec/ccaption_dec.c ffmpeg-8.1.1/libavcodec/ccaption_dec.c
---- ffmpeg-8.1.1.old/libavcodec/ccaption_dec.c	2026-05-22 09:46:43.439258722 +0200
-+++ ffmpeg-8.1.1/libavcodec/ccaption_dec.c	2026-05-22 09:46:44.825712124 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/ccaption_dec.c ffmpeg-8.1.2/libavcodec/ccaption_dec.c
+--- ffmpeg-8.1.2.old/libavcodec/ccaption_dec.c	2026-09-14 18:32:59.840223585 +0200
++++ ffmpeg-8.1.2/libavcodec/ccaption_dec.c	2026-09-14 18:33:01.066395303 +0200
 @@ -893,12 +893,13 @@
  
          if (ctx->buffer[bidx].str[0] || ctx->real_time) {
@@ -64,9 +64,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/ccaption_dec.c ffmpeg-8.1.1/libavcodec/cc
              else
                  sub->end_display_time = -1;
              ret = ff_ass_add_rect2(sub, ctx->buffer[bidx].str, ctx->readorder++, 0, NULL, NULL, &nb_rect_allocated);
-diff -Naur ffmpeg-8.1.1.old/libavcodec/dvdsubdec.c ffmpeg-8.1.1/libavcodec/dvdsubdec.c
---- ffmpeg-8.1.1.old/libavcodec/dvdsubdec.c	2026-05-22 09:46:43.236256978 +0200
-+++ ffmpeg-8.1.1/libavcodec/dvdsubdec.c	2026-05-22 09:46:44.824762926 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/dvdsubdec.c ffmpeg-8.1.2/libavcodec/dvdsubdec.c
+--- ffmpeg-8.1.2.old/libavcodec/dvdsubdec.c	2026-09-14 18:32:59.758222822 +0200
++++ ffmpeg-8.1.2/libavcodec/dvdsubdec.c	2026-09-14 18:33:01.065259983 +0200
 @@ -45,6 +45,8 @@
    int      buf_size;
    int      forced_subs_only;
@@ -181,9 +181,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/dvdsubdec.c ffmpeg-8.1.1/libavcodec/dvdsu
      { NULL }
  };
  static const AVClass dvdsub_class = {
-diff -Naur ffmpeg-8.1.1.old/libavcodec/libdav1d.c ffmpeg-8.1.1/libavcodec/libdav1d.c
---- ffmpeg-8.1.1.old/libavcodec/libdav1d.c	2026-05-22 09:46:43.355258001 +0200
-+++ ffmpeg-8.1.1/libavcodec/libdav1d.c	2026-05-22 09:46:44.828124641 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/libdav1d.c ffmpeg-8.1.2/libavcodec/libdav1d.c
+--- ffmpeg-8.1.2.old/libavcodec/libdav1d.c	2026-09-14 18:32:59.809223297 +0200
++++ ffmpeg-8.1.2/libavcodec/libdav1d.c	2026-09-14 18:33:01.068612253 +0200
 @@ -415,6 +415,8 @@
          if (res < 0)
              return res;
@@ -212,9 +212,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/libdav1d.c ffmpeg-8.1.1/libavcodec/libdav
          res = ff_dovi_attach_side_data(&dav1d->dovi, frame);
          if (res < 0)
              return res;
-diff -Naur ffmpeg-8.1.1.old/libavcodec/mfenc.c ffmpeg-8.1.1/libavcodec/mfenc.c
---- ffmpeg-8.1.1.old/libavcodec/mfenc.c	2026-05-22 09:46:43.392258318 +0200
-+++ ffmpeg-8.1.1/libavcodec/mfenc.c	2026-05-22 09:46:44.843013851 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/mfenc.c ffmpeg-8.1.2/libavcodec/mfenc.c
+--- ffmpeg-8.1.2.old/libavcodec/mfenc.c	2026-09-14 18:32:59.823223427 +0200
++++ ffmpeg-8.1.2/libavcodec/mfenc.c	2026-09-14 18:33:01.085118242 +0200
 @@ -904,6 +904,8 @@
  static int mf_encv_input_adjust(AVCodecContext *avctx, IMFMediaType *type)
  {
@@ -242,10 +242,10 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/mfenc.c ffmpeg-8.1.1/libavcodec/mfenc.c
  
      return 0;
  }
-diff -Naur ffmpeg-8.1.1.old/libavcodec/nvenc.c ffmpeg-8.1.1/libavcodec/nvenc.c
---- ffmpeg-8.1.1.old/libavcodec/nvenc.c	2026-05-22 09:46:43.187256558 +0200
-+++ ffmpeg-8.1.1/libavcodec/nvenc.c	2026-05-22 09:46:44.844360889 +0200
-@@ -680,7 +680,9 @@
+diff -Naur ffmpeg-8.1.2.old/libavcodec/nvenc.c ffmpeg-8.1.2/libavcodec/nvenc.c
+--- ffmpeg-8.1.2.old/libavcodec/nvenc.c	2026-09-14 18:32:59.738222636 +0200
++++ ffmpeg-8.1.2/libavcodec/nvenc.c	2026-09-14 18:33:01.086201073 +0200
+@@ -682,7 +682,9 @@
  
  #ifdef NVENC_HAVE_MVHEVC
      ctx->multiview_supported = nvenc_check_cap(avctx, NV_ENC_CAPS_SUPPORT_MVHEVC_ENCODE) > 0;
@@ -256,9 +256,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/nvenc.c ffmpeg-8.1.1/libavcodec/nvenc.c
          av_log(avctx, AV_LOG_WARNING, "Multiview not supported by the device\n");
          return AVERROR(ENOSYS);
      }
-diff -Naur ffmpeg-8.1.1.old/libavcodec/pgssubdec.c ffmpeg-8.1.1/libavcodec/pgssubdec.c
---- ffmpeg-8.1.1.old/libavcodec/pgssubdec.c	2026-05-22 09:46:43.249257090 +0200
-+++ ffmpeg-8.1.1/libavcodec/pgssubdec.c	2026-05-22 09:46:44.829747128 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/pgssubdec.c ffmpeg-8.1.2/libavcodec/pgssubdec.c
+--- ffmpeg-8.1.2.old/libavcodec/pgssubdec.c	2026-09-14 18:32:59.764222878 +0200
++++ ffmpeg-8.1.2/libavcodec/pgssubdec.c	2026-09-14 18:33:01.071264563 +0200
 @@ -35,9 +35,11 @@
  #include "libavutil/opt.h"
  
@@ -1039,9 +1039,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/pgssubdec.c ffmpeg-8.1.1/libavcodec/pgssu
              break;
          case DISPLAY_SEGMENT:
              if (*got_sub_ptr) {
-diff -Naur ffmpeg-8.1.1.old/libavcodec/qsvenc_av1.c ffmpeg-8.1.1/libavcodec/qsvenc_av1.c
---- ffmpeg-8.1.1.old/libavcodec/qsvenc_av1.c	2026-05-22 09:46:43.398258370 +0200
-+++ ffmpeg-8.1.1/libavcodec/qsvenc_av1.c	2026-05-22 09:46:44.831983132 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/qsvenc_av1.c ffmpeg-8.1.2/libavcodec/qsvenc_av1.c
+--- ffmpeg-8.1.2.old/libavcodec/qsvenc_av1.c	2026-09-14 18:32:59.825223446 +0200
++++ ffmpeg-8.1.2/libavcodec/qsvenc_av1.c	2026-09-14 18:33:01.073788863 +0200
 @@ -189,6 +189,10 @@
      { "tile_cols",  "Number of columns for tiled encoding",   OFFSET(qsv.tile_cols),    AV_OPT_TYPE_INT, { .i64 = 0 }, 0, UINT16_MAX, VE },
      { "tile_rows",  "Number of rows for tiled encoding",      OFFSET(qsv.tile_rows),    AV_OPT_TYPE_INT, { .i64 = 0 }, 0, UINT16_MAX, VE },
@@ -1053,9 +1053,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/qsvenc_av1.c ffmpeg-8.1.1/libavcodec/qsve
      { NULL },
  };
  
-diff -Naur ffmpeg-8.1.1.old/libavcodec/qsvenc.c ffmpeg-8.1.1/libavcodec/qsvenc.c
---- ffmpeg-8.1.1.old/libavcodec/qsvenc.c	2026-05-22 09:46:43.438258714 +0200
-+++ ffmpeg-8.1.1/libavcodec/qsvenc.c	2026-05-22 09:46:44.831729364 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/qsvenc.c ffmpeg-8.1.2/libavcodec/qsvenc.c
+--- ffmpeg-8.1.2.old/libavcodec/qsvenc.c	2026-09-14 18:32:59.840223585 +0200
++++ ffmpeg-8.1.2/libavcodec/qsvenc.c	2026-09-14 18:33:01.073508544 +0200
 @@ -492,6 +492,9 @@
      mfxExtAV1BitstreamParam *av1_bs_param = (mfxExtAV1BitstreamParam *)coding_opts[1];
      mfxExtCodingOption2 *co2 = (mfxExtCodingOption2*)coding_opts[2];
@@ -1145,9 +1145,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/qsvenc.c ffmpeg-8.1.1/libavcodec/qsvenc.c
      q->avctx = avctx;
  
      return 0;
-diff -Naur ffmpeg-8.1.1.old/libavcodec/qsvenc.h ffmpeg-8.1.1/libavcodec/qsvenc.h
---- ffmpeg-8.1.1.old/libavcodec/qsvenc.h	2026-05-22 09:46:43.217256815 +0200
-+++ ffmpeg-8.1.1/libavcodec/qsvenc.h	2026-05-22 09:46:44.831918190 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/qsvenc.h ffmpeg-8.1.2/libavcodec/qsvenc.h
+--- ffmpeg-8.1.2.old/libavcodec/qsvenc.h	2026-09-14 18:32:59.751222757 +0200
++++ ffmpeg-8.1.2/libavcodec/qsvenc.h	2026-09-14 18:33:01.073714643 +0200
 @@ -38,6 +38,7 @@
  
  #define QSV_HAVE_EXT_VP9_TILES QSV_VERSION_ATLEAST(1, 29)
@@ -1180,9 +1180,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/qsvenc.h ffmpeg-8.1.1/libavcodec/qsvenc.h
  } QSVEncContext;
  
  int ff_qsv_enc_init(AVCodecContext *avctx, QSVEncContext *q);
-diff -Naur ffmpeg-8.1.1.old/libavcodec/videotoolbox.c ffmpeg-8.1.1/libavcodec/videotoolbox.c
---- ffmpeg-8.1.1.old/libavcodec/videotoolbox.c	2026-05-22 09:46:43.289257434 +0200
-+++ ffmpeg-8.1.1/libavcodec/videotoolbox.c	2026-05-22 09:46:44.834914447 +0200
+diff -Naur ffmpeg-8.1.2.old/libavcodec/videotoolbox.c ffmpeg-8.1.2/libavcodec/videotoolbox.c
+--- ffmpeg-8.1.2.old/libavcodec/videotoolbox.c	2026-09-14 18:32:59.783223055 +0200
++++ ffmpeg-8.1.2/libavcodec/videotoolbox.c	2026-09-14 18:33:01.077555634 +0200
 @@ -132,9 +132,6 @@
      frame->crop_top = 0;
      frame->crop_bottom = 0;
@@ -1226,9 +1226,9 @@ diff -Naur ffmpeg-8.1.1.old/libavcodec/videotoolbox.c ffmpeg-8.1.1/libavcodec/vi
  #if defined(MAC_OS_X_VERSION_10_9) && !TARGET_OS_IPHONE && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9) && AV_HAS_BUILTIN(__builtin_available)
      if (avctx->codec_id == AV_CODEC_ID_PRORES) {
          if (__builtin_available(macOS 10.9, *)) {
-diff -Naur ffmpeg-8.1.1.old/libavfilter/vf_vpp_qsv.c ffmpeg-8.1.1/libavfilter/vf_vpp_qsv.c
---- ffmpeg-8.1.1.old/libavfilter/vf_vpp_qsv.c	2026-05-22 09:46:43.549259667 +0200
-+++ ffmpeg-8.1.1/libavfilter/vf_vpp_qsv.c	2026-05-22 09:46:44.833281760 +0200
+diff -Naur ffmpeg-8.1.2.old/libavfilter/vf_vpp_qsv.c ffmpeg-8.1.2/libavfilter/vf_vpp_qsv.c
+--- ffmpeg-8.1.2.old/libavfilter/vf_vpp_qsv.c	2026-09-14 18:32:59.889224042 +0200
++++ ffmpeg-8.1.2/libavfilter/vf_vpp_qsv.c	2026-09-14 18:33:01.075560222 +0200
 @@ -494,9 +494,9 @@
      outvsi_conf.Header.BufferId          = MFX_EXTBUFF_VIDEO_SIGNAL_INFO_OUT;
      outvsi_conf.Header.BufferSz          = sizeof(mfxExtVideoSignalInfo);
@@ -1242,9 +1242,9 @@ diff -Naur ffmpeg-8.1.1.old/libavfilter/vf_vpp_qsv.c ffmpeg-8.1.1/libavfilter/vf
      outvsi_conf.ColourDescriptionPresent = 1;
  
      if (memcmp(&vpp->invsi_conf, &invsi_conf, sizeof(mfxExtVideoSignalInfo)) ||
-diff -Naur ffmpeg-8.1.1.old/libavformat/isom.h ffmpeg-8.1.1/libavformat/isom.h
---- ffmpeg-8.1.1.old/libavformat/isom.h	2026-05-22 09:46:43.642260465 +0200
-+++ ffmpeg-8.1.1/libavformat/isom.h	2026-05-22 09:46:44.813590520 +0200
+diff -Naur ffmpeg-8.1.2.old/libavformat/isom.h ffmpeg-8.1.2/libavformat/isom.h
+--- ffmpeg-8.1.2.old/libavformat/isom.h	2026-09-14 18:32:59.937224488 +0200
++++ ffmpeg-8.1.2/libavformat/isom.h	2026-09-14 18:33:01.052528340 +0200
 @@ -282,6 +282,9 @@
          MOVEncryptionIndex *encryption_index;
      } cenc;
@@ -1255,9 +1255,9 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/isom.h ffmpeg-8.1.1/libavformat/isom.h
      struct IAMFDemuxContext *iamf;
      int iamf_stream_offset;
  } MOVStreamContext;
-diff -Naur ffmpeg-8.1.1.old/libavformat/matroskaenc.c ffmpeg-8.1.1/libavformat/matroskaenc.c
---- ffmpeg-8.1.1.old/libavformat/matroskaenc.c	2026-05-22 09:46:43.671260715 +0200
-+++ ffmpeg-8.1.1/libavformat/matroskaenc.c	2026-05-22 09:46:44.826961178 +0200
+diff -Naur ffmpeg-8.1.2.old/libavformat/matroskaenc.c ffmpeg-8.1.2/libavformat/matroskaenc.c
+--- ffmpeg-8.1.2.old/libavformat/matroskaenc.c	2026-09-14 18:32:59.952224628 +0200
++++ ffmpeg-8.1.2/libavformat/matroskaenc.c	2026-09-14 18:33:01.067462616 +0200
 @@ -2994,6 +2994,16 @@
      case AV_CODEC_ID_AAC:
          if (side_data_size && mkv->track.bc) {
@@ -1275,9 +1275,9 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/matroskaenc.c ffmpeg-8.1.1/libavformat/m
              ret = get_aac_sample_rates(s, mkv, side_data, side_data_size,
                                         &track->sample_rate, &output_sample_rate);
              if (ret < 0)
-diff -Naur ffmpeg-8.1.1.old/libavformat/mov.c ffmpeg-8.1.1/libavformat/mov.c
---- ffmpeg-8.1.1.old/libavformat/mov.c	2026-05-22 09:46:43.629260354 +0200
-+++ ffmpeg-8.1.1/libavformat/mov.c	2026-05-22 09:46:44.816270549 +0200
+diff -Naur ffmpeg-8.1.2.old/libavformat/mov.c ffmpeg-8.1.2/libavformat/mov.c
+--- ffmpeg-8.1.2.old/libavformat/mov.c	2026-09-14 18:32:59.931224432 +0200
++++ ffmpeg-8.1.2/libavformat/mov.c	2026-09-14 18:33:01.055234893 +0200
 @@ -57,6 +57,7 @@
  #include "libavcodec/mpegaudiodecheader.h"
  #include "libavcodec/mlp_parse.h"
@@ -1550,7 +1550,7 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/mov.c ffmpeg-8.1.1/libavformat/mov.c
      }
  retry:
      if (c->itunes_metadata && atom.size > 8) {
-@@ -9514,6 +9674,22 @@
+@@ -9525,6 +9685,22 @@
      return ret;
  }
  
@@ -1573,7 +1573,7 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/mov.c ffmpeg-8.1.1/libavformat/mov.c
  static const MOVParseTableEntry mov_default_parse_table[] = {
  { MKTAG('A','C','L','R'), mov_read_aclr },
  { MKTAG('A','P','R','G'), mov_read_avid },
-@@ -9616,6 +9792,7 @@
+@@ -9627,6 +9803,7 @@
  { MKTAG('v','p','c','C'), mov_read_vpcc },
  { MKTAG('m','d','c','v'), mov_read_mdcv },
  { MKTAG('c','l','l','i'), mov_read_clli },
@@ -1581,7 +1581,7 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/mov.c ffmpeg-8.1.1/libavformat/mov.c
  { MKTAG('d','v','c','C'), mov_read_dvcc_dvvc },
  { MKTAG('d','v','v','C'), mov_read_dvcc_dvvc },
  { MKTAG('d','v','w','C'), mov_read_dvcc_dvvc },
-@@ -11071,6 +11248,23 @@
+@@ -11090,6 +11267,23 @@
              err = ff_replaygain_export(st, s->metadata);
              if (err < 0)
                  return err;
@@ -1605,9 +1605,9 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/mov.c ffmpeg-8.1.1/libavformat/mov.c
              break;
          case AVMEDIA_TYPE_VIDEO:
              if (sc->display_matrix) {
-diff -Naur ffmpeg-8.1.1.old/libavformat/movenc.c ffmpeg-8.1.1/libavformat/movenc.c
---- ffmpeg-8.1.1.old/libavformat/movenc.c	2026-05-22 09:46:43.657260595 +0200
-+++ ffmpeg-8.1.1/libavformat/movenc.c	2026-05-22 09:46:44.845270798 +0200
+diff -Naur ffmpeg-8.1.2.old/libavformat/movenc.c ffmpeg-8.1.2/libavformat/movenc.c
+--- ffmpeg-8.1.2.old/libavformat/movenc.c	2026-09-14 18:32:59.945224563 +0200
++++ ffmpeg-8.1.2/libavformat/movenc.c	2026-09-14 18:33:01.087469484 +0200
 @@ -28,6 +28,7 @@
  
  #include "movenc.h"
@@ -1949,9 +1949,9 @@ diff -Naur ffmpeg-8.1.1.old/libavformat/movenc.c ffmpeg-8.1.1/libavformat/movenc
  
      while (cur && *cur) {
          if (strncmp("palette:", cur, 8) == 0) {
-diff -Naur ffmpeg-8.1.1.old/libavutil/frame.h ffmpeg-8.1.1/libavutil/frame.h
---- ffmpeg-8.1.1.old/libavutil/frame.h	2026-05-22 09:46:43.563259787 +0200
-+++ ffmpeg-8.1.1/libavutil/frame.h	2026-05-22 09:46:44.828225461 +0200
+diff -Naur ffmpeg-8.1.2.old/libavutil/frame.h ffmpeg-8.1.2/libavutil/frame.h
+--- ffmpeg-8.1.2.old/libavutil/frame.h	2026-09-14 18:32:59.896224107 +0200
++++ ffmpeg-8.1.2/libavutil/frame.h	2026-09-14 18:33:01.068725557 +0200
 @@ -201,6 +201,12 @@
      AV_FRAME_DATA_DOVI_RPU_BUFFER,
  
@@ -1965,9 +1965,9 @@ diff -Naur ffmpeg-8.1.1.old/libavutil/frame.h ffmpeg-8.1.1/libavutil/frame.h
       * Parsed Dolby Vision metadata, suitable for passing to a software
       * implementation. The payload is the AVDOVIMetadata struct defined in
       * libavutil/dovi_meta.h.
-diff -Naur ffmpeg-8.1.1.old/libavutil/hwcontext_d3d11va.c ffmpeg-8.1.1/libavutil/hwcontext_d3d11va.c
---- ffmpeg-8.1.1.old/libavutil/hwcontext_d3d11va.c	2026-05-22 09:46:43.580605581 +0200
-+++ ffmpeg-8.1.1/libavutil/hwcontext_d3d11va.c	2026-05-22 09:46:44.836668492 +0200
+diff -Naur ffmpeg-8.1.2.old/libavutil/hwcontext_d3d11va.c ffmpeg-8.1.2/libavutil/hwcontext_d3d11va.c
+--- ffmpeg-8.1.2.old/libavutil/hwcontext_d3d11va.c	2026-09-14 18:32:59.906488304 +0200
++++ ffmpeg-8.1.2/libavutil/hwcontext_d3d11va.c	2026-09-14 18:33:01.079610999 +0200
 @@ -85,6 +85,9 @@
      int nb_surfaces;
      int nb_surfaces_used;
@@ -2036,9 +2036,9 @@ diff -Naur ffmpeg-8.1.1.old/libavutil/hwcontext_d3d11va.c ffmpeg-8.1.1/libavutil
  }
  
  static int d3d11va_transfer_get_formats(AVHWFramesContext *ctx,
-diff -Naur ffmpeg-8.1.1.old/libavutil/hwcontext_videotoolbox.c ffmpeg-8.1.1/libavutil/hwcontext_videotoolbox.c
---- ffmpeg-8.1.1.old/libavutil/hwcontext_videotoolbox.c	2026-05-22 09:46:43.581259942 +0200
-+++ ffmpeg-8.1.1/libavutil/hwcontext_videotoolbox.c	2026-05-22 09:46:44.835041707 +0200
+diff -Naur ffmpeg-8.1.2.old/libavutil/hwcontext_videotoolbox.c ffmpeg-8.1.2/libavutil/hwcontext_videotoolbox.c
+--- ffmpeg-8.1.2.old/libavutil/hwcontext_videotoolbox.c	2026-09-14 18:32:59.906488304 +0200
++++ ffmpeg-8.1.2/libavutil/hwcontext_videotoolbox.c	2026-09-14 18:33:01.077695928 +0200
 @@ -191,7 +191,8 @@
      VTFramesContext *fctx = ctx->hwctx;
      AVVTFramesContext *hw_ctx = &fctx->p;
@@ -2065,9 +2065,9 @@ diff -Naur ffmpeg-8.1.1.old/libavutil/hwcontext_videotoolbox.c ffmpeg-8.1.1/liba
      err = CVPixelBufferPoolCreate(
          NULL,
          NULL,
-diff -Naur ffmpeg-8.1.1.old/libavutil/side_data.c ffmpeg-8.1.1/libavutil/side_data.c
---- ffmpeg-8.1.1.old/libavutil/side_data.c	2026-05-22 09:46:43.561259770 +0200
-+++ ffmpeg-8.1.1/libavutil/side_data.c	2026-05-22 09:46:44.828308077 +0200
+diff -Naur ffmpeg-8.1.2.old/libavutil/side_data.c ffmpeg-8.1.2/libavutil/side_data.c
+--- ffmpeg-8.1.2.old/libavutil/side_data.c	2026-09-14 18:32:59.895224097 +0200
++++ ffmpeg-8.1.2/libavutil/side_data.c	2026-09-14 18:33:01.068909854 +0200
 @@ -42,6 +42,7 @@
      [AV_FRAME_DATA_DETECTION_BBOXES]            = { "Bounding boxes for object detection and classification", AV_SIDE_DATA_PROP_SIZE_DEPENDENT },
      [AV_FRAME_DATA_DOVI_RPU_BUFFER]             = { "Dolby Vision RPU Data",                        AV_SIDE_DATA_PROP_COLOR_DEPENDENT },

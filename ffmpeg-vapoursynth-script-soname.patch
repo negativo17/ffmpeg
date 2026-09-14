@@ -1,11 +1,13 @@
-diff -Naur ffmpeg-7.1.2.old/libavformat/vapoursynth.c ffmpeg-7.1.2/libavformat/vapoursynth.c
---- ffmpeg-7.1.2.old/libavformat/vapoursynth.c	2025-10-27 14:43:15.744230401 +0100
-+++ ffmpeg-7.1.2/libavformat/vapoursynth.c	2025-10-27 14:43:36.732183431 +0100
-@@ -49,7 +49,7 @@
+diff -Naur ffmpeg-8.1.2.old/libavformat/vapoursynth.c ffmpeg-8.1.2/libavformat/vapoursynth.c
+--- ffmpeg-8.1.2.old/libavformat/vapoursynth.c	2026-09-14 18:33:58.567770124 +0200
++++ ffmpeg-8.1.2/libavformat/vapoursynth.c	2026-09-14 18:35:06.060065506 +0200
+@@ -48,8 +48,8 @@
+   #define VSSCRIPT_LIB "VSScript.dll"
  #else
    #include <dlfcn.h>
-   #define VSSCRIPT_NAME "libvapoursynth-script"
+-  #define VSSCRIPT_NAME "libvapoursynth-script"
 -  #define VSSCRIPT_LIB VSSCRIPT_NAME SLIBSUF
++  #define VSSCRIPT_NAME "libvsscript"
 +  #define VSSCRIPT_LIB VSSCRIPT_NAME SLIBSUF ".0"
  #endif
  
