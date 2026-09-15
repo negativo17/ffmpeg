@@ -153,7 +153,7 @@ BuildRequires:  pkgconfig(srt) >= 1.3.0
 BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(uavs3d) >= 1.1.41
-BuildRequires:  pkgconfig(vapoursynth-script) >= 42
+BuildRequires:  pkgconfig(vapoursynth) >= 79
 BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vorbis)
 BuildRequires:  pkgconfig(vorbisenc)
