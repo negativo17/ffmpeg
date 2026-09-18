@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -65,6 +65,7 @@ BuildRequires:  libchromaprint-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
 BuildRequires:  libklvanc-devel
+BuildRequires:  libquirc-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libxavs-devel
@@ -119,7 +120,6 @@ BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libqrencode)
-#BuildRequires:  pkgconfig(libquirc)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librtmp)
@@ -505,7 +505,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libplacebo \
     --enable-libpulse \
     --enable-libqrencode \
-    --disable-libquirc \
+    --enable-libquirc \
     --enable-librabbitmq \
     --enable-librav1e \
     --enable-librist \
@@ -703,6 +703,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-3
+- Enable libquirc support.
+
 * Mon Sep 14 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-2
 - Consume Decklink headers from main Fedora.
 
