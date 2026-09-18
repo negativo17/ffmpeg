@@ -2,10 +2,14 @@
 
 %if %{with bootstrap}
 %bcond chromaprint 0
+%bcond doxygen 0
 %bcond lcevcdec 0
+%bcond librsvg2 0
 %else
 %bcond chromaprint 1
+%bcond doxygen 1
 %bcond lcevcdec 1
+%bcond librsvg2 1
 %endif
 
 %global _lto_cflags %{nil}
@@ -13,18 +17,18 @@
 %global _pkg_extra_ldflags "-Wl,-z,notext"
 %endif
 
-%global avcodec_soversion 62
-%global avdevice_soversion 62
-%global avfilter_soversion 11
-%global avformat_soversion 62
-%global avutil_soversion 60
-%global swresample_soversion 6
-%global swscale_soversion 9
+%global avcodec_soversion 63
+%global avdevice_soversion 63
+%global avfilter_soversion 12
+%global avformat_soversion 63
+%global avutil_soversion 61
+%global swresample_soversion 7
+%global swscale_soversion 10
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        8.1.2
-Release:        3%{?dist}
+Version:        9.0.1
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -33,7 +37,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/2aa59a5a2926c838f6856b64af735b9e978d2d9b
+# https://github.com/HandBrake/HandBrake/tree/92f3dcb667bee9e41c721f522b4f63e8248886dd
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -48,8 +52,11 @@ BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
 BuildRequires:  decklink-devel >= 14.2
+%if %{with doxygen}
 BuildRequires:  doxygen
+%endif
 BuildRequires:  frei0r-devel
+BuildRequires:  glslc
 BuildRequires:  gmp-devel
 BuildRequires:  gsm-devel
 BuildRequires:  ilbc-devel
@@ -121,7 +128,9 @@ BuildRequires:  pkgconfig(libqrencode)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librtmp)
+%if %{with librsvg2}
 BuildRequires:  pkgconfig(librsvg-2.0)
+%endif
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
 BuildRequires:  pkgconfig(libva) >= 0.35.0
@@ -145,7 +154,6 @@ BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  pkgconfig(shaderc) >= 2019.1
 #BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(speex)
@@ -497,10 +505,11 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-librabbitmq \
     --enable-librav1e \
     --enable-librist \
+%if %{with librsvg2}
     --enable-librsvg \
+%endif
     --enable-librtmp \
     --enable-librubberband \
-    --enable-libshaderc \
     --disable-libshine \
     --enable-libsmbclient \
     --enable-libsnappy \
@@ -683,6 +692,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.1-1
+- Update to 9.0.1.
+
 * Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-3
 - Enable libquirc, SVT JPEG-XS and mpeghdec support.
 
