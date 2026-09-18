@@ -24,7 +24,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        8.1.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -62,6 +62,7 @@ BuildRequires:  libchromaprint-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
 BuildRequires:  libklvanc-devel
+BuildRequires:  libquirc-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libxavs-devel
@@ -117,7 +118,6 @@ BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
 BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libqrencode)
-#BuildRequires:  pkgconfig(libquirc)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 BuildRequires:  pkgconfig(librist) >= 0.2.7
 BuildRequires:  pkgconfig(librtmp)
@@ -135,6 +135,7 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(libzmq) >= 4.2.1
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
+BuildRequires:  pkgconfig(mpeghdec) >= 3.0.0
 #BuildRequires:  pkgconfig(OpenCL)
 BuildRequires:  pkgconfig(oapv) >= 0.2.0.0
 #BuildRequires:  pkgconfig(opencv)
@@ -182,6 +183,7 @@ BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %ifarch x86_64
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
+BuildRequires:  pkgconfig(SvtJpegxs) > 0.9.0
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
 %endif
@@ -477,6 +479,7 @@ This subpackage contains the headers for FFmpeg libswscale.
 %endif
     --enable-libmodplug \
     --enable-libmp3lame \
+    --enable-libmpeghdec \
     --enable-libmysofa \
     --disable-libnpp \
     --enable-liboapv \
@@ -490,7 +493,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libplacebo \
     --enable-libpulse \
     --enable-libqrencode \
-    --disable-libquirc \
+    --enable-libquirc \
     --enable-librabbitmq \
     --enable-librav1e \
     --enable-librist \
@@ -574,6 +577,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch x86_64
+    --enable-libsvtjpegxs \
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
@@ -679,6 +683,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-3
+- Enable libquirc, SVT JPEG-XS and mpeghdec support.
+
 * Mon Sep 14 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-2
 - Update patches.
 - Consume Decklink headers from main Fedora.
