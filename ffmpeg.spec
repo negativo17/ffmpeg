@@ -28,7 +28,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        9.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -185,6 +185,7 @@ BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
 BuildRequires:  cuda-nvcc
+BuildRequires:  onnxruntime-devel
 BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %endif
 
@@ -581,9 +582,11 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
+    --enable-libonnxruntime \
     --enable-nvdec \
     --enable-nvenc \
-    --extra-cflags="-I%{_includedir}/cuda" \
+    --extra-cflags="-I%{_includedir}/cuda -I%{_includedir}/onnxruntime" \
+    --extra-cxxflags="-I%{_includedir}/onnxruntime" \
 %endif
 %ifarch x86_64
     --enable-libsvtjpegxs \
@@ -692,6 +695,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Sep 21 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.1-2
+- Enable ONNX Runtime DNN backend.
+
 * Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.1-1
 - Update to 9.0.1.
 
