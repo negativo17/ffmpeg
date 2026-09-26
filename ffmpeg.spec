@@ -23,8 +23,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        8.1.2
-Release:        3%{?dist}
+Version:        8.1.3
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -33,7 +33,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/2aa59a5a2926c838f6856b64af735b9e978d2d9b
+# https://github.com/HandBrake/HandBrake/tree/49b25b128189011c3e19a851d5ca06cb63d31233
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -683,6 +683,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Sep 26 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.3-1
+- Update to 8.1.3.
+
 * Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.2-3
 - Enable libquirc, SVT JPEG-XS and mpeghdec support.
 
