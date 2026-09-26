@@ -1,6 +1,6 @@
-diff -Naur ffmpeg-9.0.1.old/configure ffmpeg-9.0.1/configure
---- ffmpeg-9.0.1.old/configure	2026-08-04 00:14:47.000000000 +0200
-+++ ffmpeg-9.0.1/configure	2026-09-20 11:57:36.828694340 +0200
+diff -Naur ffmpeg-9.0.2.old/configure ffmpeg-9.0.2/configure
+--- ffmpeg-9.0.2.old/configure	2026-09-26 19:12:21.588295348 +0200
++++ ffmpeg-9.0.2/configure	2026-09-26 19:12:21.849299001 +0200
 @@ -282,6 +282,7 @@
    --enable-libssh          enable SFTP protocol via libssh [no]
    --enable-libsvtav1       enable AV1 encoding via SVT [no]
@@ -33,9 +33,9 @@ diff -Naur ffmpeg-9.0.1.old/configure ffmpeg-9.0.1/configure
  enabled libvidstab        && require_pkg_config libvidstab "vidstab >= 0.98" vid.stab/libvidstab.h vsMotionDetectInit
  enabled libvmaf           && require_pkg_config libvmaf "libvmaf >= 2.0.0" libvmaf.h vmaf_init
  enabled libvmaf           && check_pkg_config libvmaf_cuda "libvmaf >= 2.0.0" libvmaf_cuda.h vmaf_cuda_state_init
-diff -Naur ffmpeg-9.0.1.old/libavcodec/allcodecs.c ffmpeg-9.0.1/libavcodec/allcodecs.c
---- ffmpeg-9.0.1.old/libavcodec/allcodecs.c	2026-08-04 00:14:47.000000000 +0200
-+++ ffmpeg-9.0.1/libavcodec/allcodecs.c	2026-09-20 11:57:36.829719876 +0200
+diff -Naur ffmpeg-9.0.2.old/libavcodec/allcodecs.c ffmpeg-9.0.2/libavcodec/allcodecs.c
+--- ffmpeg-9.0.2.old/libavcodec/allcodecs.c	2026-09-26 19:12:21.563294998 +0200
++++ ffmpeg-9.0.2/libavcodec/allcodecs.c	2026-09-26 19:12:21.851211021 +0200
 @@ -812,6 +812,7 @@
  extern const FFCodec ff_libvo_amrwbenc_encoder;
  extern const FFCodec ff_libvorbis_encoder;
@@ -44,9 +44,9 @@ diff -Naur ffmpeg-9.0.1.old/libavcodec/allcodecs.c ffmpeg-9.0.1/libavcodec/allco
  extern const FFCodec ff_libvpx_vp8_encoder;
  extern const FFCodec ff_libvpx_vp8_decoder;
  extern const FFCodec ff_libvpx_vp9_encoder;
-diff -Naur ffmpeg-9.0.1.old/libavcodec/libsvt_vp9.c ffmpeg-9.0.1/libavcodec/libsvt_vp9.c
---- ffmpeg-9.0.1.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
-+++ ffmpeg-9.0.1/libavcodec/libsvt_vp9.c	2026-09-20 11:57:59.104225641 +0200
+diff -Naur ffmpeg-9.0.2.old/libavcodec/libsvt_vp9.c ffmpeg-9.0.2/libavcodec/libsvt_vp9.c
+--- ffmpeg-9.0.2.old/libavcodec/libsvt_vp9.c	1970-01-01 01:00:00.000000000 +0100
++++ ffmpeg-9.0.2/libavcodec/libsvt_vp9.c	2026-09-26 19:12:21.851512901 +0200
 @@ -0,0 +1,700 @@
 +/*
 +* Scalable Video Technology for VP9 encoder library plugin
@@ -748,9 +748,9 @@ diff -Naur ffmpeg-9.0.1.old/libavcodec/libsvt_vp9.c ffmpeg-9.0.1/libavcodec/libs
 +    .defaults         = eb_enc_defaults,
 +    .p.wrapper_name   = "libsvt_vp9",
 +};
-diff -Naur ffmpeg-9.0.1.old/libavcodec/Makefile ffmpeg-9.0.1/libavcodec/Makefile
---- ffmpeg-9.0.1.old/libavcodec/Makefile	2026-08-04 00:14:47.000000000 +0200
-+++ ffmpeg-9.0.1/libavcodec/Makefile	2026-09-20 11:57:36.829624616 +0200
+diff -Naur ffmpeg-9.0.2.old/libavcodec/Makefile ffmpeg-9.0.2/libavcodec/Makefile
+--- ffmpeg-9.0.2.old/libavcodec/Makefile	2026-09-26 19:12:21.502294143 +0200
++++ ffmpeg-9.0.2/libavcodec/Makefile	2026-09-26 19:12:21.851724049 +0200
 @@ -1214,6 +1214,7 @@
  OBJS-$(CONFIG_LIBVORBIS_DECODER)          += libvorbisdec.o
  OBJS-$(CONFIG_LIBVORBIS_ENCODER)          += libvorbisenc.o \

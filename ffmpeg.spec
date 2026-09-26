@@ -27,8 +27,8 @@
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        9.0.1
-Release:        2%{?dist}
+Version:        9.0.2
+Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -37,7 +37,7 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/HandBrake/HandBrake/tree/92f3dcb667bee9e41c721f522b4f63e8248886dd
+# https://github.com/HandBrake/HandBrake/tree/964dd76979fa4efa34fea286a26a6773d6ddff91
 Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
@@ -695,6 +695,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Sat Sep 26 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.2-1
+- Update to 9.0.2.
+
 * Mon Sep 21 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.1-2
 - Enable ONNX Runtime DNN backend.
 
