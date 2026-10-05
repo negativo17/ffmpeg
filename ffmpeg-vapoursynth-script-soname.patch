@@ -1,0 +1,12 @@
+diff -Naur ffmpeg-7.1.2.old/libavformat/vapoursynth.c ffmpeg-7.1.2/libavformat/vapoursynth.c
+--- ffmpeg-7.1.2.old/libavformat/vapoursynth.c	2025-10-27 14:43:15.744230401 +0100
++++ ffmpeg-7.1.2/libavformat/vapoursynth.c	2025-10-27 14:43:36.732183431 +0100
+@@ -49,7 +49,7 @@
+ #else
+   #include <dlfcn.h>
+   #define VSSCRIPT_NAME "libvapoursynth-script"
+-  #define VSSCRIPT_LIB VSSCRIPT_NAME SLIBSUF
++  #define VSSCRIPT_LIB VSSCRIPT_NAME SLIBSUF ".0"
+ #endif
+ 
+ struct VSState {

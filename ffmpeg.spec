@@ -1,17 +1,27 @@
+%bcond bootstrap 0
+
+%if %{with bootstrap}
+%bcond chromaprint 0
+%bcond lcevcdec 0
+%else
+%bcond chromaprint 1
+%bcond lcevcdec 1
+%endif
+
 %global _lto_cflags %{nil}
 
-%global avcodec_soversion 59
-%global avdevice_soversion 59
-%global avfilter_soversion 8
-%global avformat_soversion 59
-%global avutil_soversion 57
-%global postproc_soversion 56
-%global swresample_soversion 4
-%global swscale_soversion 6
+%global avcodec_soversion 61
+%global avdevice_soversion 61
+%global avfilter_soversion 10
+%global avformat_soversion 61
+%global avutil_soversion 59
+%global postproc_soversion 58
+%global swresample_soversion 5
+%global swscale_soversion 8
 
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
-Version:        5.1.10
+Version:        7.1.5
 Release:        1%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
@@ -21,26 +31,26 @@ Source0:        http://%{name}.org/releases/%{name}-%{version}.tar.xz
 
 # https://github.com/OpenVisualCloud/SVT-VP9/tree/master/ffmpeg_plugin
 Patch0:         %{name}-svt-vp9.patch
-# https://github.com/OpenVisualCloud/SVT-HEVC/tree/master/ffmpeg_plugin
-Patch1:         %{name}-svt-hevc.patch
-# https://framagit.org/tytan652/ffmpeg-ndi-patch
-Patch2:         %{name}-ndi.patch
-# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/9212b53ed5b2f7346036936d500e7954190fb08b
-# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/1ebb0e43f9a15a12cd94db44e4bc5424f8a5b0c9
-# https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/43b417d516b0fabbec1f02120d948f636b8a018e
-Patch3:         %{name}-nvenc.patch
+# https://github.com/HandBrake/HandBrake/tree/8dec1804b6a33bef3337b10b535264955d9f2a34
+Patch1:         %{name}-HandBrake.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2240127
 # Reference: https://crbug.com/1306560
-Patch4:         %{name}-chromium.patch
-# https://github.com/HandBrake/HandBrake/tree/b94291a97d0587ba1ce23a87f6987ec78248ec8c
-Patch5:         %{name}-HandBrake.patch
+Patch2:         %{name}-chromium.patch
+# Fix build with recent NVCC:
+Patch3:         %{name}-nvcc.patch
 # https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff/f8a300c6739ea2ca648579d7faf3ae9811b9f19a
-Patch6:         %{name}-cuda-13.patch
+Patch4:         %{name}-cuda-13.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2345698
+# Currently set at 0, be changed every time vapoursynth changes ABI:
+Patch7:         %{name}-vapoursynth-script-soname.patch
+# Add support for newer DeckLink SDK:
+Patch8:         https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/0cd75dbfa0fc6c213cf9240b3c03c809070c5209.patch
+Patch9:         https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/27e94281d1c880b4cae28738e35c0d6f9a58f06b.patch
 
-BuildRequires:  AMF-devel
+BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
 BuildRequires:  codec2-devel
-BuildRequires:  decklink-devel >= 10.11
+BuildRequires:  decklink-devel >= 14.2
 BuildRequires:  doxygen
 BuildRequires:  frei0r-devel
 BuildRequires:  gmp-devel
@@ -49,11 +59,13 @@ BuildRequires:  ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires:  ladspa-devel
 BuildRequires:  libavc1394-devel
+%if %{with chromaprint}
 BuildRequires:  libchromaprint-devel
+%endif
 BuildRequires:  libgcrypt-devel
 BuildRequires:  libiec61883-devel
 BuildRequires:  libklvanc-devel
-BuildRequires:  libndi-devel
+BuildRequires:  libquirc-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  libxavs-devel
@@ -78,13 +90,20 @@ BuildRequires:  pkgconfig(aribb24) >= 1.0.3
 BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dav1d) >= 0.5.0
 BuildRequires:  pkgconfig(davs2) >= 1.6.0
+BuildRequires:  pkgconfig(dvdnav) >= 6.1.0
 BuildRequires:  pkgconfig(fdk-aac)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fribidi)
+BuildRequires:  pkgconfig(harfbuzz)
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(kvazaar) >= 0.8.1
-#BuildRequires:  pkgconfig(lensfun) >= 0.3.95
+BuildRequires:  pkgconfig(lc3) >= 1.1.0
+BuildRequires:  pkgconfig(lcms2) >= 2.13
+%if %{with lcevcdec}
+BuildRequires:  pkgconfig(lcevc_dec) >= 2.0.0
+%endif
+BuildRequires:  pkgconfig(libaribcaption) >= 1.1.1
 BuildRequires:  pkgconfig(libass) >= 0.11.0
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libbs2b)
@@ -93,38 +112,45 @@ BuildRequires:  pkgconfig(libdc1394-2)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libgme)
 BuildRequires:  pkgconfig(libjxl) >= 0.7.0
-BuildRequires:  pkgconfig(lilv-0)
+#BuildRequires:  pkgconfig(lensfun) > 0.3.95
 BuildRequires:  pkgconfig(libmodplug)
 BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  pkgconfig(libopenjp2) >= 2.1.0
 BuildRequires:  pkgconfig(libopenmpt) >= 0.2.6557
+BuildRequires:  pkgconfig(libplacebo) >= 4.192.0
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libqrencode)
 BuildRequires:  pkgconfig(librabbitmq) >= 0.7.1
 BuildRequires:  pkgconfig(librist) >= 0.2.7
-BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(librtmp)
+BuildRequires:  pkgconfig(librsvg-2.0)
 BuildRequires:  pkgconfig(libssh)
 BuildRequires:  pkgconfig(libtcmalloc)
 BuildRequires:  pkgconfig(libva) >= 0.35.0
 BuildRequires:  pkgconfig(libva-drm)
 BuildRequires:  pkgconfig(libva-x11)
 BuildRequires:  pkgconfig(libv4l2)
+BuildRequires:  pkgconfig(libvvenc) >= 1.11.0
 BuildRequires:  pkgconfig(libwebp)
 BuildRequires:  pkgconfig(libwebpmux) >= 0.4.0
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(libzmq) >= 4.2.1
+BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  pkgconfig(lv2)
 #BuildRequires:  pkgconfig(OpenCL)
+#BuildRequires:  pkgconfig(opencv)
 BuildRequires:  pkgconfig(openh264)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(rav1e) >= 0.4.0
 BuildRequires:  pkgconfig(rubberband) >= 1.8.1
 BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(shaderc) >= 2019.1
 #BuildRequires:  pkgconfig(shine)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(speex)
 BuildRequires:  pkgconfig(srt) >= 1.3.0
+BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
 BuildRequires:  pkgconfig(tesseract)
 BuildRequires:  pkgconfig(uavs3d) >= 1.1.41
 BuildRequires:  pkgconfig(vapoursynth-script) >= 42
@@ -132,12 +158,14 @@ BuildRequires:  pkgconfig(vidstab) >= 0.98
 BuildRequires:  pkgconfig(vorbis)
 BuildRequires:  pkgconfig(vorbisenc)
 BuildRequires:  pkgconfig(vpx) >= 1.4.0
-BuildRequires:  pkgconfig(vulkan) >= 1.2.189
+BuildRequires:  pkgconfig(vulkan) >= 1.3.277
 BuildRequires:  pkgconfig(xavs2) >= 1.3.0
 BuildRequires:  pkgconfig(xcb) >= 1.4
 BuildRequires:  pkgconfig(xcb-shape)
 BuildRequires:  pkgconfig(xcb-shm)
 BuildRequires:  pkgconfig(xcb-xfixes)
+BuildRequires:  pkgconfig(xevd) >= 0.4.1
+BuildRequires:  pkgconfig(xeve) >= 0.4.3
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(x264)
@@ -148,16 +176,13 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(zvbi-0.2) >= 0.2.28
 
 %ifarch x86_64 aarch64
-BuildRequires:  cuda-cudart-devel
 BuildRequires:  cuda-nvcc
-BuildRequires:  pkgconfig(ffnvcodec) >= 9.1.23.1
+BuildRequires:  pkgconfig(ffnvcodec) >= 12.0.16.0
 %endif
 
 %ifarch x86_64
 BuildRequires:  pkgconfig(libmfx)
 BuildRequires:  pkgconfig(libvmaf) >= 2.0.0
-BuildRequires:  pkgconfig(SvtAv1Enc) >= 0.9.0
-BuildRequires:  pkgconfig(SvtHevcEnc)
 BuildRequires:  pkgconfig(SvtVp9Enc)
 BuildRequires:  pkgconfig(vpl) >= 2.6
 %endif
@@ -417,7 +442,11 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-avformat \
     --enable-alsa \
     --enable-bzlib \
+%if %{with chromaprint}
     --enable-chromaprint \
+%else
+    --disable-chromaprint \
+%endif
     --enable-decklink \
     --enable-frei0r \
     --enable-gcrypt \
@@ -426,55 +455,76 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-gray \
     --enable-iconv \
     --enable-ladspa \
-    --enable-libass \
+    --enable-lcms2 \
     --enable-libaom \
     --enable-libaribb24 \
+    --enable-libaribcaption \
+    --enable-libass \
     --enable-libbluray \
     --enable-libbs2b \
     --enable-libcaca \
     --enable-libcdio \
     --enable-libcodec2 \
-    --enable-libdc1394 \
     --enable-libdav1d \
     --enable-libdavs2 \
+    --enable-libdc1394 \
     --enable-libdrm \
+    --enable-libdvdnav \
+    --enable-libdvdread \
     --enable-libfdk-aac \
     --enable-libfontconfig \
     --enable-libfreetype \
     --enable-libfribidi \
     --enable-libgme \
     --enable-libgsm \
+    --enable-libharfbuzz \
     --enable-libiec61883 \
     --enable-libilbc \
     --enable-libjack \
     --enable-libjxl \
     --enable-libklvanc \
     --enable-libkvazaar \
+    --enable-liblc3 \
+    --disable-liblensfun \
+%if %{with lcevcdec}
+    --enable-liblcevc-dec \
+%else
+    --disable-liblcevc-dec \
+%endif
     --enable-libmodplug \
     --enable-libmp3lame \
     --enable-libmysofa \
-    --enable-libndi_newtek \
+    --disable-libnpp \
     --enable-libopencore-amrnb \
     --enable-libopencore-amrwb \
+    --disable-libopencv \
     --enable-libopenh264 \
     --enable-libopenjpeg \
     --enable-libopenmpt \
     --enable-libopus \
+    --enable-libplacebo \
     --enable-libpulse \
+    --enable-libqrencode \
+    --enable-libquirc \
     --enable-librabbitmq \
     --enable-librav1e \
     --enable-librist \
     --enable-librsvg \
     --enable-librtmp \
     --enable-librubberband \
+    --enable-libshaderc \
+    --disable-libshine \
     --enable-libsmbclient \
     --enable-libsnappy \
+    --enable-libsvtav1 \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libsrt \
     --enable-libssh \
+    --disable-libtensorflow \
     --enable-libtesseract \
     --enable-libtheora \
+    --disable-libtorch \
     --enable-libtwolame \
     --enable-libuavs3d \
     --enable-libv4l2 \
@@ -482,15 +532,18 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-libvo-amrwbenc \
     --enable-libvorbis \
     --enable-libvpx \
+    --enable-libvvenc \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
-    --enable-libxavs \
     --enable-libxavs2 \
+    --enable-libxavs \
     --enable-libxcb \
     --enable-libxcb-shape \
     --enable-libxcb-shm \
     --enable-libxcb-xfixes \
+    --enable-libxevd \
+    --enable-libxeve \
     --enable-libxml2 \
     --enable-libxvid \
     --enable-libzimg \
@@ -499,6 +552,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-lv2 \
     --enable-lzma \
     --enable-nonfree \
+    --enable-manpages \
     --enable-openal \
     --enable-opencl \
     --enable-opengl \
@@ -516,6 +570,8 @@ This subpackage contains the headers for FFmpeg libswscale.
     --enable-vulkan \
     --enable-xlib \
     --enable-zlib \
+    --extra-cflags="-I%{_includedir}/decklink" \
+    --extra-cxxflags="-I%{_includedir}/decklink" \
     --extra-ldflags="%{build_ldflags}" \
     --incdir=%{_includedir} \
     --libdir=%{_libdir} \
@@ -524,6 +580,7 @@ This subpackage contains the headers for FFmpeg libswscale.
     --prefix=%{_prefix} \
     --shlibdir=%{_libdir} \
 %ifarch x86_64 aarch64
+    --enable-cuda-llvm \
     --enable-cuda-nvcc \
     --enable-cuvid \
     --enable-ffnvcodec \
@@ -532,8 +589,6 @@ This subpackage contains the headers for FFmpeg libswscale.
     --extra-cflags="-I%{_includedir}/cuda" \
 %endif
 %ifarch x86_64
-    --enable-libsvtav1 \
-    --enable-libsvthevc \
     --enable-libsvtvp9 \
     --enable-libvmaf \
     --enable-libvpl \
@@ -550,15 +605,6 @@ rm -fr %{buildroot}%{_docdir}/*
 rm -fr %{buildroot}%{_datadir}/examples
 mkdir doc/html
 mv doc/*.html doc/html
-
-%ldconfig_scriptlets -n libavcodec
-%ldconfig_scriptlets -n libavdevice
-%ldconfig_scriptlets -n libavfilter
-%ldconfig_scriptlets -n libavformat
-%ldconfig_scriptlets -n libavutil
-%ldconfig_scriptlets -n libpostproc
-%ldconfig_scriptlets -n libswresample
-%ldconfig_scriptlets -n libswscale
 
 %files
 %{_bindir}/%{name}
@@ -657,6 +703,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Mon Oct 05 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-1
+- Import 7.1.5 from EL10 branch.
+
 * Tue Jun 30 2026 Simone Caronni <negativo17@gmail.com> - 1:5.1.10-1
 - Update to 5.1.10.
 
