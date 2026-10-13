@@ -12,7 +12,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        5.1.10
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -652,6 +652,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Oct 13 2026 Simone Caronni <negativo17@gmail.com> - 1:5.1.10-2
+- Rebuild for downgraded nv-codec-headers.
+
 * Tue Jun 30 2026 Simone Caronni <negativo17@gmail.com> - 1:5.1.10-1
 - Update to 5.1.10.
 
