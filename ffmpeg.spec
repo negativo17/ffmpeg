@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -703,6 +703,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Oct 13 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-2
+- Rebuild for downgraded nv-codec-headers.
+
 * Mon Oct 05 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-1
 - Import 7.1.5 from EL10 branch.
 
