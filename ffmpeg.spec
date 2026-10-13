@@ -22,7 +22,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        7.1.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -701,6 +701,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Oct 13 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-3
+- Rebuild for updated dependencies.
+
 * Fri Sep 18 2026 Simone Caronni <negativo17@gmail.com> - 1:7.1.5-2
 - Enable libquirc support.
 
