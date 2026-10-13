@@ -24,7 +24,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        8.1.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -683,6 +683,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Tue Oct 13 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.3-2
+- Rebuild for updated dependencies.
+
 * Sat Sep 26 2026 Simone Caronni <negativo17@gmail.com> - 1:8.1.3-1
 - Update to 8.1.3.
 
