@@ -28,7 +28,7 @@
 Summary:        A complete solution to record, convert and stream audio and video
 Name:           ffmpeg
 Version:        9.0.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3+
 URL:            http://%{name}.org/
 Epoch:          1
@@ -47,6 +47,8 @@ Patch3:         %{name}-nvcc.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2345698
 # Currently set at 0, be changed every time vapoursynth changes ABI:
 Patch7:         %{name}-vapoursynth-script-soname.patch
+# Fix build with openapv 1.1+:
+Patch8:         https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/c54710db21c1827dbc3e47658a562525af0fe528.patch
 
 BuildRequires:  AMF-devel >= 1.4.28
 BuildRequires:  bzip2-devel
@@ -695,6 +697,9 @@ mv doc/*.html doc/html
 %{_mandir}/man3/libswscale.3*
 
 %changelog
+* Wed Nov 18 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.2-3
+- Rebuild for updated dependencies.
+
 * Tue Oct 13 2026 Simone Caronni <negativo17@gmail.com> - 1:9.0.2-2
 - Rebuild for updated dependencies.
 
